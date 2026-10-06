@@ -1,0 +1,142 @@
+/* --- RESET & LAYOUT DASAR --- */
+body {
+    background-color: #f7f5f2; /* Warna krem pucat sesuai gambar */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.role-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+/* --- BAGIAN HEADER TEKS --- */
+.role-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.overline {
+    display: block;
+    color: #9d7582; /* Warna merah bata pudar */
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.role-header h1 {
+    color: #2b2326; /* Hitam kecoklatan gelap */
+    font-size: 2.2rem;
+    line-height: 1.3;
+    font-weight: 700;
+}
+
+/* --- BAGIAN KARTU --- */
+.role-cards {
+    display: flex;
+    gap: 30px;
+    max-width: 900px;
+    width: 100%;
+    margin-bottom: 40px;
+    justify-content: center;
+}
+
+.card {
+    background-color: #ffffff;
+    border: 1px solid #eae5e3;
+    border-radius: 16px;
+    padding: 40px 30px;
+    width: 48%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.card-title h2 {
+    font-size: 1.3rem;
+    color: #2b2326;
+}
+
+.card p {
+    color: #6d6468;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    flex-grow: 1; /* Mendorong tombol ke bawah agar sejajar */
+}
+
+/* --- TOMBOL ROLE --- */
+.btn-role {
+    display: block;
+    text-align: center;
+    padding: 14px 0;
+    border-radius: 8px;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: 0.3s ease;
+}
+
+/* Warna tombol MUA sedikit lebih gelap */
+.btn-mua {
+    background-color: #6d4b56; 
+}
+.btn-mua:hover {
+    background-color: #553a43;
+}
+
+/* Warna tombol Klien sedikit lebih pudar/terang */
+.btn-klien {
+    background-color: #9d6e7b; 
+}
+.btn-klien:hover {
+    background-color: #7d5761;
+}
+
+/* --- FOOTER LOGIN --- */
+.role-footer {
+    text-align: center;
+    color: #6d6468;
+    font-size: 1.1rem;
+}
+
+.role-footer a {
+    color: #6d4b56;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.role-footer a:hover {
+    text-decoration: underline;
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 768px) {
+    .role-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+    .card {
+        width: 100%;
+        max-width: 450px;
+    }
+}

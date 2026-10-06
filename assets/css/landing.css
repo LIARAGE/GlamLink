@@ -1,0 +1,171 @@
+/* --- RESET & TIPOGRAFI --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background-color: #fbf9f9;
+    color: #33282e;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* --- NAVBAR --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 8%;
+    background-color: #fff;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.logo img {
+    height: 50px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.btn-masuk {
+    color: #33282e;
+    font-weight: 600;
+}
+
+.btn-daftar {
+    background-color: #744f61;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-daftar:hover, .btn-primary:hover {
+    background-color: #5c3e4d;
+}
+
+/* --- HERO SECTION --- */
+.hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 80px 8%;
+    gap: 50px;
+    min-height: 80vh;
+}
+
+.hero-text {
+    flex: 1;
+}
+
+.hero-text h1 {
+    font-size: 3.5rem;
+    line-height: 1.2;
+    color: #33282e;
+    margin-bottom: 20px;
+}
+
+.hero-text p {
+    font-size: 1.1rem;
+    color: #665b61;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+.btn-primary {
+    background-color: #744f61;
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.hero-image img {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* --- FOOTER --- */
+.footer {
+    background-color: #22161d;
+    color: #fff;
+    padding: 60px 8% 20px;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-brand h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.footer-brand p {
+    color: #a39ca0;
+    line-height: 1.6;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.socials a {
+    color: #fff;
+    margin-right: 15px;
+    font-size: 0.9rem;
+}
+
+.footer-links h4 {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.footer-links ul {
+    list-style: none;
+}
+
+.footer-links ul li {
+    margin-bottom: 12px;
+}
+
+.footer-links ul li a {
+    color: #a39ca0;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.footer-links ul li a:hover {
+    color: #fff;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #3c2f36;
+    padding-top: 20px;
+    color: #a39ca0;
+    font-size: 0.85rem;
+}

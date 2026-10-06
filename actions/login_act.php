@@ -30,7 +30,7 @@ if (isset($_POST['login'])) {
             } else if ($user['role'] == 'mua') {
                 header("Location: ../mua/index.php");
             } else {
-                header("Location: ../index.php"); // Halaman utama pelanggan
+                header("Location: ../beranda.php"); // Halaman utama pelanggan
             }
             exit();
 
