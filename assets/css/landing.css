@@ -7,12 +7,18 @@
 }
 
 body {
-    background-color: #fbf9f9;
+    background-color: #faf8f7; 
     color: #33282e;
 }
 
 a {
     text-decoration: none;
+}
+
+/* --- BACKGROUND GRADIENT HERO --- */
+.hero-gradient-bg {
+    background: linear-gradient(180deg, #fdf4f4 0%, #f7eaea 60%, #faf8f7 100%);
+    padding-bottom: 60px;
 }
 
 /* --- NAVBAR --- */
@@ -21,36 +27,50 @@ a {
     justify-content: space-between;
     align-items: center;
     padding: 20px 8%;
-    background-color: #fff;
-    border-bottom: 1px solid #eaeaea;
 }
 
 .logo img {
-    height: 50px;
+    height: 45px;
 }
 
 .nav-links {
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 20px;
 }
 
-.btn-masuk {
-    color: #33282e;
+.btn-text {
+    color: #7E4655; /* REVISI WARNA */
     font-weight: 600;
+    font-size: 0.95rem;
 }
 
-.btn-daftar {
-    background-color: #744f61;
-    color: #fff;
+.btn-outline {
+    border: 1px solid #7E4655; /* REVISI WARNA */
+    color: #7E4655; /* REVISI WARNA */
     padding: 10px 24px;
-    border-radius: 8px;
+    border-radius: 30px;
     font-weight: 600;
+    font-size: 0.95rem;
     transition: 0.3s;
 }
 
-.btn-daftar:hover, .btn-primary:hover {
-    background-color: #5c3e4d;
+.btn-outline:hover {
+    background-color: #f0e6e9;
+}
+
+.btn-filled {
+    background-color: #7E4655; /* REVISI WARNA */
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: 0.3s;
+}
+
+.btn-filled:hover {
+    background-color: #623642; /* REVISI WARNA HOVER */
 }
 
 /* --- HERO SECTION --- */
@@ -58,9 +78,8 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 80px 8%;
+    padding: 60px 8%;
     gap: 50px;
-    min-height: 80vh;
 }
 
 .hero-text {
@@ -70,25 +89,25 @@ a {
 .hero-text h1 {
     font-size: 3.5rem;
     line-height: 1.2;
-    color: #33282e;
+    color: #2b2326;
     margin-bottom: 20px;
 }
 
+.hero-text h1 span {
+    color: #7E4655; /* REVISI WARNA */
+}
+
 .hero-text p {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: #665b61;
     line-height: 1.6;
     margin-bottom: 40px;
+    max-width: 90%;
 }
 
-.btn-primary {
-    background-color: #744f61;
-    color: #fff;
-    padding: 14px 32px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    display: inline-block;
+.btn-large {
+    padding: 14px 35px;
+    font-size: 1.05rem;
 }
 
 .hero-image {
@@ -99,47 +118,212 @@ a {
 
 .hero-image img {
     width: 100%;
-    max-width: 500px;
+    max-width: 480px;
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 40px rgba(126, 70, 85, 0.15); /* Disesuaikan dengan tone warna */
+}
+
+/* --- SECTION HEADER UMUM --- */
+.section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.overline {
+    display: block;
+    color: #9A6372; /* REVISI WARNA SEKUNDER */
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.section-header h2 {
+    font-size: 2.2rem;
+    color: #2b2326;
+    line-height: 1.3;
+    margin-bottom: 15px;
+}
+
+.section-header p {
+    color: #665b61;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* --- FITUR SECTION --- */
+.features-section {
+    padding: 80px 8%;
+    background-color: #fff;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+.feature-card {
+    background-color: #faf8f7;
+    padding: 35px 25px;
+    border-radius: 16px;
+    border: 1px solid #f0e6e9;
+}
+
+.icon-box {
+    width: 45px;
+    height: 45px;
+    background-color: #f0e6e9;
+    color: #7E4655; /* REVISI WARNA */
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+}
+
+.feature-tag {
+    font-size: 0.75rem;
+    color: #9A6372; /* REVISI WARNA SEKUNDER */
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.feature-card h3 {
+    font-size: 1.1rem;
+    color: #2b2326;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.feature-card p {
+    font-size: 0.9rem;
+    color: #665b61;
+    line-height: 1.6;
+}
+
+/* --- PORTFOLIO SECTION --- */
+.portfolio-section {
+    padding: 80px 8%;
+    background: linear-gradient(180deg, #fff 0%, #fdf4f4 15%, #faf8f7 100%);
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.portfolio-card {
+    background-color: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+}
+
+.portfolio-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.portfolio-info {
+    padding: 25px;
+}
+
+.portfolio-tag {
+    font-size: 0.8rem;
+    color: #7E4655; /* REVISI WARNA */
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.portfolio-info h3 {
+    font-size: 1.2rem;
+    color: #2b2326;
+}
+
+/* --- CTA SECTION --- */
+.cta-section {
+    text-align: center;
+    padding: 80px 20px;
+    background-color: #faf8f7;
+}
+
+.cta-section h2 {
+    font-size: 2.2rem;
+    color: #2b2326;
+    margin-bottom: 20px;
+    line-height: 1.3;
+}
+
+.cta-section p {
+    color: #665b61;
+    max-width: 600px;
+    margin: 0 auto 35px;
+    line-height: 1.6;
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }
 
 /* --- FOOTER --- */
 .footer {
     background-color: #22161d;
     color: #fff;
-    padding: 60px 8% 20px;
+    padding: 70px 8% 30px;
 }
 
 .footer-container {
     display: grid;
-    grid-template-columns: 2.5fr 1fr 1fr 1fr;
-    gap: 40px;
-    margin-bottom: 40px;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 50px;
+    margin-bottom: 50px;
 }
 
-.footer-brand h3 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #fff;
+.footer-logo {
+    height: 40px;
+    margin-bottom: 20px;
+    filter: brightness(0) invert(1); 
 }
 
 .footer-brand p {
     color: #a39ca0;
     line-height: 1.6;
     font-size: 0.9rem;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255,255,255,0.1);
     color: #fff;
-    margin-right: 15px;
+    border-radius: 50%;
+    margin-right: 12px;
     font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.socials a:hover {
+    background-color: #7E4655; /* REVISI WARNA */
 }
 
 .footer-links h4 {
-    margin-bottom: 20px;
-    font-size: 1.1rem;
+    margin-bottom: 25px;
+    font-size: 1.05rem;
+    font-weight: 600;
 }
 
 .footer-links ul {
@@ -147,7 +331,7 @@ a {
 }
 
 .footer-links ul li {
-    margin-bottom: 12px;
+    margin-bottom: 15px;
 }
 
 .footer-links ul li a {
@@ -165,7 +349,50 @@ a {
     justify-content: space-between;
     align-items: center;
     border-top: 1px solid #3c2f36;
-    padding-top: 20px;
-    color: #a39ca0;
-    font-size: 0.85rem;
+    padding-top: 25px;
+    color: #8c8286;
+    font-size: 0.8rem;
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 992px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+    }
+    .hero-text p {
+        margin: 0 auto 40px;
+    }
+    .hero-image {
+        justify-content: center;
+    }
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .portfolio-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .features-grid, .portfolio-grid, .footer-container {
+        grid-template-columns: 1fr;
+    }
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    .btn-filled, .btn-outline {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
+    .footer-bottom {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
 }
