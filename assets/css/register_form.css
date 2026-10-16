@@ -1,10 +1,18 @@
 /* --- RESET & LAYOUT DASAR --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
 body {
-    background-color: #f7f5f2;
+    background-color: #faf8f7;
     color: #2b2326;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    padding-top: 80px; /* Kompensasi untuk navbar fixed 80px */
 }
 
 .form-container {
@@ -17,7 +25,7 @@ body {
 
 .overline {
     display: block;
-    color: #9A6372; /* REVISI WARNA */
+    color: #9A6372; 
     font-weight: 600;
     font-size: 0.85rem;
     letter-spacing: 1px;
@@ -39,7 +47,7 @@ body {
 .card-klien {
     background-color: #ffffff;
     border: 1px solid #eae5e3;
-    border-radius: 24px; /* REVISI SUDUT MEMBULAT */
+    border-radius: 24px; 
     padding: 40px;
     width: 100%;
     max-width: 480px;
@@ -57,7 +65,6 @@ body {
     font-size: 0.95rem;
 }
 
-/* Wrapper untuk Input dengan Icon */
 .input-wrapper {
     position: relative;
     display: flex;
@@ -82,37 +89,36 @@ body {
     padding: 14px 15px 14px 45px; 
     background-color: #fcfbfb;
     border: 1px solid #dcd7d5;
-    border-radius: 12px; /* REVISI SUDUT MEMBULAT */
+    border-radius: 12px; 
     font-family: inherit;
     font-size: 0.95rem;
     color: #2b2326;
     transition: 0.3s;
 }
 
-/* Input tanpa Icon (Untuk Brand & Bio MUA) */
 .input-plain {
     width: 100%;
     padding: 14px 15px;
     background-color: #fcfbfb;
     border: 1px solid #dcd7d5;
-    border-radius: 12px; /* REVISI SUDUT MEMBULAT */
+    border-radius: 12px; 
     font-family: inherit;
     font-size: 0.95rem;
 }
 
 .input-wrapper input:focus, .input-plain:focus {
     outline: none;
-    border-color: #7E4655; /* REVISI WARNA */
+    border-color: #7E4655; 
     background-color: #fff;
 }
 
 .btn-submit {
     width: 100%;
-    background-color: #7E4655; /* REVISI WARNA */
+    background-color: #7E4655; 
     color: #ffffff;
     border: none;
     padding: 15px;
-    border-radius: 12px; /* REVISI SUDUT MEMBULAT */
+    border-radius: 12px; 
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -121,7 +127,7 @@ body {
 }
 
 .btn-submit:hover, .btn-submit-mua:hover {
-    background-color: #623642; /* REVISI WARNA HOVER */
+    background-color: #623642; 
 }
 
 .terms-text {
@@ -133,7 +139,7 @@ body {
 }
 
 .terms-text a {
-    color: #7E4655; /* REVISI WARNA */
+    color: #7E4655; 
     text-decoration: underline;
 }
 
@@ -144,7 +150,7 @@ body {
 }
 
 .card-footer a {
-    color: #7E4655; /* REVISI WARNA */
+    color: #7E4655; 
     font-weight: 700;
     text-decoration: none;
 }
@@ -170,7 +176,7 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #7E4655; /* REVISI WARNA */
+    background-color: #7E4655; 
     color: #fff;
     display: flex;
     justify-content: center;
@@ -187,7 +193,7 @@ body {
 .step p {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #7E4655; /* REVISI WARNA */
+    color: #7E4655; 
 }
 
 .step:not(.active) p {
@@ -205,7 +211,7 @@ body {
 .card-mua {
     background-color: #ffffff;
     border: 1px solid #eae5e3;
-    border-radius: 24px; /* REVISI SUDUT MEMBULAT */
+    border-radius: 24px; 
     padding: 40px 50px;
     width: 100%;
     max-width: 800px;
@@ -230,8 +236,8 @@ body {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background-color: #2b2326;
-    color: #fff;
+    background-color: #F3E5E8;
+    color: #7E4655;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -271,29 +277,29 @@ body {
     margin-top: 20px;
 }
 
-.btn-outline {
+.btn-outline-mua {
     flex: 1;
     text-align: center;
     padding: 14px;
-    border: 1px solid #7E4655; /* REVISI WARNA */
-    color: #7E4655; /* REVISI WARNA */
-    border-radius: 12px; /* REVISI SUDUT MEMBULAT */
+    border: 1px solid #7E4655; 
+    color: #7E4655; 
+    border-radius: 12px; 
     font-weight: 600;
     text-decoration: none;
     transition: 0.3s;
 }
 
-.btn-outline:hover {
+.btn-outline-mua:hover {
     background-color: #f7f5f2;
 }
 
 .btn-submit-mua {
     flex: 1;
-    background-color: #7E4655; /* REVISI WARNA */
+    background-color: #7E4655; 
     color: #ffffff;
     border: none;
     padding: 14px;
-    border-radius: 12px; /* REVISI SUDUT MEMBULAT */
+    border-radius: 12px; 
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -310,5 +316,162 @@ body {
     }
     .stepper-wrapper {
         display: none; 
+    }
+}
+
+/* --- UPLOAD AREA & PREVIEW (STEP 2) --- */
+.upload-area {
+    border: 2px dashed #dcd7d5;
+    border-radius: 16px;
+    padding: 50px 20px;
+    text-align: center;
+    background-color: #fcfbfb;
+    margin-bottom: 30px;
+    transition: 0.3s;
+}
+
+.upload-area:hover {
+    border-color: #7E4655;
+    background-color: #FAF5F6;
+}
+
+.portfolio-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.preview-item {
+    width: 100%;
+    height: 160px; /* Tinggi seragam untuk preview */
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #eae5e3;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Agar gambar tidak gepeng */
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .portfolio-preview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 480px) {
+    .portfolio-preview-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- REVIEW PROFIL (STEP 4) --- */
+.review-box {
+    border: 1px solid #eae5e3;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    background-color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.review-top-bg {
+    /* Gradien pink memudar ke bawah */
+    background: linear-gradient(180deg, #F4E2E6 0%, #ffffff 100%);
+    padding: 30px;
+}
+
+.review-profile {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
+.review-photo {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: #e0d8da;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.review-info h3 {
+    font-size: 1.4rem;
+    color: #7E4655;
+    margin-bottom: 8px;
+}
+
+.review-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #fff;
+    border: 1px solid #dcd7d5;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #6d6468;
+    margin-bottom: 12px;
+}
+
+.review-bio {
+    font-size: 0.95rem;
+    color: #2b2326;
+    line-height: 1.5;
+}
+
+.review-divider {
+    height: 1px;
+    background-color: #eae5e3;
+    margin: 0 30px 25px 30px;
+}
+
+.review-bottom {
+    padding: 0 30px 30px 30px;
+}
+
+.review-bottom h4 {
+    font-size: 1.05rem;
+    color: #7E4655;
+    margin-bottom: 15px;
+}
+
+.review-portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.review-port-item {
+    height: 120px;
+    background-color: #2b2326; /* Placeholder gelap sesuai desain */
+    border-radius: 12px;
+    display: flex;
+    align-items: flex-end;
+    padding: 10px 15px;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+@media (max-width: 650px) {
+    .review-profile {
+        flex-direction: column;
+        text-align: center;
+    }
+    .review-portfolio-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }

@@ -4,24 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pilih Peran - GlamLink</title>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/landing.css"> 
-    <link rel="stylesheet" href="assets/css/register.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="assets/css/navbar.css"> 
+    <link rel="stylesheet" href="assets/css/register.css">
 </head>
 <body>
 
-    <header class="navbar">
-        <div class="logo">
-            <img src="assets/img/logo.png" alt="GlamLink Logo">
-        </div>
-        <div class="nav-links">
-            <a href="login.php" class="btn-text">Masuk</a>
-            <a href="login.php" class="btn-outline">Masuk Sebagai MUA</a>
-            <a href="register.php" class="btn-filled">Daftar</a>
-        </div>
-    </header>
+    <!-- Memanggil Navbar -->
+    <?php include 'navbar.php'; ?>
 
     <main class="role-container">
         <div class="role-header">

@@ -8,22 +8,15 @@ $role = isset($_GET['role']) ? $_GET['role'] : 'pelanggan';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buat Akun - GlamLink</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/landing.css">
-    <link rel="stylesheet" href="assets/css/register_form.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="assets/css/navbar.css">
+    <link rel="stylesheet" href="assets/css/register_form.css">
 </head>
 <body>
 
-    <!-- Navbar -->
-    <header class="navbar">
-        <div class="logo">
-            <img src="assets/img/logo.png" alt="GlamLink Logo">
-        </div>
-        <div class="nav-links">
-            <a href="login.php" class="btn-masuk">Masuk</a>
-            <a href="register.php" class="btn-daftar">Mulai Sekarang</a>
-        </div>
-    </header>
+    <!-- Memanggil Navbar -->
+    <?php include 'navbar.php'; ?>
 
     <main class="form-container">
 
@@ -118,7 +111,7 @@ $role = isset($_GET['role']) ? $_GET['role'] : 'pelanggan';
                 <h2>Buat Profil MUAmu</h2>
             </div>
 
-            <!-- Form ini nanti akan diarahkan ke tahap 2, bukan langsung disimpan -->
+            <!-- Form ini akan diarahkan ke tahap 2 (register_mua_step2.php) nantinya -->
             <form action="register_mua_step2.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="role" value="mua">
 
@@ -178,7 +171,7 @@ $role = isset($_GET['role']) ? $_GET['role'] : 'pelanggan';
                 </div>
 
                 <div class="form-actions-mua">
-                    <a href="register.php" class="btn-outline">Kembali</a>
+                    <a href="register.php" class="btn-outline-mua">Kembali</a>
                     <button type="submit" class="btn-submit-mua">Lanjut &rarr;</button>
                 </div>
             </form>

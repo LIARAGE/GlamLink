@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Jika user sudah login, langsung arahkan ke dashboard masing-masing
 if (isset($_SESSION['status_login'])) {
     if ($_SESSION['role'] == 'admin') {
         header("Location: admin/index.php");
@@ -19,34 +18,22 @@ if (isset($_SESSION['status_login'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlamLink - Tampil Memukau Di Setiap Momen</title>
-    <!-- FontAwesome untuk Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- CSS Khusus Landing Page -->
-    <link rel="stylesheet" href="assets/css/landing.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="assets/css/navbar.css">
+    <link rel="stylesheet" href="assets/css/landing.css">
 </head>
 <body>
 
-    <!-- Latar belakang gradien pink untuk Hero Section -->
-    <div class="hero-gradient-bg">
-        <!-- Navbar -->
-        <header class="navbar">
-            <div class="logo">
-                <img src="assets/img/logo.png" alt="GlamLink Logo">
-            </div>
-            <div class="nav-links">
-                <a href="login.php" class="btn-text">Masuk</a>
-                <a href="login.php" class="btn-outline">Masuk Sebagai MUA</a>
-                <a href="register.php" class="btn-filled">Daftar</a>
-            </div>
-        </header>
+    <?php include 'navbar.php'; ?>
 
-        <!-- Hero Section -->
+    <div class="hero-gradient-bg">
         <main class="hero">
             <div class="hero-text">
                 <h1>Tampil Memukau Di <span>Setiap Momen</span></h1>
                 <p>Terhubung dengan makeup artist terpercaya dan temukan pengalaman kecantikan sempurna untuk setiap momen spesial — mulai dari pernikahan impian, hari wisuda, hingga photoshoot berkelas.</p>
-                <a href="register.php" class="btn-filled btn-large">Mulai Sekarang</a>
+                <a href="register.php" class="btn-large">Mulai Sekarang</a>
             </div>
             <div class="hero-image">
                 <img src="assets/img/hero.jpg" alt="Model Kecantikan">
@@ -54,7 +41,6 @@ if (isset($_SESSION['status_login'])) {
         </main>
     </div>
 
-    <!-- Seksi Fitur / Mengapa Memilih GlamLink -->
     <section class="features-section">
         <div class="section-header">
             <span class="overline">MENGAPA MEMILIH GLAMLINK</span>
@@ -90,7 +76,6 @@ if (isset($_SESSION['status_login'])) {
         </div>
     </section>
 
-    <!-- Seksi Portfolio Pilihan -->
     <section class="portfolio-section">
         <div class="section-header">
             <span class="overline">PORTFOLIO PILIHAN</span>
@@ -122,7 +107,6 @@ if (isset($_SESSION['status_login'])) {
         </div>
     </section>
 
-    <!-- Seksi Call To Action (CTA) -->
     <section class="cta-section">
         <h2>Siap Menemukan MUA Impian<br>Anda?</h2>
         <p>Bergabunglah bersama ribuan klien yang telah mempercayakan riasan pernikahan, wisuda, dan photoshoot mereka bersama GlamLink.</p>
@@ -132,7 +116,6 @@ if (isset($_SESSION['status_login'])) {
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">

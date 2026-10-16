@@ -1,0 +1,160 @@
+/* --- RESET & LAYOUT DASAR --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background-color: #faf8f7;
+    color: #2b2326;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 80px; /* Kompensasi untuk navbar fixed */
+}
+
+.login-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+/* --- KARTU LOGIN --- */
+.login-card {
+    background-color: #ffffff;
+    border: 1px solid #eae5e3;
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.overline {
+    display: block;
+    color: #9A6372;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.card-header h2 {
+    font-size: 1.8rem;
+    color: #2b2326;
+}
+
+/* --- FORM INPUT --- */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 15px;
+    color: #8c8286;
+    font-size: 1rem;
+}
+
+.input-wrapper .eye-icon {
+    left: auto;
+    right: 15px;
+    cursor: pointer;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 14px 15px 14px 45px;
+    background-color: #fcfbfb;
+    border: 1px solid #dcd7d5;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: #2b2326;
+    transition: 0.3s;
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    border-color: #7E4655;
+    background-color: #fff;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-top: 8px;
+}
+
+.forgot-password a {
+    color: #9A6372;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.forgot-password a:hover {
+    color: #7E4655;
+    text-decoration: underline;
+}
+
+/* --- TOMBOL --- */
+.btn-submit {
+    width: 100%;
+    background-color: #7E4655;
+    color: #ffffff;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.btn-submit:hover {
+    background-color: #623642;
+}
+
+/* --- FOOTER LOGIN --- */
+.login-footer {
+    margin-top: 25px;
+    font-size: 1.05rem;
+    color: #6d6468;
+    text-align: center;
+}
+
+.login-footer a {
+    color: #7E4655;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
