@@ -1,81 +1,75 @@
-/* --- NAVBAR (FIXED & WHITE) --- */
+/* ===== NAVBAR GlamLink (dipakai di index, login, register) ===== */
+:root {
+    --gl-primary: #7E4655;
+    --gl-primary-dark: #623642;
+    --gl-soft: #f0e6e9;
+}
+
+/* 1. Bar utama: tinggi tetap 80px di semua ukuran layar */
 .navbar {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 80px; /* Tinggi absolut */
+    inset: 0 0 auto 0;          /* menempel di atas: top/left/right = 0 */
+    height: 80px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
     padding: 0 8%;
-    background-color: #ffffff;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
-    z-index: 1000;
+    background-color: #FBF8F4;
+    border-bottom: 1px solid #eadfe0;
     box-sizing: border-box;
+    z-index: 1000;
 }
 
-.navbar .logo img {
-    height: 45px;
-}
+/* 2. Logo */
+.navbar .logo { display: flex; align-items: center; }
+.navbar .logo img { display: block; height: 60px; width: auto; }
 
-.navbar .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
+/* 3. Kelompok menu */
+.navbar .nav-links { display: flex; align-items: center; gap: 16px; }
 
-.navbar .btn-text, 
-.navbar .btn-outline, 
-.navbar .btn-filled {
+/* Gaya dasar semua link di navbar */
+.navbar .nav-links a {
     font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
     text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.25s, color 0.25s;
 }
 
-.navbar .btn-text {
-    color: #7E4655;
-    font-weight: 600;
-    font-size: 0.95rem;
+/* 4. Tiga jenis tombol */
+.navbar .btn-text { color: var(--gl-primary); padding: 10px 14px; }
+.navbar .btn-text:hover {
+    color: var(--gl-primary-dark);
+    text-decoration: underline;
+    text-underline-offset: 6px;
 }
 
-.navbar .btn-outline {
-    border: 1px solid #7E4655;
-    color: #7E4655;
-    padding: 10px 24px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: 0.3s;
-}
-
-.navbar .btn-outline:hover {
-    background-color: #f0e6e9;
-}
-
+.navbar .btn-outline,
 .navbar .btn-filled {
-    background-color: #7E4655;
-    color: #fff;
     padding: 10px 24px;
+    border: 1px solid var(--gl-primary);   /* border sama supaya tinggi kedua tombol sama */
     border-radius: 30px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: 0.3s;
 }
+.navbar .btn-outline { color: var(--gl-primary); }
+.navbar .btn-outline:hover { background-color: var(--gl-soft); }
+.navbar .btn-filled { background-color: var(--gl-primary); color: #fff; }
+.navbar .btn-filled:hover { background-color: var(--gl-primary-dark); }
 
-.navbar .btn-filled:hover {
-    background-color: #623642;
-}
+/* Garis fokus saat navigasi pakai keyboard (Tab) */
+.navbar .nav-links a:focus-visible { outline: 2px solid var(--gl-primary); outline-offset: 3px; }
 
+/* 5. Tablet & HP: tetap SATU baris, tombol dikecilkan */
 @media (max-width: 768px) {
-    .navbar {
-        height: auto;
-        flex-direction: column;
-        gap: 15px;
-        padding: 15px 5%;
-    }
-    .navbar .nav-links {
-        width: 100%;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
+    .navbar { padding: 0 5%; }
+    .navbar .logo img { height: 48px; }
+    .navbar .nav-links { gap: 8px; }
+    .navbar .btn-text { padding: 8px 10px; }
+    .navbar .btn-outline,
+    .navbar .btn-filled { padding: 8px 16px; font-size: 0.85rem; }
+}
+
+/* HP kecil: sembunyikan "Masuk Sebagai MUA" supaya muat */
+@media (max-width: 560px) {
+    .navbar .nav-mua { display: none; }
 }

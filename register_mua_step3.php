@@ -1,26 +1,31 @@
 <?php
 session_start();
+require 'includes/upload.php';
 
 // PERBAIKAN: Pastikan session step 2 adalah array, bukan sisa boolean (true) dari versi sebelumnya
 if (!isset($_SESSION['reg_mua_step2']) || !is_array($_SESSION['reg_mua_step2'])) {
     $_SESSION['reg_mua_step2'] = [];
 }
 
+if (!isset($_SESSION['reg_mua_step1'])) { header("Location: register_form.php?role=mua"); exit(); }
+
+// Form langkah 2 mengirim foto ke halaman ini
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Proses upload multiple portfolio
     if (isset($_FILES['portfolio']) && !empty($_FILES['portfolio']['name'][0])) {
         $uploaded_photos = $_SESSION['reg_mua_step2']['portfolio'] ?? [];
-        foreach ($_FILES['portfolio']['tmp_name'] as $key => $tmp_name) {
-            if ($_FILES['portfolio']['error'][$key] == 0) {
-                $foto_port = time() . '_' . $key . '_' . $_FILES['portfolio']['name'][$key];
-                move_uploaded_file($tmp_name, 'assets/img/' . $foto_port);
-                $uploaded_photos[] = $foto_port;
-            }
+        foreach ($_FILES['portfolio']['name'] as $k => $nama_asli) {
+            $f = simpan_gambar([
+                'tmp_name' => $_FILES['portfolio']['tmp_name'][$k],
+                'error'    => $_FILES['portfolio']['error'][$k],
+                'size'     => $_FILES['portfolio']['size'][$k],
+            ], 'porto');
+            if ($f) $uploaded_photos[] = $f;
         }
         $_SESSION['reg_mua_step2']['portfolio'] = $uploaded_photos;
     }
+    // Redirect agar refresh halaman TIDAK mengunggah ulang foto yang sama
+    header('Location: register_mua_step3.php'); exit();
 }
-
 if (!isset($_SESSION['reg_mua_step1'])) { header("Location: register_form.php?role=mua"); exit(); }
 $s3 = isset($_SESSION['reg_mua_step3']) ? $_SESSION['reg_mua_step3'] : [];
 ?>
@@ -28,6 +33,7 @@ $s3 = isset($_SESSION['reg_mua_step3']) ? $_SESSION['reg_mua_step3'] : [];
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Layanan - Langkah 3 - GlamLink</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">

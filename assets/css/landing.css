@@ -18,29 +18,33 @@ a {
 
 /* --- BACKGROUND GRADIENT HERO --- */
 .hero-gradient-bg {
-    /* Gradien pink yang lebih kuat sesuai desain */
-    background: linear-gradient(180deg, #F4E2E6 0%, #faf8f7 100%);
-    padding-bottom: 60px;
+    /* Pink di atas, memudar ke krem di bawah (sesuai desain) */
+    background: linear-gradient(180deg, #F1C6CB 0%, #F8E6E6 45%, #FBF5F1 100%);
+    padding-bottom: 0;
 }
 
 /* --- HERO SECTION --- */
 .hero {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 60px 8%;
-    gap: 50px;
+    justify-content: space-between;
+    gap: 60px;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 70px 8% 90px;
 }
 
 .hero-text {
     flex: 1;
+    max-width: 540px;
 }
 
 .hero-text h1 {
-    font-size: 3.5rem;
-    line-height: 1.2;
+    font-size: clamp(2.4rem, 4.5vw, 3.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
     color: #2b2326;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 .hero-text h1 span {
@@ -71,18 +75,31 @@ a {
 }
 
 .hero-image {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
+    position: relative;
+    flex: 0 1 440px; /* lebar foto maksimal 440px seperti di Figma */
+    margin-right: 2%;
+}
+
+/* Hiasan blok pink lembut di belakang foto */
+.hero-image::before {
+    content: "";
+    position: absolute;
+    inset: 28px -28px -28px 28px;
+    border-radius: 28px;
+    background: rgba(126, 70, 85, 0.12);
 }
 
 .hero-image img {
+    position: relative;
+    display: block;
     width: 100%;
-    max-width: 480px;
-    border-radius: 20px;
-    /* Bingkai putih di sekeliling gambar hero */
-    border: 8px solid #ffffff; 
-    box-shadow: 0 15px 35px rgba(126, 70, 85, 0.15); 
+    aspect-ratio: 4 / 5;      /* foto selalu portrait, tidak melar */
+    object-fit: cover;        /* foto dipotong rapi, bukan dipaksa gepeng */
+    object-position: center top;
+    border-radius: 24px;
+    border: 4px solid #ffffff;
+    background: #e9d3d7;
+    box-shadow: 0 20px 40px rgba(126, 70, 85, 0.18);
 }
 
 /* --- SECTION HEADER UMUM --- */
@@ -118,25 +135,28 @@ a {
 /* --- FITUR SECTION --- */
 .features-section {
     padding: 80px 8%;
-    background-color: #faf8f7;
+    background-color: #ffffff; /* di desain bagian ini putih */
 }
 
 .features-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .feature-card {
-    background-color: #FCF7F7; /* Latar kartu putih pink pucat */
-    padding: 35px 25px;
+    background-color: #FBF7F4;
+    padding: 30px 24px;
     border-radius: 16px;
     border: 1px solid #F3E5E8;
-    transition: 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .feature-card:hover {
-    box-shadow: 0 10px 25px rgba(126, 70, 85, 0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(126, 70, 85, 0.1);
 }
 
 .icon-box {
@@ -175,40 +195,50 @@ a {
 
 /* --- PORTFOLIO SECTION --- */
 .portfolio-section {
-    padding: 80px 8%;
-    /* Gradien tajam di bagian atas yang memudar ke bawah */
-    background: linear-gradient(180deg, #F4E2E6 0%, #faf8f7 40%);
+    padding: 80px 8% 90px;
+    background: linear-gradient(180deg, #F1D3D6 0%, #FAF5F2 45%, #FBF8F4 100%);
 }
 
 .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
+    gap: 36px;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .portfolio-card {
     background-color: #fff;
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid #eae5e3;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    border-radius: 18px;
+    padding: 22px; /* foto berada DI DALAM kartu, ada jarak putih */
+    box-shadow: 0 12px 30px rgba(94, 52, 64, 0.12);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(94, 52, 64, 0.18);
 }
 
 .portfolio-card img {
+    display: block;
     width: 100%;
-    height: 300px;
+    aspect-ratio: 1 / 1.03;
     object-fit: cover;
+    object-position: center top;
+    border-radius: 12px;
+    background: #f0e2e4;
 }
 
 .portfolio-info {
-    padding: 25px;
+    padding: 18px 2px 4px;
 }
 
 .portfolio-tag {
-    font-size: 0.8rem;
-    color: #7E4655; 
-    font-weight: 700;
-    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #7E4655;
+    font-weight: 600;
+    margin-bottom: 6px;
     display: block;
 }
 
@@ -279,11 +309,21 @@ a {
     margin-bottom: 50px;
 }
 
+.footer-brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
 .footer-logo {
     height: 40px;
-    margin-bottom: 20px;
     /* Membuat logo berwarna otomatis menjadi putih */
-    filter: brightness(0) invert(1); 
+    filter: brightness(0) invert(1);
 }
 
 .footer-brand p {
@@ -366,4 +406,24 @@ a {
         gap: 15px;
         text-align: center;
     }
+}
+
+/* --- TAMBAHAN --- */
+html { scroll-behavior: smooth; }
+.cta-buttons { flex-wrap: wrap; }
+
+/* --- RESPONSIF HP & TABLET --- */
+@media (max-width: 992px) {
+    .hero { flex-direction: column; text-align: center; padding: 50px 6% 70px; gap: 50px; }
+    .hero-text { max-width: 640px; }
+    .hero-text p { max-width: 100%; }
+    .hero-image { flex: none; width: min(380px, 100%); margin-right: 0; }
+    .features-grid { grid-template-columns: repeat(2, 1fr); }
+    .portfolio-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+}
+@media (max-width: 768px) { /* navbar HP lebih tinggi (2 baris) */
+    .features-grid, .portfolio-grid { grid-template-columns: 1fr; }
+    .portfolio-grid { max-width: 380px; }
+    .section-header h2, .cta-section h2 { font-size: 1.7rem; }
+    .hero-image::before { inset: 18px -14px -18px 14px; }
 }

@@ -1,5 +1,7 @@
 <?php
 session_start();
+require 'koneksi.php';
+require 'includes/upload.php';
 
 // 1. LOGIKA HAPUS FOTO DARI SESSION & SERVER
 if (isset($_GET['hapus_foto'])) {
@@ -23,16 +25,34 @@ if (isset($_GET['hapus_foto'])) {
 }
 
 // 2. Menerima data dari Langkah 1
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['role']) && $_POST['role'] == 'mua') {
-    foreach ($_POST as $key => $val) {
-        if ($key === 'password' && empty($val)) continue;
-        $_SESSION['reg_mua_step1'][$key] = $val;
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['role'] ?? '') == 'mua') {
+    $balik = 'register_form.php?role=mua&err=';
+
+    // Simpan HANYA field yang diizinkan (password mentah & konfirmasi tidak ikut disimpan)
+    foreach (['nama', 'email', 'nomor_telepon', 'nama_brand', 'bio', 'lokasi'] as $k) {
+        $_SESSION['reg_mua_step1'][$k] = trim($_POST[$k] ?? '');
     }
-    
-    if (isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] == 0) {
-        $foto_profil = time() . '_' . $_FILES['foto_profil']['name'];
-        move_uploaded_file($_FILES['foto_profil']['tmp_name'], 'assets/img/' . $foto_profil);
-        $_SESSION['reg_mua_step1']['foto_profil'] = $foto_profil;
+
+    // Validasi password di SERVER (JavaScript saja bisa dilewati)
+    $pw = $_POST['password'] ?? '';
+    if ($pw !== '') {
+        if ($pw !== ($_POST['confirm_password'] ?? '') || strlen($pw) < 8) { header('Location: ' . $balik . 'password'); exit(); }
+        $_SESSION['reg_mua_step1']['password_hash'] = password_hash($pw, PASSWORD_DEFAULT);
+    } elseif (empty($_SESSION['reg_mua_step1']['password_hash'])) {
+        header('Location: ' . $balik . 'password'); exit();
+    }
+
+    // Cek email dari awal, jangan tunggu sampai langkah 4
+    $cek = $koneksi->prepare('SELECT 1 FROM users WHERE email = ?');
+    $cek->bind_param('s', $_SESSION['reg_mua_step1']['email']);
+    $cek->execute();
+    if ($cek->get_result()->num_rows > 0) { header('Location: ' . $balik . 'email'); exit(); }
+
+    // Foto profil
+    if (isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] != UPLOAD_ERR_NO_FILE) {
+        $f = simpan_gambar($_FILES['foto_profil'], 'profil');
+        if (!$f) { header('Location: ' . $balik . 'foto'); exit(); }
+        $_SESSION['reg_mua_step1']['foto_profil'] = $f;
     }
 }
 
@@ -47,6 +67,7 @@ $portfolios = $_SESSION['reg_mua_step2']['portfolio'] ?? [];
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - Langkah 2 - GlamLink</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">

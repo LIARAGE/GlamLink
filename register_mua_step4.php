@@ -2,8 +2,10 @@
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $_SESSION['reg_mua_step3'] = $_POST;
+    // Simpan hanya field layanan yang diizinkan
+    $_SESSION['reg_mua_step3'] = array_intersect_key($_POST, array_flip(['nama_layanan', 'kategori', 'harga', 'durasi', 'deskripsi_layanan']));
 }
+if (!isset($_SESSION['reg_mua_step3'])) { header('Location: register_mua_step3.php'); exit(); }
 if (!isset($_SESSION['reg_mua_step1'])) { header("Location: register_form.php?role=mua"); exit(); }
 
 $data_step1 = $_SESSION['reg_mua_step1'];
@@ -13,6 +15,7 @@ $portfolios = $_SESSION['reg_mua_step2']['portfolio'] ?? [];
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review - Langkah 4 - GlamLink</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -39,7 +42,7 @@ $portfolios = $_SESSION['reg_mua_step2']['portfolio'] ?? [];
                     <div class="review-profile">
                         <div class="review-photo" style="overflow: hidden;">
                             <?php if(isset($data_step1['foto_profil'])): ?>
-                                <img src="assets/img/<?php echo $data_step1['foto_profil']; ?>" style="width:100%; height:100%; object-fit:cover;">
+                                <img src="assets/img/<?php echo htmlspecialchars($data_step1['foto_profil']); ?>" style="width:100%; height:100%; object-fit:cover;">
                             <?php else: ?><i class="fa-solid fa-user"></i><?php endif; ?>
                         </div>
                         <div class="review-info">
@@ -55,7 +58,7 @@ $portfolios = $_SESSION['reg_mua_step2']['portfolio'] ?? [];
                     <div class="review-portfolio-grid">
                         <?php if(count($portfolios) > 0): ?>
                             <?php foreach($portfolios as $port): ?>
-                                <div class="review-port-item" style="background-image: url('assets/img/<?php echo $port; ?>'); background-size: cover; background-position: center;"></div>
+                                <div class="review-port-item" style="background-image: url('assets/img/<?php echo htmlspecialchars($port); ?>'); background-size: cover; background-position: center;"></div>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <div class="review-port-item">Belum ada foto</div>

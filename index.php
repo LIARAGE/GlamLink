@@ -36,7 +36,7 @@ if (isset($_SESSION['status_login'])) {
                 <a href="register.php" class="btn-large">Mulai Sekarang</a>
             </div>
             <div class="hero-image">
-                <img src="assets/img/hero.jpg" alt="Model Kecantikan">
+                <img src="assets/img/imglanding1.jpg" alt="Model Kecantikan">
             </div>
         </main>
     </div>
@@ -84,21 +84,21 @@ if (isset($_SESSION['status_login'])) {
 
         <div class="portfolio-grid">
             <div class="portfolio-card">
-                <img src="assets/img/portfolio1.jpg" alt="Bridal Makeup">
+                <img src="assets/img/bridal.jpg" alt="Bridal Makeup">
                 <div class="portfolio-info">
                     <span class="portfolio-tag">BRIDAL</span>
                     <h3>Kayla Studios</h3>
                 </div>
             </div>
             <div class="portfolio-card">
-                <img src="assets/img/portfolio2.jpg" alt="Graduation Makeup">
+                <img src="assets/img/graduation.jpg" alt="Graduation Makeup">
                 <div class="portfolio-info">
                     <span class="portfolio-tag">GRADUATION</span>
                     <h3>Caroline</h3>
                 </div>
             </div>
             <div class="portfolio-card">
-                <img src="assets/img/portfolio3.jpg" alt="Party Makeup">
+                <img src="assets/img/party.jpg" alt="Party Makeup">
                 <div class="portfolio-info">
                     <span class="portfolio-tag">PARTY</span>
                     <h3>Sandra & Sabrina Studio</h3>
@@ -119,7 +119,10 @@ if (isset($_SESSION['status_login'])) {
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">
-                <img src="assets/img/logo-white.png" alt="GlamLink" class="footer-logo">
+                <a href="index.php" class="footer-brand-logo">
+                    <img src="assets/img/logo.png" alt="GlamLink" class="footer-logo">
+                    <span>GlamLink</span>
+                </a>
                 <p>Marketplace kecantikan dua sisi terdepan yang menghubungkan klien dengan makeup artist (MUA) profesional terpercaya untuk pernikahan, wisuda, gala pesta, dan sesi photoshoot.</p>
                 <div class="socials">
                     <a href="#"><i class="fa-brands fa-instagram"></i></a>

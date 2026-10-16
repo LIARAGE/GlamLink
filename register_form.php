@@ -1,6 +1,6 @@
 <?php
 session_start();
-$role = isset($_GET['role']) ? $_GET['role'] : 'pelanggan';
+$role = (($_GET['role'] ?? '') === 'mua') ? 'mua' : 'pelanggan'; // hanya 2 nilai yang valid
 
 // Mengambil data sesi jika user menekan tombol kembali dari langkah 2
 $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
@@ -99,6 +99,10 @@ $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
                 <span class="overline">LANGKAH 1 DARI 4</span>
                 <h2>Buat Profil MUAmu</h2>
             </div>
+            <?php
+            $pesan = ['password' => 'Password tidak cocok atau kurang dari 8 karakter.', 'email' => 'Email sudah terdaftar. Gunakan email lain atau masuk.', 'foto' => 'Foto harus JPG/PNG/WEBP dan maksimal 5 MB.'];
+            if (isset($_GET['err'], $pesan[$_GET['err']])) echo '<p class="error-message" style="display:block;text-align:center;margin-bottom:15px">' . $pesan[$_GET['err']] . '</p>';
+            ?>
             <form action="register_mua_step2.php" method="POST" enctype="multipart/form-data" onsubmit="return validatePassword(this)">
                 <input type="hidden" name="role" value="mua">
 
@@ -106,7 +110,7 @@ $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
                     <div class="photo-upload">
                         <div class="photo-placeholder">
                             <?php if(isset($s1['foto_profil'])): ?>
-                                <img src="assets/img/<?php echo $s1['foto_profil']; ?>" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                                <img src="assets/img/<?php echo htmlspecialchars($s1['foto_profil']); ?>" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
                             <?php else: ?>
                                 <i class="fa-solid fa-user"></i>
                             <?php endif; ?>
@@ -145,7 +149,7 @@ $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
                         <label>Password<span class="text-danger">*</span></label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-lock"></i>
-                            <input type="password" name="password" class="password-input" value="<?php echo htmlspecialchars($s1['password'] ?? ''); ?>" required>
+                            <input type="password" name="password" class="password-input" minlength="8" placeholder="<?php echo isset($s1['password_hash']) ? 'Kosongkan jika tidak diubah' : 'Minimal 8 karakter'; ?>" <?php echo isset($s1['password_hash']) ? '' : 'required'; ?>>
                             <i class="fa-solid fa-eye eye-icon toggle-password"></i>
                         </div>
                     </div>
@@ -155,7 +159,7 @@ $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
                         <label>Konfirmasi Password<span class="text-danger">*</span></label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-lock"></i>
-                            <input type="password" name="confirm_password" class="password-input" value="<?php echo htmlspecialchars($s1['password'] ?? ''); ?>" required>
+                            <input type="password" name="confirm_password" class="password-input" <?php echo isset($s1['password_hash']) ? '' : 'required'; ?>>
                             <i class="fa-solid fa-eye eye-icon toggle-password"></i>
                         </div>
                         <div class="error-message" id="error-mua">Password tidak cocok!</div>
