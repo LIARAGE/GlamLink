@@ -100,7 +100,7 @@ $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
                 <h2>Buat Profil MUAmu</h2>
             </div>
             <?php
-            $pesan = ['password' => 'Password tidak cocok atau kurang dari 8 karakter.', 'email' => 'Email sudah terdaftar. Gunakan email lain atau masuk.', 'foto' => 'Foto harus JPG/PNG/WEBP dan maksimal 5 MB.'];
+            $pesan = ['password' => 'Password tidak cocok atau kurang dari 8 karakter.', 'email' => 'Email sudah terdaftar. Gunakan email lain atau masuk.', 'foto' => 'Foto harus JPG, PNG, atau WEBP dengan ukuran maksimal 5 MB.'];
             if (isset($_GET['err'], $pesan[$_GET['err']])) echo '<p class="error-message" style="display:block;text-align:center;margin-bottom:15px">' . $pesan[$_GET['err']] . '</p>';
             ?>
             <form action="register_mua_step2.php" method="POST" enctype="multipart/form-data" onsubmit="return validatePassword(this)">
@@ -115,8 +115,8 @@ $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
                                 <i class="fa-solid fa-user"></i>
                             <?php endif; ?>
                         </div>
-                        <span class="upload-text">Ganti Foto</span>
-                        <input type="file" name="foto_profil" accept="image/*" class="file-input" <?php echo isset($s1['foto_profil']) ? '' : 'required'; ?>>
+                        <label for="foto_profil" class="upload-text" style="cursor:pointer;">Ganti Foto</label>
+                        <input type="file" id="foto_profil" name="foto_profil" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" class="file-input" aria-label="Pilih foto profil MUA" <?php echo isset($s1['foto_profil']) ? '' : 'required'; ?>>
                         <?php if(!isset($s1['foto_profil'])): ?>
                             <span style="font-size: 0.75rem; color: #E23636;">*Wajib diisi</span>
                         <?php endif; ?>
@@ -186,6 +186,34 @@ $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
     </main>
 
     <script>
+        // Preview foto profil sebelum dikirim ke server.
+        const fotoProfilInput = document.getElementById('foto_profil');
+        if (fotoProfilInput) {
+            fotoProfilInput.addEventListener('change', function () {
+                const file = this.files && this.files[0];
+                if (!file) return;
+
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                const maxSize = 5 * 1024 * 1024;
+                if (!allowedTypes.includes(file.type) || file.size > maxSize) {
+                    alert('Pilih foto JPG, PNG, atau WEBP dengan ukuran maksimal 5 MB.');
+                    this.value = '';
+                    return;
+                }
+
+                const placeholder = document.querySelector('.photo-placeholder');
+                if (!placeholder) return;
+                const previewUrl = URL.createObjectURL(file);
+                placeholder.replaceChildren();
+                const img = document.createElement('img');
+                img.src = previewUrl;
+                img.alt = 'Pratinjau foto profil';
+                img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
+                img.onload = () => URL.revokeObjectURL(previewUrl);
+                placeholder.appendChild(img);
+            });
+        }
+
         // Fitur Hide/Unhide Password (berlaku untuk semua field password)
         const togglePasswordButtons = document.querySelectorAll('.toggle-password');
         togglePasswordButtons.forEach(button => {

@@ -158,3 +158,22 @@ body {
 .login-footer a:hover {
     text-decoration: underline;
 }
+
+/* Tombol toggle password: tampilan tetap seperti ikon mata pada desain. */
+.input-wrapper button.eye-icon {
+    position: absolute;
+    left: auto;
+    right: 15px;
+    z-index: 2;
+    border: 0;
+    padding: 4px;
+    background: transparent;
+    color: #8c8286;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.input-wrapper button.eye-icon:focus-visible {
+    outline: 2px solid #7E4655;
+    outline-offset: 3px;
+    border-radius: 4px;
+}

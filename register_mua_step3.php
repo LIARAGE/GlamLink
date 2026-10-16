@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'includes/upload.php';
+require_once __DIR__ . '/Includes/upload.php';
 
 // PERBAIKAN: Pastikan session step 2 adalah array, bukan sisa boolean (true) dari versi sebelumnya
 if (!isset($_SESSION['reg_mua_step2']) || !is_array($_SESSION['reg_mua_step2'])) {

@@ -51,7 +51,7 @@ if (isset($_SESSION['status_login'])) {
                     <div class="input-wrapper">
                         <i class="fa-solid fa-lock"></i>
                         <input type="password" name="password" required>
-                        <i class="fa-solid fa-eye eye-icon"></i>
+                        <button type="button" class="fa-solid fa-eye eye-icon toggle-password" aria-label="Tampilkan password" aria-pressed="false"></button>
                     </div>
                     <div class="forgot-password">
                         <a href="#">Lupa Password?</a>
@@ -67,5 +67,20 @@ if (isset($_SESSION['status_login'])) {
         </div>
     </main>
 
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const wrapper = this.closest('.input-wrapper');
+                const input = wrapper ? wrapper.querySelector('input[name="password"]') : null;
+                if (!input) return;
+                const show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                this.classList.toggle('fa-eye', !show);
+                this.classList.toggle('fa-eye-slash', show);
+                this.setAttribute('aria-label', show ? 'Sembunyikan password' : 'Tampilkan password');
+                this.setAttribute('aria-pressed', String(show));
+            });
+        });
+    </script>
 </body>
 </html>
