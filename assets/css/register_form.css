@@ -475,3 +475,28 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* --- TOMBOL HAPUS FOTO --- */
+.btn-remove-photo {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: rgba(43, 35, 38, 0.6);
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 0.85rem;
+    z-index: 10;
+}
+
+.btn-remove-photo:hover {
+    background-color: #E23636; /* Warna merah saat di-hover */
+}

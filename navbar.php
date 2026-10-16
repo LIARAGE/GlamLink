@@ -1,6 +1,9 @@
 <header class="navbar">
     <div class="logo">
-        <img src="assets/img/logo.png" alt="GlamLink Logo">
+        <!-- Menambahkan link ke index.php pada logo -->
+        <a href="index.php">
+            <img src="assets/img/logo.png" alt="GlamLink Logo">
+        </a>
     </div>
     <div class="nav-links">
         <a href="login.php" class="btn-text">Masuk</a>
