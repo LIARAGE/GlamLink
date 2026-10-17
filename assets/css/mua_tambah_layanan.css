@@ -1,0 +1,305 @@
+/* =========================================
+   TAMBAH LAYANAN - MUA
+========================================= */
+
+body {
+    background-color: #FAF5F6;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+    padding-top: 80px; /* Menghindari tertutup navbar fixed */
+}
+
+.text-red { color: #E23636; }
+.text-green { color: #357361; }
+
+.page-top-bg {
+    background: linear-gradient(180deg, #F4E2E6 0%, #FAF5F6 100%);
+    height: 120px;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+}
+
+.tambah-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* --- HEADER KEMBALI --- */
+.tambah-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background-color: #a09297;
+    color: white;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: 0.3s;
+}
+
+.back-btn:hover { background-color: #7E4655; }
+
+.tambah-header h2 {
+    margin: 0;
+    color: #2b2326;
+    font-size: 1.5rem;
+}
+
+/* --- GRID KIRI (FORM) & KANAN (PREVIEW) --- */
+.form-container {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 40px;
+    align-items: start;
+}
+
+.box-panel {
+    background-color: #ffffff;
+    border: 1px solid #eae5e3;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+/* --- FORM STYLING --- */
+.form-group { margin-bottom: 25px; }
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+.half { flex: 1; }
+
+label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #2b2326;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #eae5e3;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: #2b2326;
+    box-sizing: border-box;
+    background-color: #fafafa;
+    transition: border 0.3s;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #7E4655;
+    background-color: #fff;
+}
+
+small {
+    display: block;
+    color: #8c8286;
+    font-size: 0.75rem;
+    margin-top: 6px;
+}
+
+/* --- QUICK CHIPS --- */
+.quick-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.mt-2 { margin-top: 8px; }
+
+.chip-btn {
+    background-color: #f0e6e9;
+    color: #7E4655;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.chip-btn.outline {
+    background-color: #ffffff;
+    border: 1px solid #dcd7d5;
+    color: #6d6468;
+}
+.chip-btn:hover { background-color: #e5d1d6; }
+
+/* --- FASILITAS INPUT & TAGS --- */
+.fasilitas-input-wrap {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.btn-add-fasilitas {
+    background-color: #2b2326;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag-item {
+    border: 1px solid #357361;
+    color: #357361;
+    background-color: #f2faf7;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.remove-tag {
+    cursor: pointer;
+    color: #8c8286;
+}
+.remove-tag:hover { color: #E23636; }
+
+/* --- LIVE PREVIEW CARD --- */
+.preview-section {
+    position: sticky;
+    top: 100px; /* Menempel saat discroll */
+}
+
+.preview-title {
+    color: #7E4655;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.preview-card {
+    background-color: #FCFAFA;
+}
+
+.preview-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.badge-jenis {
+    color: #a05a6d;
+    border: 1px solid #e5d1d6;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-tersedia {
+    background-color: #e6f6ef;
+    color: #357361;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.preview-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.3rem;
+    color: #2b2326;
+}
+
+.prev-desc {
+    color: #6d6468;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.preview-pricing {
+    display: flex;
+    justify-content: space-between;
+    background-color: #ffffff;
+    border: 1px solid #eae5e3;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.lbl { font-size: 0.7rem; color: #8c8286; display: block; margin-bottom: 5px;}
+.val-harga { color: #7E4655; font-size: 1.2rem; font-weight: 700; }
+.val-durasi { color: #2b2326; font-size: 0.9rem; font-weight: 600; }
+.text-right { text-align: right; }
+
+.preview-facilities {
+    margin-bottom: 30px;
+}
+.lbl-bold { font-size: 0.85rem; font-weight: 700; color: #2b2326; margin-bottom: 10px; }
+
+#prev_fasilitas_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#prev_fasilitas_list li {
+    font-size: 0.85rem;
+    color: #2b2326;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.empty-list { color: #8c8286 !important; font-style: italic; }
+
+.btn-submit-layanan {
+    width: 100%;
+    background-color: #a05a6d;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-bottom: 15px;
+}
+.btn-submit-layanan:hover { background-color: #7E4655; }
+
+.guarantee-badge {
+    text-align: center;
+    color: #357361;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Responsiveness Form */
+@media (max-width: 900px) {
+    .form-container { grid-template-columns: 1fr; }
+    .preview-section { position: relative; top: 0; }
+}

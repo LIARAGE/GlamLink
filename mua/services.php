@@ -41,7 +41,7 @@ if ($query_services) {
         
         <div class="page-header">
             <h2>Layanan Saya</h2>
-            <button class="btn-add-service"><i class="fa-solid fa-plus"></i> Tambah Layanan</button>
+            <a href="tambah_layanan.php" class="btn-add-service" style="text-decoration:none;"><i class="fa-solid fa-plus"></i> Tambah Layanan</a>
         </div>
 
         <div class="services-grid">

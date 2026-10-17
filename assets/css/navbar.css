@@ -1,4 +1,4 @@
-/* ===== NAVBAR GlamLink (dipakai di index, login, register) ===== */
+/* ===== NAVBAR GlamLink (Unified: Guest & MUA) ===== */
 :root {
     --gl-primary: #7E4655;
     --gl-primary-dark: #623642;
@@ -18,18 +18,23 @@
     border-bottom: 1px solid #eadfe0;
     box-sizing: border-box;
     z-index: 1000;
+    font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 /* 2. Logo */
 .navbar .logo { display: flex; align-items: center; }
 .navbar .logo img { display: block; height: 60px; width: auto; }
 
+
+/* =========================================================
+   TAMPILAN 1: GUEST / BELUM LOGIN
+========================================================= */
+
 /* 3. Kelompok menu */
 .navbar .nav-links { display: flex; align-items: center; gap: 16px; }
 
 /* Gaya dasar semua link di navbar */
 .navbar .nav-links a {
-    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.95rem;
     font-weight: 600;
     text-decoration: none;
@@ -59,17 +64,129 @@
 /* Garis fokus saat navigasi pakai keyboard (Tab) */
 .navbar .nav-links a:focus-visible { outline: 2px solid var(--gl-primary); outline-offset: 3px; }
 
-/* 5. Tablet & HP: tetap SATU baris, tombol dikecilkan */
+
+/* =========================================================
+   TAMPILAN 2: MUA / SUDAH LOGIN
+========================================================= */
+
+/* Menu Navigasi Tengah */
+.nav-menu-mua {
+    display: flex;
+    gap: 30px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-menu-mua a {
+    text-decoration: none;
+    color: #8c8286;
+    transition: 0.3s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.nav-menu-mua a:hover, 
+.nav-menu-mua a.active {
+    color: var(--gl-primary);
+}
+
+.nav-menu-mua a.active {
+    border-bottom: 2px solid var(--gl-primary);
+    padding-bottom: 4px;
+}
+
+/* Profil dan Ikon di Kanan */
+.nav-profile-mua {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-icons .icon-btn {
+    position: relative;
+    color: #8c8286;
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
+.nav-icons .badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background-color: #A98790;
+    color: white;
+    font-size: 0.6rem;
+    padding: 2px 5px;
+    border-radius: 50%;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 2px solid #eae5e3;
+    padding-left: 15px;
+}
+
+.profile-info img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-text .brand-name {
+    font-weight: 700;
+    color: #2b2326;
+    font-size: 0.85rem;
+}
+
+.profile-text .role-text {
+    font-size: 0.7rem;
+    color: #8c8286;
+}
+
+.logout-link {
+    color: var(--gl-primary);
+    font-size: 0.85rem;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   RESPONSIVE (TABLET & HP)
+========================================================= */
+
+@media (max-width: 900px) {
+    .nav-menu-mua { display: none; } /* Sembunyikan menu tengah MUA di HP */
+    .profile-text { display: none; } /* Sembunyikan nama MUA agar tidak sesak */
+}
+
 @media (max-width: 768px) {
     .navbar { padding: 0 5%; }
     .navbar .logo img { height: 48px; }
+    
+    /* Guest Links */
     .navbar .nav-links { gap: 8px; }
     .navbar .btn-text { padding: 8px 10px; }
     .navbar .btn-outline,
     .navbar .btn-filled { padding: 8px 16px; font-size: 0.85rem; }
 }
 
-/* HP kecil: sembunyikan "Masuk Sebagai MUA" supaya muat */
 @media (max-width: 560px) {
+    /* HP kecil: sembunyikan tombol spesifik untuk Guest supaya muat */
     .navbar .nav-mua { display: none; }
 }
