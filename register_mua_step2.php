@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'koneksi.php';
+require __DIR__ . '/koneksi.php';
 require_once __DIR__ . '/Includes/upload.php';
 
 // 1. LOGIKA HAPUS FOTO DARI SESSION & SERVER
@@ -14,7 +14,7 @@ if (isset($_GET['hapus_foto'])) {
         $_SESSION['reg_mua_step2']['portfolio'] = array_values($portfolios); // Re-index array
         
         // Hapus file fisiknya dari folder assets/img
-        $file_path = 'assets/img/' . $foto_hapus;
+        $file_path = __DIR__ . '/assets/img/' . basename($foto_hapus);
         if (file_exists($file_path)) {
             unlink($file_path);
         }
@@ -50,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['role'] ?? '') == 'mua') {
 
     // Foto profil
     if (isset($_FILES['foto_profil']) && $_FILES['foto_profil']['error'] != UPLOAD_ERR_NO_FILE) {
-        $f = simpan_gambar($_FILES['foto_profil'], 'profil');
-        if (!$f) { header('Location: ' . $balik . 'foto'); exit(); }
+        $f = simpan_gambar($_FILES['foto_profil'], 'profil', 10, $alasan);
+        if (!$f) { header('Location: ' . $balik . 'foto&alasan=' . urlencode($alasan)); exit(); }
         $_SESSION['reg_mua_step1']['foto_profil'] = $f;
     }
 }
@@ -89,6 +89,10 @@ $portfolios = $_SESSION['reg_mua_step2']['portfolio'] ?? [];
                 <span class="overline">LANGKAH 2 DARI 4</span>
                 <h2>Tampilkan Karyamu</h2>
             </div>
+            <?php
+            $e2 = ['kosong' => 'Tambahkan minimal 1 foto portfolio untuk melanjutkan.', 'foto' => 'Foto gagal diunggah: ' . pesan_upload($_GET['alasan'] ?? '')];
+            if (isset($_GET['err'], $e2[$_GET['err']])) echo '<p class="error-message" style="display:block;text-align:center;margin-bottom:15px">' . $e2[$_GET['err']] . '</p>';
+            ?>
             <form action="register_mua_step3.php" method="POST" enctype="multipart/form-data">
                 <div class="upload-area">
                     <i class="fa-regular fa-image" style="font-size: 40px; color: #9A6372; margin-bottom: 15px;"></i>

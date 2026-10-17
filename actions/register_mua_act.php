@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../koneksi.php';
+require __DIR__ . '/../koneksi.php';
 
 // Wajib datang dari tombol "Selesaikan Pendaftaran" dan data langkah 1 & 3 harus ada
 if (!isset($_POST['selesai'], $_SESSION['reg_mua_step1'], $_SESSION['reg_mua_step3'])) {
@@ -29,7 +29,7 @@ try {
 
     $koneksi->commit();
     unset($_SESSION['reg_mua_step1'], $_SESSION['reg_mua_step2'], $_SESSION['reg_mua_step3']);
-    echo "<script>alert('Pendaftaran MUA berhasil! Akun Anda akan aktif setelah diverifikasi admin. Silakan masuk.'); window.location.href = '../login.php';</script>";
+    echo "<script>alert('Pendaftaran MUA berhasil! Silakan masuk.'); window.location.href = '../login.php';</script>";
 } catch (Throwable $e) {
     $koneksi->rollback();
     $pesan = ($e->getCode() == 1062) ? 'Email sudah terdaftar!' : 'Pendaftaran gagal, silakan coba lagi.'; // detail error tidak ditampilkan ke pengguna

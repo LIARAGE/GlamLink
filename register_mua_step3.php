@@ -11,18 +11,22 @@ if (!isset($_SESSION['reg_mua_step1'])) { header("Location: register_form.php?ro
 
 // Form langkah 2 mengirim foto ke halaman ini
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $foto_ok = $_SESSION['reg_mua_step2']['portfolio'] ?? [];
+    $gagal = '';
     if (isset($_FILES['portfolio']) && !empty($_FILES['portfolio']['name'][0])) {
-        $uploaded_photos = $_SESSION['reg_mua_step2']['portfolio'] ?? [];
         foreach ($_FILES['portfolio']['name'] as $k => $nama_asli) {
             $f = simpan_gambar([
                 'tmp_name' => $_FILES['portfolio']['tmp_name'][$k],
                 'error'    => $_FILES['portfolio']['error'][$k],
                 'size'     => $_FILES['portfolio']['size'][$k],
-            ], 'porto');
-            if ($f) $uploaded_photos[] = $f;
+            ], 'porto', 10, $alasan);
+            if ($f) { $foto_ok[] = $f; } else { $gagal = $alasan; }
         }
-        $_SESSION['reg_mua_step2']['portfolio'] = $uploaded_photos;
+        $_SESSION['reg_mua_step2']['portfolio'] = $foto_ok;
     }
+    // Kembali ke langkah 2 (dengan pesan) jika ada foto yang gagal atau belum ada foto sama sekali
+    if ($gagal !== '') { header('Location: register_mua_step2.php?err=foto&alasan=' . urlencode($gagal)); exit(); }
+    if (count($foto_ok) === 0) { header('Location: register_mua_step2.php?err=kosong'); exit(); }
     // Redirect agar refresh halaman TIDAK mengunggah ulang foto yang sama
     header('Location: register_mua_step3.php'); exit();
 }

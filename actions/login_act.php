@@ -1,7 +1,7 @@
 <?php
 // 1. Wajib panggil session_start() di baris paling atas untuk memulai sesi
 session_start();
-require '../koneksi.php';
+require __DIR__ . '/../koneksi.php';
 
 if (isset($_POST['login'])) {
     $email = mysqli_real_escape_string($koneksi, $_POST['email']);

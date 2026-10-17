@@ -1,6 +1,6 @@
 <?php
 // 1. Panggil file koneksi. Karena file ini ada di dalam folder actions, kita gunakan '../' untuk naik satu folder.
-require '../koneksi.php';
+require __DIR__ . '/../koneksi.php';
 
 // 2. Cek apakah tombol register sudah ditekan
 if (isset($_POST['register'])) {

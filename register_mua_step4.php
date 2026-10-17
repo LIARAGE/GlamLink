@@ -4,6 +4,10 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Simpan hanya field layanan yang diizinkan
     $_SESSION['reg_mua_step3'] = array_intersect_key($_POST, array_flip(['nama_layanan', 'kategori', 'harga', 'durasi', 'deskripsi_layanan']));
+    // Harga wajib angka lebih dari 0
+    if (!is_numeric($_SESSION['reg_mua_step3']['harga'] ?? '') || (float)$_SESSION['reg_mua_step3']['harga'] <= 0) {
+        unset($_SESSION['reg_mua_step3']); header('Location: register_mua_step3.php'); exit();
+    }
 }
 if (!isset($_SESSION['reg_mua_step3'])) { header('Location: register_mua_step3.php'); exit(); }
 if (!isset($_SESSION['reg_mua_step1'])) { header("Location: register_form.php?role=mua"); exit(); }
