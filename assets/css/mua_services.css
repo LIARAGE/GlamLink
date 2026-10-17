@@ -1,0 +1,168 @@
+/* =========================================
+   HALAMAN SERVICES (LAYANAN SAYA) - MUA
+========================================= */
+
+/* --- MAIN CONTAINER --- */
+.services-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* --- PAGE HEADER --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h2 {
+    color: #7E4655; /* Merah Marun */
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.btn-add-service {
+    background-color: #7E4655;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.btn-add-service:hover {
+    background-color: #6a3a47;
+}
+
+/* --- SERVICES GRID --- */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+/* --- SERVICE CARD --- */
+.service-card {
+    background-color: #ffffff;
+    border: 1px solid #eae5e3;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Mendorong konten ke atas dan footer ke bawah */
+}
+
+.service-content h3 {
+    margin: 0 0 8px 0;
+    color: #2b2326;
+    font-size: 1.1rem;
+}
+
+.service-category {
+    color: #8c8286;
+    font-size: 0.9rem;
+    margin: 0 0 15px 0;
+}
+
+.service-duration {
+    color: #8c8286;
+    font-size: 0.85rem;
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* --- SERVICE FOOTER (Harga & Tombol) --- */
+.service-footer {
+    border-top: 1px solid #eae5e3;
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.price-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.price-label {
+    color: #8c8286;
+    font-size: 0.75rem;
+}
+
+.price-value {
+    color: #7E4655;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit, .btn-delete {
+    background-color: #ffffff;
+    border: 1px solid #eae5e3;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: 0.2s;
+}
+
+.btn-edit {
+    color: #2b2326;
+    font-weight: 500;
+}
+
+.btn-delete {
+    color: #E23636;
+}
+
+.btn-edit:hover, .btn-delete:hover {
+    background-color: #FAF5F6;
+    border-color: #dcd7d5;
+}
+
+/* --- EMPTY STATE --- */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background-color: #ffffff;
+    border: 1px dashed #dcd7d5;
+    border-radius: 12px;
+    color: #8c8286;
+}
+
+/* --- RESPONSIVENESS --- */
+@media (max-width: 1024px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}
