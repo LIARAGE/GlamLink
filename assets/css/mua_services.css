@@ -12,7 +12,8 @@ body {
 .services-main {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px;
+    /* Kita tambahkan jarak atas (110px) agar konten turun dan tidak tertutup navbar */
+    padding: 110px 20px 40px 20px; 
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
 

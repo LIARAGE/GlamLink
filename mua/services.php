@@ -29,7 +29,6 @@ if ($query_services) {
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="../assets/css/navbar.css">
-    <!-- File CSS khusus halaman Services -->
     <link rel="stylesheet" href="../assets/css/mua_services.css">
 </head>
 <body>
@@ -39,9 +38,12 @@ if ($query_services) {
 
     <main class="services-main">
         
+        <!-- BAGIAN HEADER HALAMAN (Judul & Tombol Tambah) -->
         <div class="page-header">
             <h2>Layanan Saya</h2>
-            <a href="tambah_layanan.php" class="btn-add-service" style="text-decoration:none;"><i class="fa-solid fa-plus"></i> Tambah Layanan</a>
+            <a href="tambah_layanan.php" class="btn-add-service" style="text-decoration:none;">
+                <i class="fa-solid fa-plus"></i> Tambah Layanan
+            </a>
         </div>
 
         <div class="services-grid">
@@ -50,7 +52,6 @@ if ($query_services) {
                     <div class="service-card">
                         <div class="service-content">
                             <h3><?php echo htmlspecialchars($srv['nama_layanan']); ?></h3>
-                            <!-- Menampilkan deskripsi/kategori sebagai subtitle -->
                             <p class="service-category"><?php echo htmlspecialchars($srv['deskripsi'] ?? $srv['kategori']); ?></p>
                             <p class="service-duration">
                                 <i class="fa-regular fa-clock"></i> <?php echo htmlspecialchars($srv['durasi']); ?> pengerjaan
@@ -78,12 +79,10 @@ if ($query_services) {
 
     </main>
 
-    <!-- Script sederhana untuk mengubah status 'active' di navbar -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const navLinks = document.querySelectorAll('.nav-menu-mua a');
             navLinks.forEach(link => link.classList.remove('active'));
-            // Set link kedua (Services) menjadi aktif
             if(navLinks[1]) navLinks[1].classList.add('active');
         });
     </script>

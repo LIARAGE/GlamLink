@@ -2,8 +2,8 @@
 session_start();
 require '../koneksi.php';
 
-// Perbaikan syntax error pada operator logika (||)
-if (!isset($_SESSION['status_login']) \vert{}\vert{}$_SESSION['role'] != 'mua') {
+// Perbaikan syntax error logika OR (||)
+if (!isset($_SESSION['status_login']) || $_SESSION['role'] != 'mua') {
     header("Location: ../login.php");
     exit();
 }
@@ -39,12 +39,8 @@ if (isset($_POST['submit_layanan'])) {$nama = mysqli_real_escape_string($koneksi
 </head>
 <body>
     
-    <!-- Navbar (Logo Saja untuk mode form) -->
-    <header class="navbar" style="justify-content: flex-start;">
-        <div class="logo">
-            <a href="index.php"><img src="../assets/img/logo.png" alt="GlamLink"></a>
-        </div>
-    </header>
+    <!-- Memanggil Navbar Terpusat -->
+    <?php include '../navbar.php'; ?>
 
     <div class="page-top-bg"></div>
 
@@ -150,7 +146,6 @@ if (isset($_POST['submit_layanan'])) {$nama = mysqli_real_escape_string($koneksi
                         </ul>
                     </div>
 
-                    <!-- TOMBOL SUBMIT ADA DI DALAM SINI SESUAI DESAIN -->
                     <button type="submit" name="submit_layanan" class="btn-submit-layanan"><i class="fa-regular fa-floppy-disk"></i> Simpan & Publikasikan Layanan</button>
                     
                     <div class="guarantee-badge">
@@ -239,6 +234,12 @@ if (isset($_POST['submit_layanan'])) {$nama = mysqli_real_escape_string($koneksi
             // Simpan ke hidden input sebagai JSON string agar dikirim via POST PHP
             hiddenInput.value = JSON.stringify(fasilitasArray);
         }
+        // Mengubah status menu navbar yang aktif menjadi 'Services'
+        document.addEventListener("DOMContentLoaded", function() {
+            const navLinks = document.querySelectorAll('.nav-menu-mua a');
+            navLinks.forEach(link => link.classList.remove('active'));
+            if(navLinks[1]) navLinks[1].classList.add('active'); // Index 1 adalah menu Services
+        });
     </script>
 </body>
 </html>
