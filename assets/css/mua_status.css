@@ -1,0 +1,24 @@
+/* Halaman status verifikasi MUA */
+body { margin: 0; background: #FAF8F7; font-family: 'Plus Jakarta Sans', sans-serif; color: #2b2326; padding-top: 80px; }
+.status-container { min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; padding: 30px 20px; box-sizing: border-box; }
+.status-card { width: 100%; max-width: 560px; background: #fff; border: 1px solid #eae5e3; border-radius: 24px; padding: 45px 40px; text-align: center; box-shadow: 0 10px 30px rgba(126, 70, 85, 0.08); }
+.status-icon { width: 84px; height: 84px; margin: 0 auto 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
+.is-pending .status-icon { background: #FBF1DE; color: #C98A2B; }
+.is-rejected .status-icon { background: #FCE8E8; color: #E23636; }
+.status-card .overline { display: block; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: #9A6372; margin-bottom: 8px; }
+.status-card h2 { font-size: 1.6rem; margin: 0 0 12px; }
+.status-card p { color: #6d6468; line-height: 1.7; margin: 0 0 20px; }
+.reason-box { background: #FCE8E8; color: #8f2424; border-radius: 12px; padding: 14px 18px; text-align: left; margin-bottom: 20px; font-size: 0.95rem; }
+.status-steps { list-style: none; padding: 0; margin: 25px 0; text-align: left; display: inline-block; }
+.status-steps li { padding: 8px 0; color: #9a9093; font-weight: 500; }
+.status-steps li i { width: 26px; }
+.status-steps li.done { color: #3B8F5A; }
+.status-steps li.current { color: #C98A2B; font-weight: 700; }
+.status-steps li.current i { animation: putar 2s linear infinite; }
+.status-steps li.fail { color: #E23636; font-weight: 700; }
+@keyframes putar { to { transform: rotate(360deg); } }
+.status-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-refresh, .btn-leave { padding: 12px 26px; border-radius: 30px; font-weight: 600; text-decoration: none; border: 1.5px solid #7E4655; }
+.btn-refresh { background: #7E4655; color: #fff; }
+.btn-leave { color: #7E4655; }
+@media (max-width: 480px) { .status-card { padding: 35px 22px; } }

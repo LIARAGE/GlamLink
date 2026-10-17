@@ -8,7 +8,7 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
 // Jika MUA login, ambil data profil singkat langsung di navbar
 if ($is_logged_in && $role == 'mua' && isset($koneksi)) {
     $id_mua_nav = $_SESSION['id_user'];
-    $nav_query = mysqli_query($koneksi, "SELECT nama_brand, foto_profil FROM users WHERE id_user = '$id_mua_nav'");
+    $nav_query = mysqli_query($koneksi, "SELECT nama_brand, foto_profil, status_verifikasi FROM users WHERE id_user = '$id_mua_nav'");
     $nav_profil = mysqli_fetch_assoc($nav_query);
 }
 ?>
@@ -33,12 +33,14 @@ if ($is_logged_in && $role == 'mua' && isset($koneksi)) {
         <!-- ========================================== -->
         <!-- TAMPILAN SUDAH LOGIN (MUA)                 -->
         <!-- ========================================== -->
-        <div class="nav-menu-mua">
+        <?php if (($nav_profil['status_verifikasi'] ?? 'approved') === 'approved'): ?>
+            <div class="nav-menu-mua">
             <a href="<?php echo $path_prefix; ?>mua/index.php" class="active">Home</a>
             <a href="<?php echo $path_prefix; ?>mua/services.php">Services</a>
             <a href="#">Booking</a>
             <a href="#">Subscription</a>
         </div>
+        <?php endif; ?>
         
         <div class="nav-profile-mua">
             <div class="nav-icons">
@@ -53,7 +55,7 @@ if ($is_logged_in && $role == 'mua' && isset($koneksi)) {
                 <?php endif; ?>
                 <div class="profile-text">
                     <span class="brand-name"><?php echo htmlspecialchars($nav_profil['nama_brand'] ?? 'Nama Brand'); ?></span>
-                    <span class="role-text">MUA</span>
+                    <span class="role-text"><?php echo ($nav_profil['status_verifikasi'] ?? 'approved') === 'approved' ? 'MUA' : 'Belum terverifikasi'; ?></span>
                 </div>
             </div>
             <a href="<?php echo $path_prefix; ?>logout.php" class="logout-link">Logout</a>

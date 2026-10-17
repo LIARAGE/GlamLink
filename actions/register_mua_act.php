@@ -15,7 +15,7 @@ $harga = (int)$s3['harga'];
 // Transaksi: user + portfolio + layanan masuk SEMUA, atau tidak sama sekali
 $koneksi->begin_transaction();
 try {
-    $st = $koneksi->prepare("INSERT INTO users (nama, email, password, role, nomor_telepon, nama_brand, bio, lokasi, foto_profil) VALUES (?, ?, ?, 'mua', ?, ?, ?, ?, ?)");
+    $st = $koneksi->prepare("INSERT INTO users (nama, email, password, role, nomor_telepon, nama_brand, bio, lokasi, foto_profil, status_verifikasi) VALUES (?, ?, ?, 'mua', ?, ?, ?, ?, ?, 'pending')");
     $st->bind_param('ssssssss', $s1['nama'], $s1['email'], $s1['password_hash'], $s1['nomor_telepon'], $s1['nama_brand'], $s1['bio'], $s1['lokasi'], $foto);
     $st->execute();
     $id_mua = $koneksi->insert_id;
@@ -29,7 +29,7 @@ try {
 
     $koneksi->commit();
     unset($_SESSION['reg_mua_step1'], $_SESSION['reg_mua_step2'], $_SESSION['reg_mua_step3']);
-    echo "<script>alert('Pendaftaran MUA berhasil! Silakan masuk.'); window.location.href = '../login.php';</script>";
+    echo "<script>alert('Pendaftaran berhasil! Akun Anda menunggu verifikasi admin. Silakan masuk untuk melihat status verifikasi.'); window.location.href = '../login.php';</script>";
 } catch (Throwable $e) {
     $koneksi->rollback();
     $pesan = ($e->getCode() == 1062) ? 'Email sudah terdaftar!' : 'Pendaftaran gagal, silakan coba lagi.'; // detail error tidak ditampilkan ke pengguna
