@@ -2,11 +2,11 @@
 // Mendeteksi apakah navbar dipanggil dari dalam folder (seperti /mua/) atau root
 $path_prefix = (basename(dirname($_SERVER['PHP_SELF'])) == 'mua') ? '../' : '';
 
-$is_logged_in = isset($_SESSION['status_login']) && $_SESSION['status_login'] == true;
-$role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
+$nav_logged_in = isset($_SESSION['status_login']) && $_SESSION['status_login'] == true;
+$nav_role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
 
 // Jika MUA login, ambil data profil singkat langsung di navbar
-if ($is_logged_in && $role == 'mua' && isset($koneksi)) {
+if ($nav_logged_in && $nav_role == 'mua' && isset($koneksi)) {
     $id_mua_nav = $_SESSION['id_user'];
     $nav_query = mysqli_query($koneksi, "SELECT nama_brand, foto_profil, status_verifikasi FROM users WHERE id_user = '$id_mua_nav'");
     $nav_profil = mysqli_fetch_assoc($nav_query);
@@ -19,7 +19,7 @@ if ($is_logged_in && $role == 'mua' && isset($koneksi)) {
         </a>
     </div>
     
-    <?php if (!$is_logged_in): ?>
+    <?php if (!$nav_logged_in): ?>
         <!-- ========================================== -->
         <!-- TAMPILAN BELUM LOGIN (GUEST)               -->
         <!-- ========================================== -->
@@ -29,7 +29,7 @@ if ($is_logged_in && $role == 'mua' && isset($koneksi)) {
             <a href="<?php echo $path_prefix; ?>register.php" class="btn-filled">Daftar</a>
         </div>
 
-    <?php elseif ($role == 'mua'): ?>
+    <?php elseif ($nav_role == 'mua'): ?>
         <!-- ========================================== -->
         <!-- TAMPILAN SUDAH LOGIN (MUA)                 -->
         <!-- ========================================== -->

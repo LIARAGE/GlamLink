@@ -1,6 +1,10 @@
 <?php
 session_start();
-$role = (($_GET['role'] ?? '') === 'mua') ? 'mua' : 'pelanggan'; // hanya 2 nilai yang valid
+$tipe = (($_GET['role'] ?? '') === 'mua') ? 'mua' : 'pelanggan'; // hanya 2 nilai yang valid
+
+// Isian klien sebelumnya (tanpa password) jika pendaftaran ditolak server; dibaca sekali lalu dihapus
+$old = $_SESSION['reg_klien_old'] ?? [];
+unset($_SESSION['reg_klien_old']);
 
 // Mengambil data sesi jika user menekan tombol kembali dari langkah 2
 $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
@@ -25,7 +29,7 @@ $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
     <?php include 'navbar.php'; ?>
 
     <main class="form-container">
-        <?php if ($role == 'pelanggan'): ?>
+        <?php if ($tipe == 'pelanggan'): ?>
         <!-- ========================================== -->
         <!-- FORM KLIEN -->
         <!-- ========================================== -->
@@ -34,29 +38,41 @@ $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
                 <span class="overline">AKUN KLIEN</span>
                 <h2>Buat Akun</h2>
             </div>
+            <?php
+            $pesan_klien = [
+                'nama'            => 'Nama lengkap wajib diisi (maksimal 100 karakter).',
+                'email'           => 'Format email tidak valid.',
+                'email_dipakai'   => 'Email sudah terdaftar. Gunakan email lain atau masuk.',
+                'telepon'         => 'Nomor telepon tidak valid. Contoh: 081234567890.',
+                'password_pendek' => 'Password minimal 8 karakter.',
+                'password'        => 'Konfirmasi password tidak cocok.',
+                'gagal'           => 'Pendaftaran gagal, silakan coba lagi.',
+            ];
+            if (isset($_GET['err'], $pesan_klien[$_GET['err']])) echo '<p class="error-message" style="display:block;text-align:center;margin-bottom:15px">' . $pesan_klien[$_GET['err']] . '</p>';
+            ?>
             <form action="actions/register_act.php" method="POST" onsubmit="return validatePassword(this)">
                 <input type="hidden" name="role" value="pelanggan">
                 
                 <div class="input-group">
                     <label>Nama Lengkap<span class="text-danger">*</span></label>
-                    <div class="input-wrapper"><i class="fa-solid fa-user"></i><input type="text" name="nama" placeholder="Contoh: Virginia Aurelyn" required></div>
+                    <div class="input-wrapper"><i class="fa-solid fa-user"></i><input type="text" name="nama" placeholder="Contoh: Virginia Aurelyn" maxlength="100" value="<?php echo htmlspecialchars($old['nama'] ?? ''); ?>" required></div>
                 </div>
                 
                 <div class="input-group">
                     <label>Alamat Email<span class="text-danger">*</span></label>
-                    <div class="input-wrapper"><i class="fa-solid fa-envelope"></i><input type="email" name="email" placeholder="nama@email.com" required></div>
+                    <div class="input-wrapper"><i class="fa-solid fa-envelope"></i><input type="email" name="email" placeholder="nama@email.com" maxlength="100" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required></div>
                 </div>
                 
                 <div class="input-group">
                     <label>Nomor Telepon<span class="text-danger">*</span></label>
-                    <div class="input-wrapper"><i class="fa-solid fa-phone"></i><input type="text" name="nomor_telepon" placeholder="081234567890" required></div>
+                    <div class="input-wrapper"><i class="fa-solid fa-phone"></i><input type="tel" name="nomor_telepon" placeholder="081234567890" pattern="(\+62|62|0)8[0-9]{8,11}" title="Contoh: 081234567890" value="<?php echo htmlspecialchars($old['nomor_telepon'] ?? ''); ?>" required></div>
                 </div>
                 
                 <div class="input-group">
                     <label>Password<span class="text-danger">*</span></label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" name="password" class="password-input" required>
+                        <input type="password" name="password" class="password-input" minlength="8" placeholder="Minimal 8 karakter" required>
                         <i class="fa-solid fa-eye eye-icon toggle-password"></i>
                     </div>
                 </div>
