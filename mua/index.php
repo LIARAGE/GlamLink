@@ -9,7 +9,7 @@ $query_profil = mysqli_query($koneksi, "SELECT * FROM users WHERE id_user = '$id
 $profil = mysqli_fetch_assoc($query_profil);
 
 // 3. FETCH STATISTIK PESANAN (DENGAN LOGIKA DINAMIS)
-$q_total = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM bookings b JOIN services s ON b.id_service = s.id_service WHERE s.id_mua = '$id_mua'");
+$q_total = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM bookings WHERE id_mua = '$id_mua'");
 $stat_total = mysqli_fetch_assoc($q_total)['total'] ?? 0;
 
 // Logika Dinamis: Pesanan bulan ini vs bulan lalu
@@ -18,10 +18,10 @@ $current_year = date('Y');
 $last_month = date('m', strtotime('-1 month'));
 $last_month_year = date('Y', strtotime('-1 month'));
 
-$q_this_month = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM bookings b JOIN services s ON b.id_service = s.id_service WHERE s.id_mua = '$id_mua' AND MONTH(created_at) = '$current_month' AND YEAR(created_at) = '$current_year'");
+$q_this_month = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM bookings WHERE id_mua = '$id_mua' AND MONTH(created_at) = '$current_month' AND YEAR(created_at) = '$current_year'");
 $this_month_total = mysqli_fetch_assoc($q_this_month)['total'] ?? 0;
 
-$q_last_month = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM bookings b JOIN services s ON b.id_service = s.id_service WHERE s.id_mua = '$id_mua' AND MONTH(created_at) = '$last_month' AND YEAR(created_at) = '$last_month_year'");
+$q_last_month = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM bookings WHERE id_mua = '$id_mua' AND MONTH(created_at) = '$last_month' AND YEAR(created_at) = '$last_month_year'");
 $last_month_total = mysqli_fetch_assoc($q_last_month)['total'] ?? 0;
 
 $diff = $this_month_total - $last_month_total;
@@ -30,13 +30,13 @@ $trend_text = "{$trend_sign}{$diff} dari bulan lalu";
 $trend_class = $diff >= 0 ? "text-success" : "text-danger";
 
 // Statistik Lainnya
-$q_menunggu = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM bookings b JOIN services s ON b.id_service = s.id_service WHERE s.id_mua = '$id_mua' AND status = 'menunggu'");
+$q_menunggu = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM bookings WHERE id_mua = '$id_mua' AND status = 'menunggu'");
 $stat_menunggu = mysqli_fetch_assoc($q_menunggu)['total'] ?? 0;
 
-$q_selesai = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM bookings b JOIN services s ON b.id_service = s.id_service WHERE s.id_mua = '$id_mua' AND status = 'selesai'");
+$q_selesai = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM bookings WHERE id_mua = '$id_mua' AND status = 'selesai'");
 $stat_selesai = mysqli_fetch_assoc($q_selesai)['total'] ?? 0;
 
-$q_pendapatan = mysqli_query($koneksi, "SELECT SUM(total_harga) as total FROM bookings b JOIN services s ON b.id_service = s.id_service WHERE s.id_mua = '$id_mua' AND status = 'selesai'");
+$q_pendapatan = mysqli_query($koneksi, "SELECT SUM(total_harga) as total FROM bookings WHERE id_mua = '$id_mua' AND status = 'selesai'");
 $stat_pendapatan = mysqli_fetch_assoc($q_pendapatan)['total'] ?? 0;
 
 // 4. FETCH DAFTAR PESANAN TERBARU (Tambah nomor telepon, lokasi, dan catatan)
@@ -44,8 +44,8 @@ $query_bookings = mysqli_query($koneksi, "
     SELECT b.*, u.nama AS nama_klien, u.foto_profil AS foto_klien, u.nomor_telepon, s.nama_layanan 
     FROM bookings b 
     LEFT JOIN users u ON b.id_pelanggan = u.id_user 
-    JOIN services s ON b.id_service = s.id_service 
-    WHERE s.id_mua = '$id_mua' AND b.status = 'menunggu'
+    LEFT JOIN services s ON b.id_layanan = s.id_service 
+    WHERE b.id_mua = '$id_mua' AND b.status = 'menunggu'
     ORDER BY b.created_at DESC LIMIT 5
 ");
 
