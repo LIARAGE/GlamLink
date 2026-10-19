@@ -1,5 +1,5 @@
 <?php
-session_start();
+session_start(); //halo
 
 if (isset($_SESSION['status_login'])) {
     if ($_SESSION['role'] == 'admin') {
