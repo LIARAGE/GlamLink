@@ -1,19 +1,18 @@
 <?php
-session_start();
-
 // Memanggil file koneksi yang berada satu tingkat di luar folder admin
-include '../koneksi.php';
+session_start();
+require '../koneksi.php';
 
-// Pastikan koneksi berhasil
-if (!isset($conn) || !$conn) {
+// Pastikan koneksi berhasil menggunakan variabel $koneksi
+if (!isset($koneksi) || !$koneksi) {
     die("Koneksi gagal terhubung ke database.");
 }
 
-$email = mysqli_real_escape_string($conn, $_POST['email']);
+$email = mysqli_real_escape_string($koneksi, $_POST['email']);
 $password = $_POST['password'];
 
 // Cek data admin di database
-$query = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND role='admin' LIMIT 1");
+$query = mysqli_query($koneksi, "SELECT * FROM users WHERE email='$email' AND role='admin' LIMIT 1");
 $admin = mysqli_fetch_assoc($query);
 
 if ($admin) {
