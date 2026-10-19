@@ -8,10 +8,13 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
 include '../koneksi.php';
 
-// Hitung Statistik
-$total_klien = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as jml FROM users WHERE role='klien'"))['jml'];
-$total_mua = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as jml FROM users WHERE role='mua' AND status_akun='Terverifikasi'"))['jml'];
-$menunggu_verif = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as jml FROM users WHERE role='mua' AND status_akun='Menunggu'"))['jml'];
+// Hitung Statistik dengan penamaan kolom/nilai yang BENAR sesuai Database
+$total_klien = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as jml FROM users WHERE role='pelanggan'"))['jml'];
+$total_mua = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as jml FROM users WHERE role='mua' AND status_verifikasi='approved'"))['jml'];
+$menunggu_verif = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as jml FROM users WHERE role='mua' AND status_verifikasi='pending'"))['jml'];
+
+// Ambil nama Admin dari session
+$nama_admin = $_SESSION['admin_nama'] ?? 'Admin';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -30,12 +33,12 @@ $menunggu_verif = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as jml
             <a href="verifikasi_mua.php">Verifikasi MUA</a>
         </nav>
         <div class="admin-profile">
-            <span>Admin</span> | <a href="../logout.php" style="color: #C62828; text-decoration: none;">Logout</a>
+            <span><?= htmlspecialchars($nama_admin); ?></span> | <a href="../logout.php" style="color: #C62828; text-decoration: none;">Logout</a>
         </div>
     </header>
 
     <main class="main-container">
-        <h1>Selamat Datang, Admin</h1>
+        <h1>Selamat Datang, <?= htmlspecialchars($nama_admin); ?></h1>
         <p>Pantau seluruh aktivitas pendaftaran MUA, transaksi pemesanan, dan verifikasi dokumen.</p>
 
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 30px;">
