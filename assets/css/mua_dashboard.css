@@ -1,106 +1,25 @@
 /* =========================================
-   DASHBOARD MUA - LAYOUT & STYLING
+   DASHBOARD MUA - LAYOUT & STYLING (REVISI FINAL)
 ========================================= */
 body {
-    background-color: #FAF5F6; /* Warna latar belakang halaman */
+    background-color: #FAF5F6; 
     font-family: 'Plus Jakarta Sans', sans-serif;
     margin: 0;
-}
-
-/* --- NAVBAR MUA --- */
-.mua-navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #ffffff;
-    padding: 15px 50px;
-    border-bottom: 1px solid #eae5e3;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.nav-menu {
-    display: flex;
-    gap: 30px;
-    font-weight: 600;
-}
-
-.nav-menu a {
-    text-decoration: none;
-    color: #7E4655; /* Merah Marun GlamLink */
-}
-
-.nav-menu a.active {
-    border-bottom: 2px solid #7E4655;
-    padding-bottom: 4px;
-}
-
-.nav-profile {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.nav-icons {
-    display: flex;
-    gap: 15px;
-}
-
-.nav-icons .icon-btn {
+    padding-top: 80px; /* Menghindari tertutup navbar */
     position: relative;
-    color: #8c8286;
-    font-size: 1.2rem;
+    z-index: 0;
 }
 
-.nav-icons .badge {
+/* GRADIENT FULL-WIDTH DI BELAKANG HEADER */
+body::before {
+    content: "";
     position: absolute;
-    top: -5px;
-    right: -10px;
-    background-color: #D97706; /* Badge notif orange */
-    color: white;
-    font-size: 0.6rem;
-    padding: 2px 6px;
-    border-radius: 10px;
-}
-
-.profile-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-left: 2px solid #eae5e3;
-    padding-left: 20px;
-}
-
-.profile-info img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.profile-text {
-    display: flex;
-    flex-direction: column;
-}
-
-.profile-text .brand-name {
-    font-weight: 700;
-    color: #2b2326;
-    font-size: 0.9rem;
-}
-
-.profile-text .role-text {
-    font-size: 0.75rem;
-    color: #8c8286;
-}
-
-.logout-link {
-    color: #E23636;
-    font-size: 0.9rem;
-    text-decoration: none;
-    font-weight: 600;
-    margin-left: 10px;
+    top: 80px; /* Mulai persis di bawah navbar */
+    left: 0;
+    width: 100%;
+    height: 350px; /* Ketinggian gradien menyebar ke bawah */
+    background: linear-gradient(180deg, #F9E5E9 0%, #FAF5F6 100%);
+    z-index: -1;
 }
 
 /* --- MAIN DASHBOARD CONTAINER --- */
@@ -113,14 +32,11 @@ body {
 /* --- HERO HEADER --- */
 .hero-header {
     text-align: center;
-    padding: 40px 20px 60px 20px;
-    background: linear-gradient(180deg, #F4E2E6 0%, #FAF5F6 100%);
-    border-radius: 16px;
-    margin-bottom: -30px; /* Overlap dengan stat cards */
+    padding: 20px 20px 50px 20px; /* Latar belakang kotak dihilangkan agar menyatu dengan body */
 }
 
 .hero-header h2 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     color: #2b2326;
     margin-bottom: 10px;
 }
@@ -142,14 +58,12 @@ body {
     line-height: 1.6;
 }
 
-/* --- STATS GRID --- */
+/* --- STATS GRID KOTAK 4 --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     margin-bottom: 40px;
-    position: relative;
-    z-index: 10;
 }
 
 .stat-card {
@@ -170,20 +84,41 @@ body {
     margin-bottom: 15px;
 }
 
+/* Base style untuk ikon di card */
+.stat-header i {
+    padding: 8px 10px;
+    border-radius: 50%;
+    font-size: 0.9rem;
+}
+
+/* Pewarnaan ikon masing-masing stat card (Sesuai desain) */
+.stat-card:nth-child(1) .stat-header i { color: #7E4655; background: #F4E2E6; }
+.stat-card:nth-child(2) .stat-header i { color: #D97706; background: #FEF3C7; padding: 8px 12px; }
+.stat-card:nth-child(3) .stat-header i { color: #059669; background: #D1FAE5; }
+.stat-card:nth-child(4) .stat-header i { color: #7E4655; background: #F4E2E6; }
+
+/* Styling Angka Statistik (Diperkuat agar tidak hitam lagi) */
 .stat-card h3 {
     font-size: 1.8rem;
     margin: 0 0 5px 0;
-    color: #2b2326;
+    color: #2b2326; /* Default */
 }
+
+/* Penimpa Warna Default */
+.stat-card h3.text-warning { color: #D97706 !important; }
+.stat-card h3.text-success { color: #059669 !important; }
+.stat-card h3.text-primary { color: #7E4655 !important; }
 
 .stat-desc {
     font-size: 0.75rem;
     color: #8c8286;
 }
 
-.text-success { color: #059669; }
-.text-warning { color: #D97706; }
-.text-primary { color: #7E4655; }
+/* Utility Colors Tambahan */
+.text-success { color: #059669 !important; }
+.text-warning { color: #D97706 !important; }
+.text-danger { color: #E23636 !important; }
+.text-primary { color: #7E4655 !important; }
 
 /* --- RECENT BOOKINGS LIST --- */
 .recent-bookings {
@@ -283,7 +218,7 @@ body {
 }
 
 .btn-confirm {
-    background-color: #357361; /* Hijau Konfirmasi */
+    background-color: #357361; 
     color: white;
     border: none;
     padding: 8px 16px;
@@ -295,7 +230,7 @@ body {
 
 .btn-reject {
     background-color: #ffffff;
-    color: #E23636; /* Merah Tolak */
+    color: #E23636; 
     border: 1px solid #E23636;
     padding: 8px 16px;
     border-radius: 20px;
@@ -312,17 +247,11 @@ body {
     font-size: 1rem;
 }
 
-/* Responsiveness */
-@media (max-width: 900px) {
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .booking-item { flex-direction: column; align-items: flex-start; gap: 15px; }
-}
-
 /* =========================================
    MODAL / POP-UP CLIENT DETAILS
 ========================================= */
 .modal-overlay {
-    display: none; /* Disembunyikan secara default oleh JS */
+    display: none; 
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -463,4 +392,10 @@ body {
     border-radius: 10px;
     font-weight: 600;
     cursor: pointer;
+}
+
+/* Responsiveness layar kecil */
+@media (max-width: 900px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .booking-item { flex-direction: column; align-items: flex-start; gap: 15px; }
 }
