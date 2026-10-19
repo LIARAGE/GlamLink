@@ -1,0 +1,78 @@
+:root {
+    --bg-color: #FAF6F0;
+    --primary-color: #4A3B32;
+    --accent-color: #C5A880;
+    --card-bg: #FFFFFF;
+    --text-main: #2C221E;
+    --text-muted: #7A6F68;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+}
+
+.admin-navbar {
+    background: #FFFFFF;
+    border-bottom: 1px solid #E8DFD8;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin: 0 20px;
+    padding-bottom: 5px;
+}
+
+.nav-links a.active {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    font-weight: 600;
+}
+
+.main-container {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card-stat {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    border: 1px solid #EFECE6;
+}
+
+.badge-status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.badge-aktif, .badge-terverifikasi { background: #E1F5FE; color: #0288D1; }
+.badge-menunggu { background: #FFF9C4; color: #F57F17; }
+.badge-ditolak { background: #FFEBEE; color: #C62828; }
+
+.btn-action {
+    background: transparent;
+    border: 1px solid #D7CCC8;
+    color: var(--primary-color);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+.btn-action:hover {
+    background: var(--primary-color);
+    color: #fff;
+}
