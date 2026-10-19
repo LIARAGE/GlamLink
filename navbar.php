@@ -34,10 +34,10 @@ if ($nav_logged_in && $nav_role == 'mua' && isset($koneksi)) {
         <!-- TAMPILAN SUDAH LOGIN (MUA)                 -->
         <!-- ========================================== -->
         <?php if (($nav_profil['status_verifikasi'] ?? 'approved') === 'approved'): ?>
-            <div class="nav-menu-mua">
-            <a href="<?php echo $path_prefix; ?>mua/index.php" class="active">Home</a>
+        <div class="nav-menu-mua">
+            <a href="<?php echo $path_prefix; ?>mua/index.php">Home</a>
             <a href="<?php echo $path_prefix; ?>mua/services.php">Services</a>
-            <a href="#">Booking</a>
+            <a href="<?php echo $path_prefix; ?>mua/booking.php">Booking</a>
             <a href="#">Subscription</a>
         </div>
         <?php endif; ?>
