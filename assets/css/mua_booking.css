@@ -480,3 +480,42 @@ a.date-num.selected-date {
     padding: 12px;
     font-size: 0.95rem;
 }
+
+/* =========================================
+   LAYOUT KHUSUS TAB DONE
+========================================= */
+
+.header-action { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.btn-outline-maroon { border: 1px solid #7E4655; color: #7E4655; padding: 8px 16px; border-radius: 20px; font-weight: 600; text-decoration: none; font-size: 0.9rem; }
+
+.done-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 25px; }
+.stat-box { background: #fff; border: 1px solid #eae5e3; border-radius: 12px; padding: 20px; }
+.stat-title { font-size: 0.85rem; color: #6d6468; display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600; }
+.stat-value { font-size: 1.8rem; color: #2b2326; font-weight: 700; margin-bottom: 5px; }
+.stat-value .sub-val { font-size: 1rem; color: #8c8286; font-weight: 400; }
+.stat-desc { font-size: 0.75rem; color: #8c8286; }
+
+.text-green { color: #059669; }
+.text-maroon { color: #7E4655; }
+.text-yellow { color: #D97706; }
+.badge-lunas { background: #d1fae5; color: #059669; font-size: 0.7rem; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
+
+.done-table-container { background: #fff; border: 1px solid #eae5e3; border-radius: 12px; padding: 20px; }
+.done-table-container h3 { margin: 0 0 20px 0; font-size: 1.1rem; color: #2b2326; }
+
+.history-table { width: 100%; border-collapse: collapse; text-align: left; }
+.history-table th { padding: 15px 10px; border-bottom: 1px solid #eae5e3; color: #6d6468; font-size: 0.85rem; font-weight: 600; }
+.history-table td { padding: 15px 10px; border-bottom: 1px solid #eae5e3; font-size: 0.9rem; color: #2b2326; vertical-align: middle; }
+.history-table tr:last-child td { border-bottom: none; }
+
+.td-client { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.td-client img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
+
+.badge-dokum { font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 5px; }
+.badge-dokum.kosong { border: 1px solid #fecaca; background: #fee2e2; color: #dc2626; }
+.badge-dokum.selesai { border: 1px solid #a7f3d0; background: #ecfdf5; color: #059669; }
+
+@media (max-width: 900px) {
+    .done-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .history-table { display: block; overflow-x: auto; white-space: nowrap; }
+}
