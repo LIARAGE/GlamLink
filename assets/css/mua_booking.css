@@ -1,5 +1,5 @@
 /* =========================================
-   HALAMAN BOOKING - MUA
+   HALAMAN BOOKING - MUA (VERSI FINAL)
 ========================================= */
 
 body {
@@ -45,7 +45,6 @@ body {
     color: #7E4655;
 }
 
-/* Garis bawah tab aktif */
 .tab-link.active::after {
     content: '';
     position: absolute;
@@ -104,9 +103,14 @@ body {
 }
 
 .calendar-header h3 { margin: 0; font-size: 1.1rem; color: #2b2326; }
-.calendar-header button {
-    background: none; border: none; cursor: pointer; color: #6d6468; font-size: 1.1rem;
+.calendar-header a.nav-cal {
+    color: #6d6468;
+    font-size: 1.1rem;
+    text-decoration: none;
+    padding: 5px 10px;
+    transition: 0.2s;
 }
+.calendar-header a.nav-cal:hover { color: #7E4655; }
 
 .calendar-grid {
     display: grid;
@@ -116,21 +120,62 @@ body {
 }
 
 .day-name { font-size: 0.8rem; font-weight: 600; color: #2b2326; margin-bottom: 10px; }
+
 .date-num {
-    font-size: 0.95rem; color: #6d6468; position: relative; height: 30px; display: flex; align-items: center; justify-content: center;
+    font-size: 0.95rem; 
+    color: #6d6468; 
+    position: relative; 
+    height: 35px; 
+    width: 35px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    margin: 0 auto;
 }
 .date-num.empty { visibility: hidden; }
 .text-red { color: #E23636 !important; }
 
+/* Link Kalender yang Bisa Diklik */
+a.date-num {
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent; 
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+a.date-num:hover { background-color: #F4E2E6; }
+
+a.date-num.selected-date {
+    border-color: #7E4655; 
+    background-color: transparent;
+    color: #2b2326; 
+}
+
 /* Titik indikator pesanan di kalender */
 .dot {
     position: absolute;
-    bottom: -4px;
+    bottom: 2px;
     width: 5px;
     height: 5px;
     background-color: #7E4655;
     border-radius: 50%;
 }
+.dot.cuti-dot { background-color: #E23636; }
+
+/* Legend Kalender */
+.calendar-legend {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+    font-size: 0.8rem;
+    color: #8c8286;
+}
+.calendar-legend div { display: flex; align-items: center; gap: 8px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+.legend-dot.available { background-color: #7E4655; }
+.legend-dot.cuti { background-color: #E23636; }
 
 /* --- BOOKING CARDS (KANAN) --- */
 .booking-list {
@@ -170,9 +215,13 @@ body {
     font-size: 0.75rem; border: 1px solid #dcd7d5; padding: 2px 8px; border-radius: 4px; color: #8c8286; font-weight: 500;
 }
 
+/* --- BADGE STATUS --- */
 .status-badge {
     background-color: #e6f6ef; color: #059669; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px;
 }
+.status-badge.status-warning { background-color: #FEF3C7; color: #D97706; }
+.status-badge.status-success { background-color: #d1fae5; color: #059669; border: 1px solid #a7f3d0; }
+.status-badge.status-danger { background-color: #FEE2E2; color: #DC2626; border: 1px solid #fecaca; }
 
 .bk-service { margin: 0 0 15px 0; color: #7E4655; font-size: 0.9rem; font-weight: 600; }
 
@@ -189,6 +238,7 @@ body {
 .text-grey { color: #8c8286; }
 .text-italic { font-style: italic; color: #a09297; }
 
+/* --- FOOTER REGULAR --- */
 .bk-footer-actions {
     border-top: 1px solid #eae5e3;
     padding: 15px 25px;
@@ -198,115 +248,115 @@ body {
     border-radius: 0 0 12px 12px;
 }
 
+/* --- BUTTONS --- */
 .btn-outline-grey {
     background: #ffffff; border: 1px solid #dcd7d5; color: #6d6468; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px;
 }
-
 .btn-filled-red {
     background: #FF0000; color: #ffffff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px;
 }
-
-.empty-state { text-align: center; padding: 50px; color: #8c8286; border: 1px dashed #dcd7d5; border-radius: 12px; }
-
-/* Responsiveness */
-@media (max-width: 900px) {
-    .booking-grid { grid-template-columns: 1fr; }
-    .booking-tabs { gap: 20px; overflow-x: auto; }
-}
-
-/* =========================================
-   STYLING KALENDER & STATUS
-========================================= */
-
-.calendar-header a.nav-cal {
-    color: #6d6468;
-    font-size: 1.1rem;
-    text-decoration: none;
-    padding: 5px 10px;
-    transition: 0.2s;
-}
-.calendar-header a.nav-cal:hover { color: #7E4655; }
-
-/* Mengubah .date-num menjadi link kotak ujung melengkung seperti referensi */
-a.date-num {
-    text-decoration: none;
-    cursor: pointer;
-    border: 1px solid transparent; /* default transparan */
-    border-radius: 8px;
-    width: 35px;
-    height: 35px;
-    margin: 0 auto;
-    transition: all 0.2s;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-a.date-num:hover { background-color: #F4E2E6; }
-
-/* Styling Khusus Tanggal Yang Sedang Dipilih */
-a.date-num.selected-date {
-    border-color: #7E4655; /* Kotak outline tipis sesuai desain */
-    background-color: transparent;
-    color: #2b2326; 
-}
-
-/* Titik Indikator di bawah tanggal */
-.dot {
-    position: absolute;
-    bottom: 2px;
-    width: 5px;
-    height: 5px;
-    background-color: #7E4655; /* Available / Booking biasa */
-    border-radius: 50%;
-}
-.dot.cuti-dot {
-    background-color: #E23636; /* Warna merah untuk cuti/libur */
-}
-
-/* Legend Kalender (Available & Cuti) */
-.calendar-legend {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-top: 30px;
-    font-size: 0.8rem;
-    color: #8c8286;
-}
-.calendar-legend div {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-.legend-dot.available { background-color: #7E4655; }
-.legend-dot.cuti { background-color: #E23636; }
-
-/* Badge Status Tambahan */
-.status-warning {
-    background-color: #FEF3C7;
-    color: #D97706;
-}
-
-/* Tombol Aksi Tambahan untuk Ongoing */
-.action-group {
-    display: flex;
-    gap: 10px;
-}
-
 .btn-filled-green {
     background: #059669; color: #ffffff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px;
 }
-
 .btn-outline-red {
     background: #ffffff; border: 1px solid #E23636; color: #E23636; padding: 8px 20px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px;
 }
 
-/* Badge Status Lanjutan */
-.status-badge.status-success { background-color: #d1fae5; color: #059669; border: 1px solid #a7f3d0; }
-.status-badge.status-danger { background-color: #FEE2E2; color: #DC2626; border: 1px solid #fecaca; }
+.action-group { display: flex; gap: 10px; }
+.btn-stack { display: flex; gap: 10px; }
+
+.empty-state { text-align: center; padding: 50px; color: #8c8286; border: 1px dashed #dcd7d5; border-radius: 12px; }
+
+/* =========================================
+   LAYOUT KHUSUS TAB ONGOING
+========================================= */
+
+.bk-card.ongoing-layout .bk-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.bk-card.ongoing-layout .client-left {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+}
+
+.bk-card.ongoing-layout .action-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    min-width: 250px;
+}
+
+.price-big {
+    font-size: 1.4rem;
+    color: #7E4655;
+    margin: 0 0 15px 0;
+    font-weight: 700;
+}
+
+/* Footer Pencairan Dana */
+.bk-footer-ongoing {
+    background-color: #FAF5F6;
+    border-top: 1px solid #eae5e3;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0 0 12px 12px;
+}
+
+.pencairan-text {
+    font-size: 0.8rem;
+    color: #8c8286;
+    line-height: 1.5;
+}
+
+.pencairan-text strong {
+    color: #2b2326;
+    font-size: 0.85rem;
+}
+
+.status-chips {
+    display: flex;
+    gap: 10px;
+}
+
+.chip-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chip-status.pending { color: #D97706; border: 1px solid #FDE68A; background-color: #FFFBEB; }
+.chip-status.done { color: #059669; border: 1px solid #A7F3D0; background-color: #ECFDF5; }
+.chip-status.default { color: #6d6468; border: 1px solid #dcd7d5; background-color: #ffffff; }
+
+/* =========================================
+   RESPONSIVENESS
+========================================= */
+
+@media (max-width: 900px) {
+    .booking-grid { grid-template-columns: 1fr; }
+    .booking-tabs { gap: 20px; overflow-x: auto; }
+    
+    .bk-card.ongoing-layout .bk-header-info {
+        flex-direction: column;
+    }
+    .bk-card.ongoing-layout .action-right {
+        align-items: flex-start;
+        margin-top: 20px;
+    }
+    .bk-footer-ongoing {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}

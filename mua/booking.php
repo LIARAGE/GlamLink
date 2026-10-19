@@ -7,78 +7,86 @@ if (!isset($_SESSION['status_login']) || $_SESSION['role'] != 'mua') {
     exit();
 }
 
-$id_mua =$_SESSION['id_user'];
-
-// 1. AMBIL PARAMETER FILTER TAB
+$id_mua = $_SESSION['id_user'];
 $month = isset($_GET['m']) ? (int)$_GET['m'] : (int)date('m');
-$year = isset($_GET['y']) ? (int)$_GET['y'] : (int)date('Y');$selected_date = isset($_GET['date']) ?$_GET['date'] : '';
+$year = isset($_GET['y']) ? (int)$_GET['y'] : (int)date('Y');
+$tab = $_GET['tab'] ?? 'scheduled';
 
-$tab =$_GET['tab'] ?? 'scheduled';
-$status_filter = 'dikonfirmasi';$page_title = 'Pesanan Terkonfirmasi';
+// --- PROSES BACKEND: KONFIRMASI SELESAI (ONGOING) ---
+if (isset($_POST['konfirmasi_selesai_mua'])) {
+    $id_booking_done = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
+    mysqli_query($koneksi, "UPDATE bookings SET is_mua_done = 1 WHERE id_booking = '$id_booking_done' AND id_mua = '$id_mua'");
+    
+    $cek = mysqli_query($koneksi, "SELECT is_mua_done, is_client_done FROM bookings WHERE id_booking = '$id_booking_done'");
+    if ($row = mysqli_fetch_assoc($cek)) {
+        if ($row['is_mua_done'] == 1 && $row['is_client_done'] == 1) {
+            mysqli_query($koneksi, "UPDATE bookings SET status = 'selesai' WHERE id_booking = '$id_booking_done'");
+        }
+    }
+    header("Location: booking.php?tab=ongoing&m=$month&y=$year");
+    exit();
+}
 
-if ($tab == 'ongoing') {
-    $status_filter = 'menunggu';$page_title = 'Pesanan Menunggu';
-} elseif ($tab == 'done') {
-    $status_filter = 'selesai';$page_title = 'Pesanan Selesai';
-} elseif ($tab == 'cancelled') {
-    $status_filter = 'ditolak';$page_title = 'Pesanan Dibatalkan';
+// --- PROSES BACKEND: TERIMA / TOLAK / BATALKAN (SCHEDULED) ---
+if (isset($_POST['terima_pesanan'])) {
+    $id_b = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
+    mysqli_query($koneksi, "UPDATE bookings SET status = 'dikonfirmasi' WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
+    header("Location: booking.php?tab=scheduled&m=$month&y=$year");
+    exit();
+}
+if (isset($_POST['tolak_pesanan']) || isset($_POST['batalkan_pesanan'])) {$id_b = mysqli_real_escape_string($koneksi,$_POST['id_booking']);
+    mysqli_query($koneksi, "UPDATE bookings SET status = 'ditolak' WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
+    header("Location: booking.php?tab=scheduled&m=$month&y=$year");
+    exit();
+}
+
+// --- LOGIKA FILTER DINAMIS BERDASARKAN TAB ---
+$status_filter = "b.status IN ('menunggu', 'dikonfirmasi')"; 
+$time_filter = "AND (b.tanggal_booking > CURDATE() OR (b.tanggal_booking = CURDATE() AND b.waktu_booking > CURTIME()))";
+$date_filter = "AND MONTH(b.tanggal_booking) = '$month' AND YEAR(b.tanggal_booking) = '$year'";
+$page_title = 'Jadwal Pesanan';
+
+if ($tab == 'ongoing') {$status_filter = "b.status = 'dikonfirmasi'";
+    $time_filter = "AND (b.tanggal_booking < CURDATE() OR (b.tanggal_booking = CURDATE() AND b.waktu_booking <= CURTIME()))";
+    $date_filter = ""; 
+    $page_title = 'Jadwal Hari Ini';
+} elseif ($tab == 'done') {$status_filter = "b.status = 'selesai'";
+    $time_filter = "";
+    $page_title = 'Pesanan Selesai';
+} elseif ($tab == 'cancelled') {$status_filter = "b.status = 'ditolak'";
+    $time_filter = "";
+    $page_title = 'Pesanan Dibatalkan';
 }
 
 // Logika Prev/Next Bulan
-$prev_month =$month - 1;
-$prev_year =$year;
+$prev_month =$month - 1; $prev_year =$year;
 if ($prev_month == 0) { $prev_month = 12; $prev_year--; }
-
-$next_month =$month + 1;
-$next_year =$year;
+$next_month =$month + 1; $next_year =$year;
 if ($next_month == 13) { $next_month = 1; $next_year++; }
 
-// 2. FETCH DATA UNTUK TITIK KALENDER (Tarik Semua: Dikonfirmasi & Menunggu)
-$query_dots = mysqli_query($koneksi, "
-    SELECT tanggal_booking FROM bookings 
-    WHERE id_mua = '$id_mua' AND status IN ('dikonfirmasi', 'menunggu')
-      AND MONTH(tanggal_booking) = '$month' AND YEAR(tanggal_booking) = '$year'
-");
-$booked_dates = [];
-if ($query_dots) {
-    while ($row = mysqli_fetch_assoc($query_dots)) {
-        $booked_dates[] = date('Y-m-d', strtotime($row['tanggal_booking']));
-    }
-}
-
-// 3. FETCH DATA UNTUK DAFTAR KANAN (Hanya ditarik sesuai Tab aktif)
+// --- FETCH DATA PESANAN ---
 $query_bookings = mysqli_query($koneksi, "
     SELECT b.*, u.nama AS nama_klien, u.foto_profil AS foto_klien, u.nomor_telepon, s.nama_layanan 
     FROM bookings b 
     LEFT JOIN users u ON b.id_pelanggan = u.id_user 
     LEFT JOIN services s ON b.id_layanan = s.id_service 
-    WHERE b.id_mua = '$id_mua' AND b.status = '$status_filter'
-      AND MONTH(b.tanggal_booking) = '$month' AND YEAR(b.tanggal_booking) = '$year'
+    WHERE b.id_mua = '$id_mua' AND ($status_filter) $time_filter$date_filter
     ORDER BY b.tanggal_booking ASC, b.waktu_booking ASC
 ");
 
-$all_month_bookings = [];
-if ($query_bookings) {
-    while ($row = mysqli_fetch_assoc($query_bookings)) {
-        $all_month_bookings[] =$row;
-    }
-}
+if (!$query_bookings) { die("Error SQL: " . mysqli_error($koneksi)); }
 
-// 4. FILTER JS (Saring yang akan ditampilkan berdasarkan tanggal yang diklik)
-$bookings_to_show = [];
-if (!empty($selected_date)) {
-    foreach ($all_month_bookings as$bk) {
-        if ($bk['tanggal_booking'] ==$selected_date) {
-            $bookings_to_show[] =$bk;
-        }
+$all_bookings = [];$booked_dates = [];
+while ($row = mysqli_fetch_assoc($query_bookings)) {
+    $all_bookings[] =$row;
+    if ($tab != 'ongoing') {
+        $booked_dates[] = date('Y-m-d', strtotime($row['tanggal_booking']));
     }
-} else {
-    $bookings_to_show =$all_month_bookings; 
 }
 
 // Data Header Kalender
 $days_in_month = cal_days_in_month(CAL_GREGORIAN, $month,$year);
-$first_day_of_month = date('N', strtotime(sprintf("\%04d-\%02d-01", $year, $month)));$date_obj = DateTime::createFromFormat('!m', $month);$month_name_id = str_replace(
+$first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)));$date_obj = DateTime::createFromFormat('!m', $month);$month_name_id = str_replace(
     ['January','February','March','April','May','June','July','August','September','October','November','December'],
     ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],
     $date_obj->format('F') . ' ' .$year
@@ -94,6 +102,9 @@ $first_day_of_month = date('N', strtotime(sprintf("\%04d-\%02d-01", $year, $mont
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/mua_booking.css">
+    <style>
+        .form-inline { display: inline-block; margin: 0; }
+    </style>
 </head>
 <body>
 
@@ -116,9 +127,9 @@ $first_day_of_month = date('N', strtotime(sprintf("\%04d-\%02d-01", $year, $mont
             <input type="text" placeholder="Cari nama klien, kode, atau tanggal">
         </div>
 
-        <div class="booking-grid">
+        <div class="booking-grid" style="<?php echo $tab == 'ongoing' ? 'display: block;' : ''; ?>">
             
-            <!-- KOLOM KIRI: KALENDER -->
+            <?php if ($tab != 'ongoing'): ?>
             <aside class="calendar-sidebar">
                 <div class="calendar-card">
                     <div class="calendar-header">
@@ -131,13 +142,10 @@ $first_day_of_month = date('N', strtotime(sprintf("\%04d-\%02d-01", $year, $mont
                         <div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div><div class="day-name text-red">Sun</div>
                         
                         <?php
-                        // Spacer
                         for ($i = 1; $i < $first_day_of_month; $i++) echo '<div class="date-num empty"></div>';
                         
-                        // Render Tanggal
                         for ($d = 1; $d <= $days_in_month; $d++) {
-                            $current_date = sprintf("\%04d-\%02d-\%02d", $year, $month,$d);
-                            
+                            $current_date = sprintf("%04d-%02d-%02d", $year, $month,$d);
                             $is_sunday = date('N', strtotime($current_date)) == 7 ? 'text-red' : '';
                             $dot_class =$is_sunday ? 'dot cuti-dot' : 'dot';
                             $is_booked = in_array($current_date,$booked_dates) ? "<div class='$dot_class'></div>" : '';
@@ -147,82 +155,132 @@ $first_day_of_month = date('N', strtotime(sprintf("\%04d-\%02d-01", $year, $mont
                         }
                         ?>
                     </div>
-                    
                     <div class="calendar-legend">
-                        <div><span class="legend-dot available"></span> Available</div>
+                        <div><span class="legend-dot available"></span> Jadwal</div>
                         <div><span class="legend-dot cuti"></span> Cuti</div>
                     </div>
                 </div>
             </aside>
+            <?php endif; ?>
 
-            <!-- KOLOM KANAN: DAFTAR PESANAN -->
             <section class="booking-list">
+                <?php if ($tab != 'ongoing'): ?>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="dynamic-list-title" style="margin: 0; font-size: 1.1rem; color: #2b2326; width: 100%;">Semua Pesanan Bulan Ini</h3>
                 </div>
+                <?php endif; ?>
 
-                <div id="empty-state-msg" class="empty-state" style="display: <?php echo count($all_month_bookings) > 0 ? 'none' : 'block'; ?>;">
-                    Belum ada jadwal pesanan di bulan ini.
+                <div id="empty-state-msg" class="empty-state" style="display: <?php echo count($all_bookings) > 0 ? 'none' : 'block'; ?>;">
+                    Belum ada jadwal pesanan.
                 </div>
 
-                <?php foreach ($all_month_bookings as$bk): ?>
-                    <div class="bk-card" data-date="<?php echo $bk['tanggal_booking']; ?>">
+                <?php foreach ($all_bookings as$bk): ?>
+                    <div class="bk-card <?php echo $tab == 'ongoing' ? 'ongoing-layout' : ''; ?>" data-date="<?php echo date('Y-m-d', strtotime($bk['tanggal_booking'])); ?>">
                         <div class="bk-header-info">
-                            <img src="../assets/img/<?php echo htmlspecialchars($bk['foto_klien'] ?? 'default.jpg'); ?>" alt="Klien">
-                            <div class="bk-client-details">
-                                <div class="title-row">
-                                    <h4><?php echo htmlspecialchars($bk['nama_klien']); ?> <span class="invoice-badge"><?php echo htmlspecialchars($bk['no_invoice']); ?></span></h4>
+                            <div class="client-left">
+                                <img src="../assets/img/<?php echo htmlspecialchars($bk['foto_klien'] ?? 'default.jpg'); ?>" alt="Klien">
+                                <div class="bk-client-details">
+                                    <div class="title-row">
+                                        <h4><?php echo htmlspecialchars($bk['nama_klien']); ?> <span class="invoice-badge"><?php echo htmlspecialchars($bk['no_invoice']); ?></span></h4>
+                                        
+                                        <?php 
+                                        $status_db = strtolower($bk['status']);$b_class = ''; $b_icon = '';$b_text = '';
+                                        if (in_array($status_db, ['menunggu', 'pending'])) {$b_class = 'status-warning'; $b_icon = 'fa-solid fa-clock-rotate-left';$b_text = 'Menunggu Konfirmasi';
+                                        } elseif (in_array($status_db, ['selesai', 'done', 'completed'])) {$b_class = 'status-success'; $b_icon = 'fa-solid fa-check-double';$b_text = 'Selesai';
+                                        } elseif (in_array($status_db, ['ditolak', 'dibatalkan', 'cancelled'])) {$b_class = 'status-danger'; $b_icon = 'fa-solid fa-ban';$b_text = 'Dibatalkan';
+                                        } else {
+                                            $b_class = ''; $b_icon = 'fa-regular fa-circle-check';$b_text = 'Terkonfirmasi';
+                                        }
+                                        ?>
+                                        <span class="status-badge <?php echo $b_class; ?>"><i class="<?php echo $b_icon; ?>"></i> <?php echo $b_text; ?></span>
+                                    </div>
+                                    <p class="bk-service"><?php echo htmlspecialchars($bk['nama_layanan']); ?></p>
                                     
-                                    <?php 
-                                    $status_db = $bk['status'];$b_class = ''; $b_icon = '';$b_text = '';
-                                    if ($status_db == 'menunggu') {$b_class = 'status-warning'; $b_icon = 'fa-solid fa-clock-rotate-left';$b_text = 'Menunggu Konfirmasi';
-                                    } elseif ($status_db == 'dikonfirmasi') {$b_class = ''; $b_icon = 'fa-regular fa-circle-check';$b_text = 'Terkonfirmasi';
-                                    } elseif ($status_db == 'selesai') {$b_class = 'status-success'; $b_icon = 'fa-solid fa-check-double';$b_text = 'Selesai';
-                                    } elseif ($status_db == 'ditolak' || $status_db == 'dibatalkan') {$b_class = 'status-danger'; $b_icon = 'fa-solid fa-ban';$b_text = 'Dibatalkan';
-                                    }
-                                    ?>
-                                    <span class="status-badge <?php echo $b_class; ?>"><i class="<?php echo $b_icon; ?>"></i> <?php echo $b_text; ?></span>
-                                </div>
-                                <p class="bk-service"><?php echo htmlspecialchars($bk['nama_layanan']); ?></p>
-                                
-                                <div class="bk-meta-grid">
-                                    <div><i class="fa-regular fa-calendar"></i> <?php echo date('d/m/Y', strtotime($bk['tanggal_booking'])); ?></div>
-                                    <div><i class="fa-regular fa-clock"></i> <?php echo date('H:i', strtotime($bk['waktu_booking'])); ?> WIB</div>
-                                    <div class="full-row"><i class="fa-solid fa-phone"></i> <?php echo htmlspecialchars($bk['nomor_telepon'] ?? '-'); ?></div>
-                                    <div class="full-row text-grey">Lokasi: <?php echo htmlspecialchars($bk['lokasi_acara'] ?? 'Belum ditentukan'); ?></div>
-                                    <div class="full-row text-italic">Catatan Klien: "<?php echo htmlspecialchars($bk['catatan'] ?? '-'); ?>"</div>
+                                    <div class="bk-meta-grid">
+                                        <div><i class="fa-regular fa-calendar"></i> <?php echo date('d/m/Y', strtotime($bk['tanggal_booking'])); ?></div>
+                                        <div><i class="fa-regular fa-clock"></i> <?php echo date('H:i', strtotime($bk['waktu_booking'])); ?> WIB</div>
+                                        <div><i class="fa-solid fa-phone"></i> <?php echo htmlspecialchars($bk['nomor_telepon'] ?? '-'); ?></div>
+                                        <div class="full-row text-grey">Lokasi: <?php echo htmlspecialchars($bk['lokasi_acara'] ?? 'Belum ditentukan'); ?></div>
+                                        <div class="full-row text-italic">Catatan Klien: "<?php echo htmlspecialchars($bk['catatan'] ?? '-'); ?>"</div>
+                                    </div>
                                 </div>
                             </div>
+                            
+                            <?php if ($tab == 'ongoing'): ?>
+                            <div class="action-right">
+                                <h3 class="price-big">Rp <?php echo number_format($bk['total_harga'], 0, ',', '.'); ?></h3>
+                                <div class="btn-stack">
+                                    <button class="btn-outline-grey"><i class="fa-regular fa-comment-dots"></i> Chat Klien</button>
+                                    <?php if ($bk['is_mua_done'] == 0): ?>
+                                        <form method="POST" action="" class="form-inline">
+                                            <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                            <button type="submit" name="konfirmasi_selesai_mua" class="btn-filled-green"><i class="fa-solid fa-circle-check"></i> Konfirmasi Selesai Rias</button>
+                                        </form>
+                                    <?php else: ?>
+                                        <button class="btn-outline-grey" style="cursor: default;"><i class="fa-solid fa-clock-rotate-left"></i> Check Status Konfirmasi Klien</button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <?php endif; ?>
                         </div>
                         
+                        <?php if ($tab != 'ongoing'): ?>
                         <div class="bk-footer-actions">
                             <button class="btn-outline-grey"><i class="fa-regular fa-comment-dots"></i> Chat Klien</button>
                             <div class="action-group">
-                                <?php if($tab == 'ongoing'): ?>
-                                    <button class="btn-filled-green"><i class="fa-solid fa-check"></i> Konfirmasi</button>
-                                    <button class="btn-outline-red"><i class="fa-solid fa-xmark"></i> Tolak</button>
-                                <?php elseif($tab == 'scheduled'): ?>
-                                    <button class="btn-filled-red"><i class="fa-regular fa-circle-xmark"></i> Batalkan Sesi</button>
+                                <?php if ($tab == 'scheduled' && strtolower($bk['status']) == 'menunggu'): ?>
+                                    <form method="POST" class="form-inline">
+                                        <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                        <button type="submit" name="terima_pesanan" class="btn-filled-green"><i class="fa-solid fa-check"></i> Konfirmasi</button>
+                                    </form>
+                                    <form method="POST" class="form-inline">
+                                        <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                        <button type="submit" name="tolak_pesanan" class="btn-outline-red"><i class="fa-solid fa-xmark"></i> Tolak</button>
+                                    </form>
+                                <?php elseif ($tab == 'scheduled' && strtolower($bk['status']) == 'dikonfirmasi'): ?>
+                                    <form method="POST" class="form-inline">
+                                        <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                        <button type="submit" name="batalkan_pesanan" class="btn-filled-red"><i class="fa-regular fa-circle-xmark"></i> Batalkan Sesi</button>
+                                    </form>
                                 <?php endif; ?>
                             </div>
                         </div>
+                        <?php endif; ?>
+
+                        <?php if ($tab == 'ongoing'): ?>
+                        <div class="bk-footer-ongoing">
+                            <div class="pencairan-text">
+                                <strong><i class="fa-solid fa-wand-magic-sparkles" style="color: #7E4655;"></i> Pencairan Dana: Konfirmasi Penyelesaian Sesi Makeup</strong><br>
+                                Dana <b>Rp <?php echo number_format($bk['total_harga'], 0, ',', '.'); ?></b> akan otomatis masuk ke Saldo Dompet setelah Anda & Klien sama-sama mengonfirmasi penyelesaian sesi.
+                            </div>
+                            <div class="status-chips">
+                                <?php if ($bk['is_mua_done'] == 1): ?>
+                                    <span class="chip-status done"><i class="fa-solid fa-check"></i> MUA: Sudah Konfirmasi</span>
+                                <?php else: ?>
+                                    <span class="chip-status pending"><i class="fa-solid fa-hourglass-half"></i> MUA: Belum</span>
+                                <?php endif; ?>
+
+                                <?php if ($bk['is_client_done'] == 1): ?>
+                                    <span class="chip-status done"><i class="fa-solid fa-check"></i> Klien: Sudah Konfirmasi</span>
+                                <?php else: ?>
+                                    <span class="chip-status default"><i class="fa-solid fa-hourglass-half"></i> Klien: Belum</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </section>
         </div>
     </main>
 
+    <?php if ($tab != 'ongoing'): ?>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const navLinks = document.querySelectorAll('.nav-menu-mua a');
-            navLinks.forEach(link => link.classList.remove('active'));
-            if(navLinks[2]) navLinks[2].classList.add('active'); 
-
             const dateBtns = document.querySelectorAll('.date-filter-btn');
             const bookingCards = document.querySelectorAll('.bk-card');
             const emptyState = document.getElementById('empty-state-msg');
             const titleElement = document.getElementById('dynamic-list-title');
-            
             let currentSelectedDate = null;
             let totalCards = bookingCards.length;
 
@@ -235,10 +293,8 @@ $first_day_of_month = date('N', strtotime(sprintf("\%04d-\%02d-01", $year, $mont
                         currentSelectedDate = null;
                         this.classList.remove('selected-date');
                         titleElement.innerHTML = 'Semua Pesanan Bulan Ini';
-                        
                         bookingCards.forEach(card => card.style.display = ''); 
                         emptyState.style.display = totalCards === 0 ? 'block' : 'none';
-                        emptyState.innerHTML = 'Belum ada jadwal pesanan di bulan ini.';
                         return;
                     }
 
@@ -259,9 +315,7 @@ $first_day_of_month = date('N', strtotime(sprintf("\%04d-\%02d-01", $year, $mont
                             card.style.display = 'none';
                         }
                     });
-                    
                     emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-                    emptyState.innerHTML = 'Tidak ada jadwal pesanan pada tanggal ini.';
                     
                     const clearBtn = document.getElementById('clear-filter');
                     if(clearBtn) {
@@ -272,6 +326,15 @@ $first_day_of_month = date('N', strtotime(sprintf("\%04d-\%02d-01", $year, $mont
                     }
                 });
             });
+        });
+    </script>
+    <?php endif; ?>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const navLinks = document.querySelectorAll('.nav-menu-mua a');
+            navLinks.forEach(link => link.classList.remove('active'));
+            if(navLinks[2]) navLinks[2].classList.add('active'); 
         });
     </script>
 </body>

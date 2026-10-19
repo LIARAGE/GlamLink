@@ -152,7 +152,8 @@ INSERT INTO `users` (`id_user`, `nama`, `email`, `nomor_telepon`, `nama_brand`, 
 (2, 'Kayla', 'kayla@gmail.com', '08123456789', 'Kayla Studio', 'Professional Make Up Artist in Greater Jakarta. Since 2020.', 'Greater Jakarta', 'profil_f503a6a7668d8e62.jpg', '$2y$10$bzoVf/3N4E6IW8/.zWqmLuKdHqVH7hgSD8M7wolWAquX/HzqrbU0u', 'mua', '2026-10-16 16:00:25', 'approved', NULL),
 (4, 'alex', 'alex@gmail.com', '081234567890', 'Mpruy Studio', 'Studio tergacor', 'Jakarta Timur', 'profil_713a502cf5c43137.jpg', '$2y$10$ETqMldWHGvcdyxDIxSDb0ulfe5CAHNfIykRGXL4nxd0EjMZdYUWzy', 'mua', '2026-10-17 21:17:26', 'approved', NULL),
 (5, 'ferdi', 'ferdi@gmail.com', '081234567890', 'Gacor Studio', 'pasti gacor', 'Jakarta Timur', 'profil_5092b841046d0c6c.jpg', '$2y$10$aceJkSjULSLhuVIcuapwPulTBP0xxBKnfmXJwjUA1m9JiZCbYoto2', 'mua', '2026-10-17 22:09:29', 'pending', NULL),
-(6, 'kuncoro', 'kuncoro@gmail.com', '081234567890', NULL, NULL, NULL, NULL, '$2y$10$KbxJYMf3nJ0i8pHk1Y9p6OcggB.aY0CIfKzUW6NlfiPQu/OmpQebC', 'pelanggan', '2026-10-19 06:17:44', 'approved', NULL);
+(6, 'kuncoro', 'kuncoro@gmail.com', '081234567890', NULL, NULL, NULL, NULL, '$2y$10$KbxJYMf3nJ0i8pHk1Y9p6OcggB.aY0CIfKzUW6NlfiPQu/OmpQebC', 'pelanggan', '2026-10-19 06:17:44', 'approved', NULL),
+(7, 'Admin 1', 'admin@gmail.com', NULL, NULL, NULL, NULL, NULL, 'admin123', 'admin', '2026-10-19 13:55:41', 'approved', NULL);
 
 --
 -- Indexes for dumped tables
