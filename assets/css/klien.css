@@ -1,0 +1,97 @@
+/* ===== Halaman klien (Home, Cari MUA, Profil MUA, Booking, History, Profil) ===== */
+:root { --p: #7E4655; --p-dark: #623642; --accent: #9A6372; --ink: #2b2326; --muted: #7a6d71; --line: #eadfe0; --soft: #F3E6E8; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #FBF8F4; color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; padding-top: 80px; }
+a { color: inherit; text-decoration: none; }
+.muted { color: var(--muted); } .small { font-size: .85rem; }
+.kl-wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px 60px; }
+.page-top { padding-top: 36px; }
+
+/* --- Hero (sesuai desain: gradasi pink, kartu pencarian putih) --- */
+.kl-hero { background: linear-gradient(180deg, #F6D3D6 0%, #FAE9EA 55%, #FBF8F4 100%); padding: 56px 24px 64px; text-align: center; }
+.kl-hero .salam { margin: 0 0 24px; font-size: 1.8rem; font-weight: 700; }
+.kl-hero .salam span { color: var(--p); }
+.kl-hero h1 { margin: 0 0 14px; font-size: 2.5rem; }
+.kl-hero .sub { max-width: 620px; margin: 0 auto 34px; color: var(--muted); line-height: 1.7; }
+.search-card { max-width: 1070px; margin: 0 auto; background: #fff; border-radius: 24px; padding: 24px 28px; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 18px; align-items: end; text-align: left; box-shadow: 0 6px 24px rgba(126, 70, 85, .08); }
+.search-card.flat { grid-template-columns: 1.3fr 1fr 1fr 1fr auto; border: 1px solid var(--line); box-shadow: none; margin: 0 0 20px; }
+.search-card label, .form-card label { display: block; font-weight: 600; margin-bottom: 8px; }
+.search-card select, .search-card input, .form-card input, .form-card textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--p); border-radius: 10px; font: inherit; background: #fff; color: var(--ink); }
+.btn-cari { display: inline-block; background: var(--p); color: #fff; border: 0; border-radius: 30px; padding: 13px 34px; font: 600 1rem 'Plus Jakarta Sans', sans-serif; cursor: pointer; text-align: center; transition: background .25s; }
+.btn-cari:hover { background: var(--p-dark); } .btn-cari.full { width: 100%; margin-top: 18px; }
+
+/* --- Judul bagian --- */
+.kl-title { color: var(--p); font-size: 1.6rem; margin: 40px 0 18px; font-weight: 700; }
+.kl-title.big { font-size: 2rem; margin-top: 0; }
+.kl-title-row { display: flex; justify-content: space-between; align-items: baseline; }
+.lihat-semua { color: var(--p); font-weight: 700; }
+
+/* --- Grid & kartu portfolio (foto penuh + overlay) --- */
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.porto-card { position: relative; display: block; border-radius: 20px; overflow: hidden; aspect-ratio: 3 / 3.6; color: #fff; background: #d9c6c9; }
+.porto-card .porto-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.porto-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(30, 14, 20, .82) 100%); }
+.lihat-pill { position: absolute; top: 16px; right: 16px; z-index: 2; background: rgba(251, 240, 240, .96); color: var(--p); border-radius: 10px; padding: 8px 14px; font-size: .9rem; font-weight: 500; }
+.porto-info { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 24px; }
+.porto-info h3 { margin: 0 0 10px; font-size: 1.3rem; }
+.porto-mua { display: flex; align-items: center; gap: 10px; font-size: .9rem; margin-bottom: 12px; }
+
+/* --- Kartu MUA populer --- */
+.mua-card { display: block; background: #fff; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; transition: transform .25s, box-shadow .25s; }
+.mua-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(126, 70, 85, .12); }
+.mua-cover { height: 190px; background: var(--soft); } .mua-cover img, .mua-cover .foto-kosong { width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+.mua-body { padding: 18px 20px 20px; }
+.mua-head { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; } .mua-head h3 { margin: 0 0 2px; font-size: 1.05rem; } .mua-head .muted { font-size: .85rem; }
+.mua-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: .9rem; } .mua-foot b { color: var(--p); font-size: 1.05rem; }
+
+/* --- Elemen kecil --- */
+.avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; flex: none; } .avatar.sm { width: 30px; height: 30px; } .avatar.xl { width: 110px; height: 110px; }
+.foto-kosong { display: flex; align-items: center; justify-content: center; background: #EBD9DC; color: #fff; }
+.avatar.foto-kosong { font-size: 1rem; } .avatar.xl.foto-kosong { font-size: 2.6rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; } .chip { display: inline-block; background: #B76E79; color: #fff; border-radius: 6px; padding: 3px 10px; font-size: .78rem; }
+.mua-body .chip { background: var(--soft); color: var(--p); }
+.kosong { text-align: center; color: var(--muted); padding: 60px 20px; } .kosong i { font-size: 2.4rem; color: #cdb5ba; } .kosong p { margin: 14px 0 20px; }
+.hasil-info { margin: 0 0 18px; } .hasil-info a { color: var(--p); font-weight: 600; }
+.kembali { display: inline-block; color: var(--p); font-weight: 600; margin-bottom: 14px; }
+
+/* --- Profil MUA --- */
+.profil-head { display: flex; gap: 24px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 28px; }
+.profil-head h1 { margin: 0 0 6px; font-size: 1.8rem; } .profil-head .bio { margin: 10px 0 0; line-height: 1.7; } .verif { color: #3B8F5A; font-size: 1.1rem; }
+.layanan-item { display: flex; justify-content: space-between; gap: 20px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 20px 24px; margin-bottom: 14px; }
+.layanan-item h3 { margin: 0 0 6px; font-size: 1.1rem; } .layanan-item p { margin: 0 0 8px; } .layanan-item .chip { background: var(--soft); color: var(--p); vertical-align: middle; }
+.fasilitas { list-style: none; margin: 8px 0 0; padding: 0; font-size: .9rem; color: var(--muted); } .fasilitas i { color: #3B8F5A; margin-right: 6px; }
+.aksi { text-align: right; flex: none; } .aksi b { display: block; color: var(--p); font-size: 1.2rem; margin-bottom: 10px; }
+.galeri { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; } .galeri .porto-img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 14px; display: block; }
+
+/* --- Form booking & profil --- */
+.booking-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; align-items: start; }
+.form-card, .ringkasan { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 28px; } .form-card label { margin-top: 16px; } .form-card h3 { margin: 0 0 4px; }
+.form-card input[type=file] { border: 1px dashed var(--accent); }
+.foto-edit { display: flex; align-items: center; gap: 18px; }
+.ringkasan h3 { margin: 0 0 14px; } .ringkasan p { display: flex; justify-content: space-between; gap: 12px; margin: 10px 0; } .ringkasan .total b { color: var(--p); font-size: 1.3rem; } .ringkasan hr { border: 0; border-top: 1px solid var(--line); }
+.alert-err, .alert-ok { border-radius: 12px; padding: 12px 16px; margin: 0 0 16px; } .alert-err { background: #FCE8E8; color: #9a2a2a; } .alert-ok { background: #E6F4EA; color: #276a3f; }
+
+/* --- History --- */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; } .tabs a { padding: 8px 18px; border: 1px solid var(--line); border-radius: 30px; background: #fff; color: var(--p); font-weight: 500; } .tabs a.on { background: var(--p); color: #fff; border-color: var(--p); }
+.order-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 20px 24px; margin-bottom: 14px; }
+.order-top { display: flex; justify-content: space-between; margin-bottom: 14px; } .inv { font-weight: 700; color: var(--muted); }
+.order-mua { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; } .order-mua h3 { margin: 0; font-size: 1.05rem; }
+.order-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; color: var(--muted); font-size: .92rem; } .order-meta b { margin-left: auto; color: var(--p); font-size: 1.1rem; }
+.badge-status { padding: 4px 14px; border-radius: 30px; font-size: .82rem; font-weight: 600; }
+.s-menunggu { background: #FBF1DE; color: #A8731C; } .s-dikonfirmasi { background: #E3EEFB; color: #2D63A8; } .s-selesai { background: #E6F4EA; color: #276a3f; } .s-ditolak { background: #FCE8E8; color: #9a2a2a; }
+
+/* --- Menu bawah (HP) --- */
+.bottom-nav { display: none; }
+
+/* --- Tablet & HP --- */
+@media (max-width: 992px) {
+    .grid-3 { grid-template-columns: repeat(2, 1fr); } .search-card, .search-card.flat { grid-template-columns: 1fr 1fr; } .galeri { grid-template-columns: repeat(3, 1fr); } .booking-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+    body { padding-bottom: 72px; } .kl-hero h1 { font-size: 1.9rem; } .kl-hero .salam { font-size: 1.4rem; }
+    .search-card, .search-card.flat { grid-template-columns: 1fr; padding: 20px; } .btn-cari { width: 100%; }
+    .grid-3 { grid-template-columns: 1fr; } .galeri { grid-template-columns: repeat(2, 1fr); }
+    .profil-head { flex-direction: column; text-align: center; } .layanan-item { flex-direction: column; align-items: stretch; } .aksi { text-align: left; }
+    .bottom-nav { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; background: #fff; border-top: 1px solid var(--line); padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px)); }
+    .bottom-nav a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: .72rem; color: var(--muted); } .bottom-nav a i { font-size: 1.15rem; } .bottom-nav a.on { color: var(--p); font-weight: 700; }
+}
