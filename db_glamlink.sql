@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 19, 2026 at 08:53 AM
+-- Generation Time: Oct 19, 2026 at 10:59 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -27,7 +27,6 @@ SET time_zone = "+00:00";
 -- Table structure for table `bookings`
 --
 
-DROP TABLE IF EXISTS `bookings`;
 CREATE TABLE `bookings` (
   `id_booking` int(11) NOT NULL,
   `no_invoice` varchar(20) NOT NULL,
@@ -42,6 +41,9 @@ CREATE TABLE `bookings` (
   `status` enum('menunggu','dikonfirmasi','selesai','ditolak') NOT NULL DEFAULT 'menunggu',
   `is_mua_done` tinyint(1) DEFAULT 0,
   `is_client_done` tinyint(1) DEFAULT 0,
+  `foto_dokumentasi` varchar(255) DEFAULT NULL,
+  `rating` int(1) DEFAULT NULL,
+  `ulasan` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -49,11 +51,13 @@ CREATE TABLE `bookings` (
 -- Dumping data for table `bookings`
 --
 
-INSERT INTO `bookings` (`id_booking`, `no_invoice`, `id_mua`, `id_pelanggan`, `id_layanan`, `tanggal_booking`, `waktu_booking`, `lokasi_acara`, `catatan`, `total_harga`, `status`, `is_mua_done`, `is_client_done`, `created_at`) VALUES
-(2, 'GL-8921', 2, 1, 1, '2026-10-24', '04:00:00', NULL, NULL, 3000000, 'menunggu', 0, 0, '2026-10-16 18:25:27'),
-(3, 'GL-7742', 2, 1, 1, '2026-10-30', '16:00:00', NULL, NULL, 3000000, 'menunggu', 0, 0, '2026-10-16 18:25:27'),
-(4, 'GL-6001', 2, 1, 1, '2026-10-10', '08:00:00', NULL, NULL, 3000000, 'selesai', 0, 0, '2026-10-16 18:25:27'),
-(5, 'GL-6002', 2, 1, 1, '2026-10-12', '10:00:00', NULL, NULL, 3000000, 'selesai', 0, 0, '2026-10-16 18:25:27');
+INSERT INTO `bookings` (`id_booking`, `no_invoice`, `id_mua`, `id_pelanggan`, `id_layanan`, `tanggal_booking`, `waktu_booking`, `lokasi_acara`, `catatan`, `total_harga`, `status`, `is_mua_done`, `is_client_done`, `foto_dokumentasi`, `rating`, `ulasan`, `created_at`) VALUES
+(2, 'GL-8921', 2, 1, 1, '2026-10-24', '04:00:00', NULL, NULL, 3000000, 'ditolak', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27'),
+(3, 'GL-7742', 2, 1, 1, '2026-10-30', '16:00:00', NULL, NULL, 3000000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27'),
+(4, 'GL-6001', 2, 1, 1, '2026-10-10', '08:00:00', 'Fairmont Jakarta, Gelora Bung Karno', 'Makeup natural aja', 3000000, 'selesai', 1, 1, 'dokum_sample_1.jpg', 5, 'Suka banget sama hasilnya! Tahan seharian walau keringetan.', '2026-10-16 18:25:27'),
+(5, 'GL-6002', 2, 1, 1, '2026-10-12', '10:00:00', 'Plataran Dharmawangsa, Jakarta Selatan', 'Minta flawless complexion', 3000000, 'selesai', 1, 1, 'dokum_sample_2.jpg', 4, 'Bagus, MUA-nya ramah dan on time. Sayang lipstiknya agak gampang hilang kalau dipakai makan.', '2026-10-16 18:25:27'),
+(6, 'GL-4288', 2, 1, 1, '2026-09-14', '10:00:00', 'Hutan Kota by Plataran, GBK', 'Smokey eyes agak bold', 3000000, 'selesai', 1, 1, NULL, NULL, NULL, '2026-10-19 08:25:30'),
+(7, 'GL-9820', 2, 1, 2, '2026-10-19', '14:00:00', 'Hotel Mulia Senayan', 'Acaraku mulai jam 7 sebenarnya, tapi aku mau kelar sblm jam 6', 750000, 'dikonfirmasi', 0, 0, NULL, NULL, NULL, '2026-10-19 08:25:30');
 
 -- --------------------------------------------------------
 
@@ -61,7 +65,6 @@ INSERT INTO `bookings` (`id_booking`, `no_invoice`, `id_mua`, `id_pelanggan`, `i
 -- Table structure for table `chats`
 --
 
-DROP TABLE IF EXISTS `chats`;
 CREATE TABLE `chats` (
   `id_chat` int(11) NOT NULL,
   `id_pengirim` int(11) NOT NULL,
@@ -76,7 +79,6 @@ CREATE TABLE `chats` (
 -- Table structure for table `portfolios`
 --
 
-DROP TABLE IF EXISTS `portfolios`;
 CREATE TABLE `portfolios` (
   `id_portfolio` int(11) NOT NULL,
   `id_mua` int(11) NOT NULL,
@@ -98,7 +100,6 @@ INSERT INTO `portfolios` (`id_portfolio`, `id_mua`, `foto`) VALUES
 -- Table structure for table `services`
 --
 
-DROP TABLE IF EXISTS `services`;
 CREATE TABLE `services` (
   `id_service` int(11) NOT NULL,
   `id_mua` int(11) NOT NULL,
@@ -116,7 +117,7 @@ CREATE TABLE `services` (
 
 INSERT INTO `services` (`id_service`, `id_mua`, `nama_layanan`, `kategori`, `harga`, `durasi`, `deskripsi`, `fasilitas`) VALUES
 (1, 2, 'Wedding Makeup', 'Bridal', 3000000.00, '1 hari', '1 day service for Bride. Make Up and Touch Up.', NULL),
-(2, 2, 'Graduation', 'Makeup', 750000.00, '', 'Complexion 1 hari', '[\"Pouch mini retouch gratis\",\"Glow area pundak & leher\",\"Pemasangan softlens ramah mata\"]'),
+(2, 2, 'Graduation', 'Makeup', 750000.00, '120 menit', 'Complexion 1 hari', '[\"Pouch mini retouch gratis\",\"Glow area pundak & leher\",\"Pemasangan softlens ramah mata\"]'),
 (3, 4, 'Make Up Wedding', 'Bridal', 100000.00, '120 menit', 'mantab 1000%', NULL),
 (4, 5, 'ga tau dah', 'Bridal', 200000.00, '200 menit', 'dijamin bagus', NULL);
 
@@ -126,7 +127,6 @@ INSERT INTO `services` (`id_service`, `id_mua`, `nama_layanan`, `kategori`, `har
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id_user` int(11) NOT NULL,
   `nama` varchar(100) NOT NULL,
@@ -148,7 +148,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `nama`, `email`, `nomor_telepon`, `nama_brand`, `bio`, `lokasi`, `foto_profil`, `password`, `role`, `dibuat_pada`, `status_verifikasi`, `alasan_tolak`) VALUES
-(1, 'Jocelyn Nicole', 'jocelyn@gmail.com', NULL, NULL, NULL, NULL, NULL, '$2y$10$KfUdb8DbOKU8H2hrssUrjO9YmOMbX1OKKzTArE/VV78ZKkKkiyeXC', 'pelanggan', '2026-10-04 19:41:41', 'approved', NULL),
+(1, 'Jocelyn Nicole', 'jocelyn@gmail.com', NULL, NULL, NULL, NULL, '9f567205-162e-4c5e-a3c5-bbe07dd47cf0.jpg', '$2y$10$KfUdb8DbOKU8H2hrssUrjO9YmOMbX1OKKzTArE/VV78ZKkKkiyeXC', 'pelanggan', '2026-10-04 19:41:41', 'approved', NULL),
 (2, 'Kayla', 'kayla@gmail.com', '08123456789', 'Kayla Studio', 'Professional Make Up Artist in Greater Jakarta. Since 2020.', 'Greater Jakarta', 'profil_f503a6a7668d8e62.jpg', '$2y$10$bzoVf/3N4E6IW8/.zWqmLuKdHqVH7hgSD8M7wolWAquX/HzqrbU0u', 'mua', '2026-10-16 16:00:25', 'approved', NULL),
 (4, 'alex', 'alex@gmail.com', '081234567890', 'Mpruy Studio', 'Studio tergacor', 'Jakarta Timur', 'profil_713a502cf5c43137.jpg', '$2y$10$ETqMldWHGvcdyxDIxSDb0ulfe5CAHNfIykRGXL4nxd0EjMZdYUWzy', 'mua', '2026-10-17 21:17:26', 'approved', NULL),
 (5, 'ferdi', 'ferdi@gmail.com', '081234567890', 'Gacor Studio', 'pasti gacor', 'Jakarta Timur', 'profil_5092b841046d0c6c.jpg', '$2y$10$aceJkSjULSLhuVIcuapwPulTBP0xxBKnfmXJwjUA1m9JiZCbYoto2', 'mua', '2026-10-17 22:09:29', 'pending', NULL),
@@ -206,7 +206,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id_booking` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_booking` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `chats`
@@ -230,7 +230,7 @@ ALTER TABLE `services`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
