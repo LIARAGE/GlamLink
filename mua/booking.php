@@ -8,11 +8,8 @@ if (!isset($_SESSION['status_login']) || $_SESSION['role'] != 'mua') {
 }
 
 $id_mua = $_SESSION['id_user'];
-$month = isset($_GET['m']) ? (int)$_GET['m'] : (int)date('m');
-$year = isset($_GET['y']) ? (int)$_GET['y'] : (int)date('Y');
-$tab = $_GET['tab'] ?? 'scheduled';
 
-// --- PROSES BACKEND: KONFIRMASI SELESAI (ONGOING) ---
+// --- PROSES KONFIRMASI SELESAI RIAS OLEH MUA ---
 if (isset($_POST['konfirmasi_selesai_mua'])) {
     $id_booking_done = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
     mysqli_query($koneksi, "UPDATE bookings SET is_mua_done = 1 WHERE id_booking = '$id_booking_done' AND id_mua = '$id_mua'");
@@ -23,45 +20,54 @@ if (isset($_POST['konfirmasi_selesai_mua'])) {
             mysqli_query($koneksi, "UPDATE bookings SET status = 'selesai' WHERE id_booking = '$id_booking_done'");
         }
     }
-    header("Location: booking.php?tab=ongoing&m=$month&y=$year");
+    header("Location: booking.php?tab=ongoing");
     exit();
 }
 
-// --- PROSES BACKEND: TERIMA / TOLAK / BATALKAN (SCHEDULED) ---
+// --- PROSES TERIMA / TOLAK / BATALKAN (SCHEDULED) ---
 if (isset($_POST['terima_pesanan'])) {
     $id_b = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
     mysqli_query($koneksi, "UPDATE bookings SET status = 'dikonfirmasi' WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
-    header("Location: booking.php?tab=scheduled&m=$month&y=$year");
+    header("Location: booking.php?tab=scheduled");
     exit();
 }
-if (isset($_POST['tolak_pesanan']) || isset($_POST['batalkan_pesanan'])) {$id_b = mysqli_real_escape_string($koneksi,$_POST['id_booking']);
+if (isset($_POST['tolak_pesanan']) || isset($_POST['batalkan_pesanan'])) {
+    $id_b = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
     mysqli_query($koneksi, "UPDATE bookings SET status = 'ditolak' WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
-    header("Location: booking.php?tab=scheduled&m=$month&y=$year");
+    header("Location: booking.php?tab=scheduled");
     exit();
 }
 
-// --- LOGIKA FILTER DINAMIS BERDASARKAN TAB ---
+// --- AMBIL PARAMETER WAKTU & TAB ---
+$month = isset($_GET['m']) ? (int)$_GET['m'] : (int)date('m');
+$year = isset($_GET['y']) ? (int)$_GET['y'] : (int)date('Y');
+$tab = $_GET['tab'] ?? 'scheduled';
+
+// --- LOGIKA FILTER DINAMIS ---
 $status_filter = "b.status IN ('menunggu', 'dikonfirmasi')"; 
 $time_filter = "AND (b.tanggal_booking > CURDATE() OR (b.tanggal_booking = CURDATE() AND b.waktu_booking > CURTIME()))";
 $date_filter = "AND MONTH(b.tanggal_booking) = '$month' AND YEAR(b.tanggal_booking) = '$year'";
-$page_title = 'Jadwal Pesanan';
+$page_title = 'Pesanan Terkonfirmasi';
 
-if ($tab == 'ongoing') {$status_filter = "b.status = 'dikonfirmasi'";
+if ($tab == 'ongoing') {
+    $status_filter = "b.status = 'dikonfirmasi'";
     $time_filter = "AND (b.tanggal_booking < CURDATE() OR (b.tanggal_booking = CURDATE() AND b.waktu_booking <= CURTIME()))";
     $date_filter = ""; 
     $page_title = 'Jadwal Hari Ini';
-} elseif ($tab == 'done') {$status_filter = "b.status = 'selesai'";
+} elseif ($tab == 'done') {
+    $status_filter = "b.status = 'selesai'";
     $time_filter = "";
     $page_title = 'Pesanan Selesai';
-} elseif ($tab == 'cancelled') {$status_filter = "b.status = 'ditolak'";
+} elseif ($tab == 'cancelled') {
+    $status_filter = "b.status = 'ditolak'";
     $time_filter = "";
     $page_title = 'Pesanan Dibatalkan';
 }
 
 // Logika Prev/Next Bulan
-$prev_month =$month - 1; $prev_year =$year;
+$prev_month = $month - 1; $prev_year = $year;
 if ($prev_month == 0) { $prev_month = 12; $prev_year--; }
-$next_month =$month + 1; $next_year =$year;
+$next_month = $month + 1; $next_year = $year;
 if ($next_month == 13) { $next_month = 1; $next_year++; }
 
 // --- FETCH DATA PESANAN ---
@@ -70,26 +76,29 @@ $query_bookings = mysqli_query($koneksi, "
     FROM bookings b 
     LEFT JOIN users u ON b.id_pelanggan = u.id_user 
     LEFT JOIN services s ON b.id_layanan = s.id_service 
-    WHERE b.id_mua = '$id_mua' AND ($status_filter) $time_filter$date_filter
+    WHERE b.id_mua = '$id_mua' AND ($status_filter) $time_filter $date_filter
     ORDER BY b.tanggal_booking ASC, b.waktu_booking ASC
 ");
 
-if (!$query_bookings) { die("Error SQL: " . mysqli_error($koneksi)); }
-
-$all_bookings = [];$booked_dates = [];
-while ($row = mysqli_fetch_assoc($query_bookings)) {
-    $all_bookings[] =$row;
-    if ($tab != 'ongoing') {
-        $booked_dates[] = date('Y-m-d', strtotime($row['tanggal_booking']));
+$all_bookings = [];
+$booked_dates = [];
+if ($query_bookings) {
+    while ($row = mysqli_fetch_assoc($query_bookings)) {
+        $all_bookings[] = $row;
+        if ($tab != 'ongoing') {
+            $booked_dates[] = date('Y-m-d', strtotime($row['tanggal_booking']));
+        }
     }
 }
 
 // Data Header Kalender
-$days_in_month = cal_days_in_month(CAL_GREGORIAN, $month,$year);
-$first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)));$date_obj = DateTime::createFromFormat('!m', $month);$month_name_id = str_replace(
+$days_in_month = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+$first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)));
+$date_obj = DateTime::createFromFormat('!m', $month);
+$month_name_id = str_replace(
     ['January','February','March','April','May','June','July','August','September','October','November','December'],
     ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],
-    $date_obj->format('F') . ' ' .$year
+    $date_obj->format('F') . ' ' . $year
 );
 ?>
 <!DOCTYPE html>
@@ -116,7 +125,7 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
         </div>
 
         <div class="booking-tabs">
-            <a href="?tab=scheduled&m=<?php echo $month; ?>&y=<?php echo$year; ?>" class="tab-link <?php echo $tab == 'scheduled' ? 'active' : ''; ?>">Scheduled</a>
+            <a href="?tab=scheduled&m=<?php echo $month; ?>&y=<?php echo $year; ?>" class="tab-link <?php echo $tab == 'scheduled' ? 'active' : ''; ?>">Scheduled</a>
             <a href="?tab=ongoing&m=<?php echo $month; ?>&y=<?php echo$year; ?>" class="tab-link <?php echo $tab == 'ongoing' ? 'active' : ''; ?>">Ongoing</a>
             <a href="?tab=done&m=<?php echo $month; ?>&y=<?php echo$year; ?>" class="tab-link <?php echo $tab == 'done' ? 'active' : ''; ?>">Done</a>
             <a href="?tab=cancelled&m=<?php echo $month; ?>&y=<?php echo$year; ?>" class="tab-link <?php echo $tab == 'cancelled' ? 'active' : ''; ?>">Cancelled</a>
@@ -151,7 +160,7 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
                             $is_booked = in_array($current_date,$booked_dates) ? "<div class='$dot_class'></div>" : '';
                             $is_today =$current_date == date('Y-m-d') ? 'today' : '';
                             
-                            echo "<a href='#' data-date='$current_date' class='date-num date-filter-btn$is_sunday $is_today' style='font-weight:".($is_today ? 'bold' : 'normal').";'>$d$is_booked</a>";
+                            echo "<a href='#' data-filter-date='$current_date' class='date-num date-filter-btn$is_sunday $is_today' style='font-weight:".($is_today ? 'bold' : 'normal').";'>$d$is_booked</a>";
                         }
                         ?>
                     </div>
@@ -175,7 +184,46 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
                 </div>
 
                 <?php foreach ($all_bookings as$bk): ?>
-                    <div class="bk-card <?php echo $tab == 'ongoing' ? 'ongoing-layout' : ''; ?>" data-date="<?php echo date('Y-m-d', strtotime($bk['tanggal_booking'])); ?>">
+                    <div class="bk-card <?php echo $tab == 'ongoing' ? 'ongoing-layout' : ''; ?>" 
+                         data-filter-date="<?php echo date('Y-m-d', strtotime($bk['tanggal_booking'])); ?>"
+                         data-inv="<?php echo htmlspecialchars($bk['no_invoice']); ?>"
+                         data-name="<?php echo htmlspecialchars($bk['nama_klien']); ?>"
+                         data-service="<?php echo htmlspecialchars($bk['nama_layanan']); ?>"
+                         data-date-str="<?php echo date('d/m/Y', strtotime($bk['tanggal_booking'])); ?>"
+                         data-time="<?php echo date('H:i', strtotime($bk['waktu_booking'])); ?>"
+                         data-location="<?php echo htmlspecialchars($bk['lokasi_acara'] ?? 'Belum ditentukan'); ?>"
+                         data-phone="<?php echo htmlspecialchars($bk['nomor_telepon'] ?? '-'); ?>"
+                         data-notes="<?php echo htmlspecialchars($bk['catatan'] ?? '-'); ?>"
+                         data-price="Rp <?php echo number_format($bk['total_harga'], 0, ',', '.'); ?>">
+                         
+                        <!-- ELEMEN TERSEMBUNYI UNTUK TOMBOL MODAL POP-UP -->
+                        <div class="card-action-data" style="display: none;">
+                            <?php if ($tab == 'ongoing'): ?>
+                                <?php if ($bk['is_mua_done'] == 0): ?>
+                                    <form method="POST" action="" class="modal-form-stretch">
+                                        <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                        <button type="submit" name="konfirmasi_selesai_mua" class="btn-filled-green btn-stretch"><i class="fa-solid fa-circle-check"></i> Konfirmasi Selesai Rias</button>
+                                    </form>
+                                <?php else: ?>
+                                    <button class="btn-outline-grey btn-stretch" style="cursor: default;"><i class="fa-solid fa-clock-rotate-left"></i> Menunggu Konfirmasi Klien</button>
+                                <?php endif; ?>
+                            <?php elseif ($tab == 'scheduled' && strtolower($bk['status']) == 'menunggu'): ?>
+                                <form method="POST" action="" class="modal-form-stretch">
+                                    <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                    <button type="submit" name="terima_pesanan" class="btn-filled-green btn-stretch"><i class="fa-solid fa-check"></i> Konfirmasi Pesanan</button>
+                                </form>
+                                <form method="POST" action="" class="modal-form-stretch">
+                                    <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                    <button type="submit" name="tolak_pesanan" class="btn-outline-red btn-stretch"><i class="fa-solid fa-xmark"></i> Tolak</button>
+                                </form>
+                            <?php elseif ($tab == 'scheduled' && strtolower($bk['status']) == 'dikonfirmasi'): ?>
+                                <form method="POST" action="" class="modal-form-stretch">
+                                    <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                    <button type="submit" name="batalkan_pesanan" class="btn-filled-red btn-stretch"><i class="fa-regular fa-circle-xmark"></i> Batalkan Sesi</button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                        
                         <div class="bk-header-info">
                             <div class="client-left">
                                 <img src="../assets/img/<?php echo htmlspecialchars($bk['foto_klien'] ?? 'default.jpg'); ?>" alt="Klien">
@@ -200,8 +248,11 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
                                         <div><i class="fa-regular fa-calendar"></i> <?php echo date('d/m/Y', strtotime($bk['tanggal_booking'])); ?></div>
                                         <div><i class="fa-regular fa-clock"></i> <?php echo date('H:i', strtotime($bk['waktu_booking'])); ?> WIB</div>
                                         <div><i class="fa-solid fa-phone"></i> <?php echo htmlspecialchars($bk['nomor_telepon'] ?? '-'); ?></div>
+                                        
+                                        <?php if($tab != 'ongoing'): ?>
+                                            <div><i class="fa-solid fa-money-bill-wave"></i> Rp <?php echo number_format($bk['total_harga'], 0, ',', '.'); ?></div>
+                                        <?php endif; ?>
                                         <div class="full-row text-grey">Lokasi: <?php echo htmlspecialchars($bk['lokasi_acara'] ?? 'Belum ditentukan'); ?></div>
-                                        <div class="full-row text-italic">Catatan Klien: "<?php echo htmlspecialchars($bk['catatan'] ?? '-'); ?>"</div>
                                     </div>
                                 </div>
                             </div>
@@ -210,14 +261,14 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
                             <div class="action-right">
                                 <h3 class="price-big">Rp <?php echo number_format($bk['total_harga'], 0, ',', '.'); ?></h3>
                                 <div class="btn-stack">
-                                    <button class="btn-outline-grey"><i class="fa-regular fa-comment-dots"></i> Chat Klien</button>
+                                    <button class="btn-outline-grey" onclick="event.stopPropagation()"><i class="fa-regular fa-comment-dots"></i> Chat Klien</button>
                                     <?php if ($bk['is_mua_done'] == 0): ?>
-                                        <form method="POST" action="" class="form-inline">
+                                        <form method="POST" action="" class="form-inline" onclick="event.stopPropagation()">
                                             <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
                                             <button type="submit" name="konfirmasi_selesai_mua" class="btn-filled-green"><i class="fa-solid fa-circle-check"></i> Konfirmasi Selesai Rias</button>
                                         </form>
                                     <?php else: ?>
-                                        <button class="btn-outline-grey" style="cursor: default;"><i class="fa-solid fa-clock-rotate-left"></i> Check Status Konfirmasi Klien</button>
+                                        <button class="btn-outline-grey" style="cursor: default;" onclick="event.stopPropagation()"><i class="fa-solid fa-clock-rotate-left"></i> Status Konfirmasi Klien</button>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -226,19 +277,19 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
                         
                         <?php if ($tab != 'ongoing'): ?>
                         <div class="bk-footer-actions">
-                            <button class="btn-outline-grey"><i class="fa-regular fa-comment-dots"></i> Chat Klien</button>
+                            <button class="btn-outline-grey" onclick="event.stopPropagation()"><i class="fa-regular fa-comment-dots"></i> Chat Klien</button>
                             <div class="action-group">
                                 <?php if ($tab == 'scheduled' && strtolower($bk['status']) == 'menunggu'): ?>
-                                    <form method="POST" class="form-inline">
+                                    <form method="POST" class="form-inline" onclick="event.stopPropagation()">
                                         <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
                                         <button type="submit" name="terima_pesanan" class="btn-filled-green"><i class="fa-solid fa-check"></i> Konfirmasi</button>
                                     </form>
-                                    <form method="POST" class="form-inline">
+                                    <form method="POST" class="form-inline" onclick="event.stopPropagation()">
                                         <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
                                         <button type="submit" name="tolak_pesanan" class="btn-outline-red"><i class="fa-solid fa-xmark"></i> Tolak</button>
                                     </form>
                                 <?php elseif ($tab == 'scheduled' && strtolower($bk['status']) == 'dikonfirmasi'): ?>
-                                    <form method="POST" class="form-inline">
+                                    <form method="POST" class="form-inline" onclick="event.stopPropagation()">
                                         <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
                                         <button type="submit" name="batalkan_pesanan" class="btn-filled-red"><i class="fa-regular fa-circle-xmark"></i> Batalkan Sesi</button>
                                     </form>
@@ -250,8 +301,8 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
                         <?php if ($tab == 'ongoing'): ?>
                         <div class="bk-footer-ongoing">
                             <div class="pencairan-text">
-                                <strong><i class="fa-solid fa-wand-magic-sparkles" style="color: #7E4655;"></i> Pencairan Dana: Konfirmasi Penyelesaian Sesi Makeup</strong><br>
-                                Dana <b>Rp <?php echo number_format($bk['total_harga'], 0, ',', '.'); ?></b> akan otomatis masuk ke Saldo Dompet setelah Anda & Klien sama-sama mengonfirmasi penyelesaian sesi.
+                                <strong><i class="fa-solid fa-wand-magic-sparkles" style="color: #7E4655;"></i> Pencairan Dana</strong><br>
+                                Dana otomatis masuk ke Saldo Dompet setelah Anda & Klien mengonfirmasi penyelesaian sesi.
                             </div>
                             <div class="status-chips">
                                 <?php if ($bk['is_mua_done'] == 1): ?>
@@ -274,11 +325,78 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
         </div>
     </main>
 
-    <?php if ($tab != 'ongoing'): ?>
+    <!-- MODAL / POP-UP DETAIL PESANAN -->
+    <div id="bookingModal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="close-modal" onclick="closeBookingModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header-text">
+                <span class="inv-number" id="modalInvoice">GL-0000</span>
+                <h2 id="modalClientName">Nama Klien</h2>
+            </div>
+            <div class="modal-section">
+                <div class="detail-row">
+                    <span class="label">Layanan</span>
+                    <span class="value bold" id="modalService">Service Name</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Tanggal & Waktu</span>
+                    <span class="value" id="modalDateTime">Date, Time</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Lokasi</span>
+                    <span class="value" id="modalLocation">Location</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">No. Telepon</span>
+                    <span class="value" id="modalPhone">Phone</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Catatan Klien</span>
+                    <span class="value italic" id="modalNotes">Notes</span>
+                </div>
+                <div class="detail-row" style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px;">
+                    <span class="label">Total Harga</span>
+                    <span class="value price" id="modalPrice">Rp 0</span>
+                </div>
+            </div>
+            <!-- WADAH AKSI TOMBOL YANG DISUNTIKKAN VIA JS -->
+            <div class="modal-footer-actions" id="modalActionButtons"></div>
+        </div>
+    </div>
+
+    <!-- SCRIPT UTAMA & FILTER TANGGAL -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const dateBtns = document.querySelectorAll('.date-filter-btn');
+            const navLinks = document.querySelectorAll('.nav-menu-mua a');
+            navLinks.forEach(link => link.classList.remove('active'));
+            if(navLinks[2]) navLinks[2].classList.add('active'); 
+
+            // Logika Klik Kartu untuk Modal
             const bookingCards = document.querySelectorAll('.bk-card');
+            bookingCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('button') || e.target.closest('form') || e.target.closest('a')) return;
+                    
+                    document.getElementById('modalInvoice').innerText = this.getAttribute('data-inv');
+                    document.getElementById('modalClientName').innerText = this.getAttribute('data-name');
+                    document.getElementById('modalService').innerText = this.getAttribute('data-service');
+                    document.getElementById('modalDateTime').innerText = this.getAttribute('data-date-str') + ' - ' + this.getAttribute('data-time') + ' WIB';
+                    document.getElementById('modalLocation').innerText = this.getAttribute('data-location');
+                    document.getElementById('modalPhone').innerText = this.getAttribute('data-phone');
+                    document.getElementById('modalNotes').innerText = '"' + this.getAttribute('data-notes') + '"';
+                    document.getElementById('modalPrice').innerText = this.getAttribute('data-price');
+                    
+                    // Suntikkan tombol form aksi spesifik dari kartu yang diklik ke dalam modal
+                    const actionData = this.querySelector('.card-action-data');
+                    document.getElementById('modalActionButtons').innerHTML = actionData ? actionData.innerHTML : '';
+                    
+                    document.getElementById('bookingModal').style.display = 'flex';
+                });
+            });
+
+            // Logika Filter Kalender
+            <?php if ($tab != 'ongoing'): ?>
+            const dateBtns = document.querySelectorAll('.date-filter-btn');
             const emptyState = document.getElementById('empty-state-msg');
             const titleElement = document.getElementById('dynamic-list-title');
             let currentSelectedDate = null;
@@ -287,7 +405,7 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
             dateBtns.forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const selectedDate = this.getAttribute('data-date');
+                    const selectedDate = this.getAttribute('data-filter-date');
                     
                     if (currentSelectedDate === selectedDate) {
                         currentSelectedDate = null;
@@ -308,7 +426,7 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
                     
                     let visibleCount = 0;
                     bookingCards.forEach(card => {
-                        if (card.getAttribute('data-date') === selectedDate) {
+                        if (card.getAttribute('data-filter-date') === selectedDate) {
                             card.style.display = '';
                             visibleCount++;
                         } else {
@@ -326,15 +444,12 @@ $first_day_of_month = date('N', strtotime(sprintf("%04d-%02d-01", $year, $month)
                     }
                 });
             });
+            <?php endif; ?>
         });
-    </script>
-    <?php endif; ?>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const navLinks = document.querySelectorAll('.nav-menu-mua a');
-            navLinks.forEach(link => link.classList.remove('active'));
-            if(navLinks[2]) navLinks[2].classList.add('active'); 
+        function closeBookingModal() { document.getElementById('bookingModal').style.display = 'none'; }
+        document.getElementById('bookingModal').addEventListener('click', function(e) {
+            if(e.target === this) closeBookingModal();
         });
     </script>
 </body>

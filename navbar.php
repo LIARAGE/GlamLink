@@ -38,7 +38,7 @@ if ($nav_logged_in && in_array($nav_role, ['mua', 'pelanggan']) && isset($koneks
             <a href="<?php echo $path_prefix; ?>mua/index.php">Home</a>
             <a href="<?php echo $path_prefix; ?>mua/services.php">Services</a>
             <a href="<?php echo $path_prefix; ?>mua/booking.php">Booking</a>
-            <a href="#">Subscription</a>
+            <a href="<?php echo $path_prefix; ?>mua/subscription.php">Subscription</a>
         </div>
         <?php endif; ?>
         
