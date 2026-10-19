@@ -360,3 +360,123 @@ a.date-num.selected-date {
         gap: 15px;
     }
 }
+
+/* =========================================
+   MODAL / POP-UP DETAIL PESANAN
+========================================= */
+.bk-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.bk-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+}
+
+.modal-overlay {
+    display: none; 
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-box {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    padding: 30px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #FAF5F6;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #8c8286;
+    font-size: 1rem;
+}
+
+.modal-header-text {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eae5e3;
+    padding-bottom: 15px;
+}
+
+.modal-header-text .inv-number {
+    font-size: 0.8rem;
+    color: #8c8286;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.modal-header-text h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #2b2326;
+}
+
+.modal-section {
+    background-color: #FAF5F6;
+    border-radius: 12px;
+    padding: 15px 20px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.label {
+    color: #8c8286;
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.value {
+    color: #2b2326;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    text-align: right;
+}
+
+.value.bold { font-weight: 600; }
+.value.price { font-weight: 700; color: #7E4655; font-size: 1.1rem; }
+.value.italic { font-style: italic; color: #6d6468; }
+
+/* Styling tombol yang disuntikkan ke dalam modal footer */
+.modal-footer-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+.modal-form-stretch {
+    flex: 1;
+    display: flex;
+}
+.btn-stretch {
+    flex: 1;
+    justify-content: center;
+    padding: 12px;
+    font-size: 0.95rem;
+}
