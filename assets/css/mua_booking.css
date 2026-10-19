@@ -519,3 +519,124 @@ a.date-num.selected-date {
     .done-stats-grid { grid-template-columns: repeat(2, 1fr); }
     .history-table { display: block; overflow-x: auto; white-space: nowrap; }
 }
+
+/* =========================================
+   HALAMAN SESSION DETAIL (DONE)
+========================================= */
+.detail-top-bg {
+    background: linear-gradient(180deg, #F8E3E7 0%, #FAF5F6 100%);
+    height: 180px;
+    width: 100%;
+    padding-top: 40px;
+}
+
+.detail-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-back {
+    background: #A99C9F;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: 0.2s;
+}
+.btn-back:hover { background: #8c8286; }
+.detail-top-bg h2 { margin: 0; color: #2b2326; font-size: 1.4rem; }
+
+/* Struktur Card Utama */
+.sc-card {
+    background: #fff;
+    border-radius: 20px;
+    display: flex;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    overflow: hidden;
+    min-height: 500px;
+}
+
+/* Kolom Kiri (Foto Background) */
+.sc-left {
+    width: 420px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Overlay gradient hitam transparan di foto supaya teks putih terbaca */
+.sc-left::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 70%, rgba(0,0,0,0.7) 100%);
+    z-index: 1;
+}
+
+.sc-left > * { position: relative; z-index: 2; }
+
+.sc-badges-top { display: flex; gap: 10px; }
+.badge-foto { background: #fff; color: #2b2326; font-size: 0.75rem; padding: 5px 12px; border-radius: 6px; font-weight: 600; }
+.badge-kategori { background: rgba(0,0,0,0.6); color: #fff; font-size: 0.75rem; padding: 5px 12px; border-radius: 6px; font-weight: 500; }
+
+.sc-kode-bottom { color: #fff; }
+.sc-kode-bottom .k-label { font-size: 0.7rem; font-weight: 600; opacity: 0.9; display: block; }
+.sc-kode-bottom .k-val { font-size: 1.4rem; font-weight: 700; }
+
+/* Kolom Kanan */
+.sc-right {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sc-header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eae5e3; padding-bottom: 20px; margin-bottom: 25px; }
+.sc-client-info { display: flex; align-items: center; gap: 15px; }
+.sc-client-info img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+.sc-client-info h3 { margin: 0 0 5px 0; font-size: 1.1rem; color: #2b2326; display: flex; align-items: center; gap: 10px; }
+.sc-client-info p { margin: 0; font-size: 0.85rem; color: #8c8286; }
+
+.sc-price-info { text-align: right; }
+.sc-price-info .p-label { display: block; font-size: 0.75rem; color: #8c8286; margin-bottom: 3px; }
+.sc-price-info .p-val { font-size: 1.3rem; font-weight: 700; color: #7E4655; }
+
+.sc-grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.sc-box { border: 1px solid #eae5e3; border-radius: 12px; padding: 15px; background: #FCFAFA; }
+.sc-box .b-label { font-size: 0.7rem; color: #8c8286; font-weight: 600; display: block; margin-bottom: 8px; }
+.sc-box .b-title { font-size: 0.95rem; font-weight: 700; color: #2b2326; display: block; margin-bottom: 5px; }
+.sc-box .b-desc { font-size: 0.85rem; color: #6d6468; display: block; }
+
+.sc-rating-container { border: 1px solid #eae5e3; border-radius: 12px; padding: 20px; background: #FCFAFA; flex: 1; }
+.sc-rating-container .r-label { font-size: 0.7rem; color: #8c8286; font-weight: 600; display: block; margin-bottom: 15px; }
+.r-content { display: flex; gap: 15px; align-items: flex-start; }
+.r-badge { background: #FFFBEB; border: 1px solid #FDE68A; color: #D97706; padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+.r-text { font-size: 0.85rem; color: #6d6468; line-height: 1.5; font-style: italic; }
+
+.sc-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 1px dashed #eae5e3; padding-top: 20px; }
+.sf-time { font-size: 0.85rem; color: #8c8286; }
+.sf-time strong { color: #2b2326; }
+.sf-actions { display: flex; gap: 15px; }
+.btn-filled-maroon { background: #7E4655; color: #fff; border: none; padding: 10px 20px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+
+@media (max-width: 900px) {
+    .sc-card { flex-direction: column; }
+    .sc-left { width: 100%; height: 300px; }
+    .sc-header-row { flex-direction: column; align-items: flex-start; gap: 15px; }
+    .sc-price-info { text-align: left; }
+    .sc-grid-info { grid-template-columns: 1fr; }
+    .sc-footer { flex-direction: column; align-items: flex-start; gap: 20px; }
+}

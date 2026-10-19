@@ -1,0 +1,243 @@
+/* =========================================
+   HALAMAN SUBSCRIPTION MUA (MASTER)
+========================================= */
+
+body {
+    background-color: #FAF5F6;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+    padding-top: 80px; 
+}
+
+.sub-main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h2 { margin: 0; font-size: 1.6rem; color: #2b2326; }
+.status-badge-top { background: #d1fae5; color: #059669; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; border: 1px solid #a7f3d0; }
+
+/* --- Banner Aktif --- */
+.active-sub-banner {
+    background: #3B2E33; /* Dark brown */
+    border-radius: 20px;
+    padding: 35px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(59,46,51,0.2);
+}
+
+.asb-left h3 { color: #fff; font-size: 2.2rem; margin: 10px 0 0 0; }
+.asb-label { color: #D1C5C9; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.badge-aktif { background: #059669; color: #fff; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; }
+
+.asb-right { display: flex; align-items: center; gap: 30px; background: rgba(255,255,255,0.05); padding: 20px 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }
+.asb-expiry { display: flex; flex-direction: column; }
+.exp-label { color: #A99C9F; font-size: 0.7rem; font-weight: 600; margin-bottom: 5px; }
+.exp-date { color: #fff; font-size: 1.2rem; font-weight: 700; }
+.exp-days { color: #A99C9F; font-size: 0.8rem; margin-top: 3px; }
+
+.btn-perpanjang { background: #fff; color: #2b2326; padding: 12px 24px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.95rem; transition: 0.2s; }
+.btn-perpanjang:hover { background: #f0f0f0; }
+
+/* --- Pricing Grid --- */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.pricing-card {
+    background: #fff;
+    border: 1px solid #eae5e3;
+    border-radius: 20px;
+    padding: 35px 30px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.pricing-card.popular {
+    border: 2px solid #7E4655;
+    box-shadow: 0 15px 40px rgba(126,70,85,0.1);
+    transform: scale(1.02);
+}
+
+.popular-badge { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #7E4655; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 6px 15px; border-radius: 20px; letter-spacing: 1px; }
+
+.pc-tier { font-size: 0.75rem; font-weight: 700; color: #8c8286; display: block; margin-bottom: 10px; letter-spacing: 1px; }
+.pc-header h4 { font-size: 1.4rem; color: #2b2326; margin: 0 0 5px 0; }
+.pc-duration { font-size: 0.9rem; color: #8c8286; margin: 0; }
+
+.pc-price { margin: 30px 0; padding-bottom: 30px; border-bottom: 1px solid #eae5e3; }
+.pc-price h2 { font-size: 2.2rem; color: #2b2326; margin: 0 0 5px 0; }
+.pc-price p { font-size: 0.85rem; color: #8c8286; margin: 0; }
+
+.pc-features { list-style: none; padding: 0; margin: 0 0 40px 0; flex: 1; }
+.pc-features li { display: flex; gap: 12px; font-size: 0.9rem; color: #6d6468; margin-bottom: 15px; line-height: 1.4; }
+.pc-features i { color: #059669; margin-top: 3px; }
+
+.btn-pilih { text-align: center; padding: 14px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.95rem; transition: 0.2s; }
+.btn-pilih.outline { background: #FCFAFA; color: #2b2326; border: 1px solid #eae5e3; }
+.btn-pilih.filled { background: #7E4655; color: #fff; }
+.btn-pilih.dark { background: #2b2326; color: #fff; }
+
+.text-maroon { color: #7E4655 !important; }
+.text-yellow { color: #D97706 !important; }
+.text-green { color: #059669 !important; }
+
+/* --- History Section --- */
+.history-section { background: #fff; border: 1px solid #eae5e3; border-radius: 20px; padding: 30px; }
+.hs-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eae5e3; padding-bottom: 20px; margin-bottom: 20px; }
+.hs-header h3 { margin: 0; font-size: 1.2rem; color: #2b2326; }
+.hs-header span { font-size: 0.85rem; color: #8c8286; }
+
+.table-responsive { overflow-x: auto; }
+.history-table { width: 100%; border-collapse: collapse; text-align: left; }
+.history-table th { padding: 15px; color: #8c8286; font-size: 0.85rem; font-weight: 600; background: #FCFAFA; border-bottom: 1px solid #eae5e3; }
+.history-table td { padding: 20px 15px; border-bottom: 1px solid #eae5e3; font-size: 0.9rem; vertical-align: middle; }
+.history-table tr:last-child td { border-bottom: none; }
+
+.badge-status { font-size: 0.75rem; font-weight: 600; padding: 5px 12px; border-radius: 12px; display: inline-flex; align-items: center; gap: 5px; }
+.badge-status.aktif { background: #d1fae5; color: #059669; }
+.badge-status.exp { background: #f1f5f9; color: #64748b; }
+
+/* =========================================
+   HALAMAN PAYMENT SUBSCRIPTION (FORM)
+========================================= */
+
+.pay-top-bg {
+    background: linear-gradient(180deg, #F8E3E7 0%, #FAF5F6 100%);
+    height: 140px;
+    width: 100%;
+    padding-top: 30px;
+}
+
+.pay-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-back-pay {
+    background: #A99C9F; color: #fff; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-size: 1.2rem; transition: 0.2s;
+}
+.btn-back-pay:hover { background: #8c8286; }
+.pay-top-bg h2 { margin: 0; color: #2b2326; font-size: 1.5rem; }
+
+.pay-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 30px;
+    align-items: start;
+    width: 100%;
+}
+
+.pay-step-box {
+    background: #fff;
+    border: 1px solid #eae5e3;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+.step-num { background: #7E4655; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; }
+.step-header h3 { margin: 0; color: #2b2326; font-size: 1.1rem; letter-spacing: 0.5px; }
+
+/* Radio Card Custom */
+.radio-card {
+    display: flex;
+    gap: 20px;
+    border: 1px solid #eae5e3;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+.radio-card input[type="radio"] { display: none; }
+
+.rc-check {
+    width: 24px; height: 24px; border-radius: 50%; border: 2px solid #dcd7d5; display: flex; align-items: center; justify-content: center; color: transparent; font-size: 0.8rem; margin-top: 2px; transition: 0.2s;
+}
+
+.radio-card.selected { border-color: #7E4655; background: #FCFAFA; box-shadow: 0 5px 15px rgba(126,70,85,0.05); }
+.radio-card.selected .rc-check { background: #7E4655; border-color: #7E4655; color: #fff; }
+
+.rc-content { flex: 1; }
+.rc-top { display: flex; justify-content: space-between; margin-bottom: 15px; }
+.rc-top h4 { margin: 0 0 5px 0; font-size: 1.2rem; color: #2b2326; display: flex; align-items: center; gap: 10px; }
+.rc-dur { margin: 0; color: #8c8286; font-size: 0.9rem; }
+
+.rc-price-right { text-align: right; }
+.rc-price-right h4 { margin: 0 0 5px 0; color: #7E4655; font-size: 1.1rem; }
+.rc-price-right p { margin: 0; color: #8c8286; font-size: 0.85rem; }
+
+.badge-tier { font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; font-weight: 600; }
+.badge-tier.basic { background: #f1f5f9; color: #64748b; }
+.badge-tier.pop { background: #d1fae5; color: #059669; }
+.badge-tier.vip { background: #fef3c7; color: #d97706; }
+
+.rc-features { list-style: none; padding: 0; margin: 0; }
+.rc-features li { display: flex; gap: 10px; font-size: 0.85rem; color: #6d6468; margin-bottom: 8px; align-items: center; }
+.rc-features li i { color: #059669; font-size: 1rem; }
+
+/* Radio Card Kecil (Metode Bayar) */
+.small-card { padding: 20px; align-items: center; }
+.rc-icon { background: #FAF5F6; color: #7E4655; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+.rc-text-simple h4 { margin: 0 0 5px 0; color: #2b2326; font-size: 1rem; display: flex; align-items: center; gap: 10px; }
+.rc-text-simple p { margin: 0; color: #8c8286; font-size: 0.85rem; }
+
+/* Summary Box Kanan */
+.summary-box {
+    background: #fff; border: 1px solid #eae5e3; border-radius: 20px; padding: 30px; position: sticky; top: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+.sum-label { font-size: 0.75rem; color: #8c8286; font-weight: 600; letter-spacing: 0.5px; }
+.summary-box h3 { margin: 5px 0 25px 0; color: #2b2326; font-size: 1.3rem; padding-bottom: 20px; border-bottom: 1px solid #eae5e3; }
+
+.sum-details { margin-bottom: 25px; }
+.sum-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; }
+.sr-label { color: #6d6468; }
+.sr-val { color: #2b2326; text-align: right; }
+.sr-val.bold { font-weight: 700; }
+
+.sum-total { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eae5e3; padding-top: 20px; margin-bottom: 25px; font-weight: 700; color: #2b2326; font-size: 1.1rem; }
+.st-price { font-size: 1.5rem; color: #7E4655; }
+
+.sum-info-box { background: #FAF5F6; border-radius: 12px; padding: 15px; display: flex; gap: 15px; margin-bottom: 25px; }
+.sum-info-box i { color: #7E4655; font-size: 1.2rem; margin-top: 2px; }
+.sum-info-box strong { display: block; font-size: 0.85rem; color: #2b2326; margin-bottom: 5px; }
+.sum-info-box p { margin: 0; font-size: 0.8rem; color: #8c8286; line-height: 1.5; }
+
+.btn-bayar { background: #7E4655; color: #fff; width: 100%; border: none; padding: 15px; border-radius: 12px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
+.btn-bayar:hover { background: #633642; }
+
+.secure-text { text-align: center; font-size: 0.75rem; color: #059669; margin: 15px 0 0 0; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 5px; }
+
+/* Responsiveness */
+@media (max-width: 1000px) {
+    .pricing-grid { grid-template-columns: 1fr; }
+    .pricing-card.popular { transform: none; }
+    .active-sub-banner { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .asb-right { width: 100%; justify-content: space-between; }
+    
+    .pay-grid { grid-template-columns: 1fr; }
+    .summary-box { position: relative; top: 0; }
+}

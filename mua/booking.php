@@ -216,7 +216,7 @@ $month_name_id = str_replace(
                     </thead>
                     <tbody>
                         <?php foreach ($all_bookings as $bk): ?>
-                        <tr>
+                        <tr onclick="window.location.href='session_detail.php?id=<?php echo $bk['id_booking']; ?>'" style="cursor: pointer; transition: 0.2s;" onmouseover="this.style.backgroundColor='#faf5f6'" onmouseout="this.style.backgroundColor='transparent'">
                             <td><?php echo htmlspecialchars($bk['no_invoice']); ?></td>
                             <td class="td-client"><img src="../assets/img/<?php echo htmlspecialchars($bk['foto_klien'] ?? 'default.jpg'); ?>" alt="klien"> <?php echo htmlspecialchars($bk['nama_klien']); ?></td>
                             <td><?php echo htmlspecialchars($bk['nama_layanan']); ?></td>

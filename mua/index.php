@@ -2,7 +2,21 @@
 session_start();
 require '../koneksi.php';
 
-require __DIR__ . '/../Includes/auth_mua.php'; // wajib login sebagai MUA dan sudah diverifikasi admin
+require __DIR__ . '/../includes/auth_mua.php'; // wajib login sebagai MUA dan sudah diverifikasi admin
+
+// --- 1. PROSES TERIMA / TOLAK PESANAN ---
+if (isset($_POST['terima_pesanan'])) {
+    $id_b = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
+    mysqli_query($koneksi, "UPDATE bookings SET status = 'dikonfirmasi' WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
+    header("Location: index.php");
+    exit();
+}
+if (isset($_POST['tolak_pesanan'])) {
+    $id_b = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
+    mysqli_query($koneksi, "UPDATE bookings SET status = 'ditolak' WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
+    header("Location: index.php");
+    exit();
+}
 
 // 2. FETCH PROFIL MUA
 $query_profil = mysqli_query($koneksi, "SELECT * FROM users WHERE id_user = '$id_mua'") or die('Error Profil');
@@ -122,7 +136,7 @@ if ($query_bookings) {
                     <h3>Permintaan Pesanan Terbaru</h3>
                     <p>Tinjau, terima, atau tolak jadwal pesanan masuk dari calon klien Anda.</p>
                 </div>
-                <a href="#" class="view-all">Lihat Semua (<?php echo $stat_menunggu; ?>) &rarr;</a>
+                <a href="booking.php?tab=scheduled" class="view-all">Lihat Semua (<?php echo $stat_menunggu; ?>) &rarr;</a>
             </div>
 
             <div class="booking-list">
@@ -142,16 +156,20 @@ if ($query_bookings) {
                                 </div>
                             </div>
                             <div class="booking-actions">
-                                <button class="btn-confirm"><i class="fa-solid fa-check"></i> Konfirmasi</button>
-                                <button class="btn-reject"><i class="fa-solid fa-xmark"></i> Tolak</button>
-                                <!-- Tombol ini sekarang memicu JavaScript openModal -->
+                                <!-- Tombol aksi di bungkus form agar berfungsi -->
+                                <form method="POST" style="display:inline; margin:0;">
+                                    <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                    <button type="submit" name="terima_pesanan" class="btn-confirm"><i class="fa-solid fa-check"></i> Konfirmasi</button>
+                                </form>
+                                <form method="POST" style="display:inline; margin:0;">
+                                    <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                    <button type="submit" name="tolak_pesanan" class="btn-reject"><i class="fa-solid fa-xmark"></i> Tolak</button>
+                                </form>
                                 <button class="btn-view" onclick="openModal('modal-<?php echo $bk['id_booking']; ?>')"><i class="fa-regular fa-eye"></i></button>
                             </div>
                         </div>
 
-                        <!-- ============================================== -->
                         <!-- POPUP MODAL (DETAIL KLIEN) UNTUK SETIAP PESANAN -->
-                        <!-- ============================================== -->
                         <div id="modal-<?php echo $bk['id_booking']; ?>" class="modal-overlay">
                             <div class="modal-box">
                                 <button class="close-modal" onclick="closeModal('modal-<?php echo $bk['id_booking']; ?>')"><i class="fa-solid fa-xmark"></i></button>
@@ -195,8 +213,11 @@ if ($query_bookings) {
                                 </div>
 
                                 <div class="modal-footer-actions">
-                                    <button class="btn-modal-confirm">Terima & Konfirmasi</button>
-                                    <button class="btn-modal-reject">Tolak Permintaan</button>
+                                    <form method="POST" style="display:inline; margin:0; width:100%;">
+                                        <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
+                                        <button type="submit" name="terima_pesanan" class="btn-modal-confirm" style="width:48%;">Terima & Konfirmasi</button>
+                                        <button type="submit" name="tolak_pesanan" class="btn-modal-reject" style="width:48%; float:right;">Tolak Permintaan</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
