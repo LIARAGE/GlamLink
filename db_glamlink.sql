@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 19, 2026 at 10:59 AM
+-- Generation Time: Oct 19, 2026 at 12:10 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,8 +55,8 @@ INSERT INTO `bookings` (`id_booking`, `no_invoice`, `id_mua`, `id_pelanggan`, `i
 (2, 'GL-8921', 2, 1, 1, '2026-10-24', '04:00:00', NULL, NULL, 3000000, 'ditolak', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27'),
 (3, 'GL-7742', 2, 1, 1, '2026-10-30', '16:00:00', NULL, NULL, 3000000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27'),
 (4, 'GL-6001', 2, 1, 1, '2026-10-10', '08:00:00', 'Fairmont Jakarta, Gelora Bung Karno', 'Makeup natural aja', 3000000, 'selesai', 1, 1, 'dokum_sample_1.jpg', 5, 'Suka banget sama hasilnya! Tahan seharian walau keringetan.', '2026-10-16 18:25:27'),
-(5, 'GL-6002', 2, 1, 1, '2026-10-12', '10:00:00', 'Plataran Dharmawangsa, Jakarta Selatan', 'Minta flawless complexion', 3000000, 'selesai', 1, 1, 'dokum_sample_2.jpg', 4, 'Bagus, MUA-nya ramah dan on time. Sayang lipstiknya agak gampang hilang kalau dipakai makan.', '2026-10-16 18:25:27'),
-(6, 'GL-4288', 2, 1, 1, '2026-09-14', '10:00:00', 'Hutan Kota by Plataran, GBK', 'Smokey eyes agak bold', 3000000, 'selesai', 1, 1, NULL, NULL, NULL, '2026-10-19 08:25:30'),
+(5, 'GL-6002', 2, 1, 1, '2026-10-12', '10:00:00', 'Plataran Dharmawangsa, Jakarta Selatan', 'Minta flawless complexion', 3000000, 'selesai', 1, 1, 'dokum_5_1792401121.jpg', 4, 'Bagus, MUA-nya ramah dan on time. Sayang lipstiknya agak gampang hilang kalau dipakai makan.', '2026-10-16 18:25:27'),
+(6, 'GL-4288', 2, 1, 1, '2026-09-14', '10:00:00', 'Hutan Kota by Plataran, GBK', 'Smokey eyes agak bold', 3000000, 'selesai', 1, 1, 'dokum_6_1792401183.jpg', NULL, NULL, '2026-10-19 08:25:30'),
 (7, 'GL-9820', 2, 1, 2, '2026-10-19', '14:00:00', 'Hotel Mulia Senayan', 'Acaraku mulai jam 7 sebenarnya, tapi aku mau kelar sblm jam 6', 750000, 'dikonfirmasi', 0, 0, NULL, NULL, NULL, '2026-10-19 08:25:30');
 
 -- --------------------------------------------------------
@@ -72,6 +72,33 @@ CREATE TABLE `chats` (
   `pesan` text NOT NULL,
   `waktu_kirim` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mua_subscriptions`
+--
+
+CREATE TABLE `mua_subscriptions` (
+  `id_transaksi` int(11) NOT NULL,
+  `no_invoice` varchar(50) NOT NULL,
+  `id_mua` int(11) NOT NULL,
+  `id_paket` int(11) NOT NULL,
+  `metode_bayar` varchar(50) NOT NULL,
+  `nominal_bayar` int(11) NOT NULL,
+  `tanggal_transaksi` timestamp NOT NULL DEFAULT current_timestamp(),
+  `tanggal_berakhir` date NOT NULL,
+  `status` enum('aktif','kedaluwarsa','menunggu') NOT NULL DEFAULT 'aktif'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `mua_subscriptions`
+--
+
+INSERT INTO `mua_subscriptions` (`id_transaksi`, `no_invoice`, `id_mua`, `id_paket`, `metode_bayar`, `nominal_bayar`, `tanggal_transaksi`, `tanggal_berakhir`, `status`) VALUES
+(1, 'INV-SUB-2025-1012', 2, 2, 'GoPay', 110000, '2026-08-12 08:20:00', '2026-09-11', 'kedaluwarsa'),
+(2, 'INV-SUB-2026-0419', 2, 2, 'BCA Virtual Account', 110000, '2026-09-19 02:00:00', '2026-10-20', 'aktif'),
+(3, 'INV-SUB-2026-7476', 2, 2, 'QRIS Instan', 99000, '2026-10-19 10:06:38', '2026-11-19', 'aktif');
 
 -- --------------------------------------------------------
 
@@ -120,6 +147,28 @@ INSERT INTO `services` (`id_service`, `id_mua`, `nama_layanan`, `kategori`, `har
 (2, 2, 'Graduation', 'Makeup', 750000.00, '120 menit', 'Complexion 1 hari', '[\"Pouch mini retouch gratis\",\"Glow area pundak & leher\",\"Pemasangan softlens ramah mata\"]'),
 (3, 4, 'Make Up Wedding', 'Bridal', 100000.00, '120 menit', 'mantab 1000%', NULL),
 (4, 5, 'ga tau dah', 'Bridal', 200000.00, '200 menit', 'dijamin bagus', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `subscription_packages`
+--
+
+CREATE TABLE `subscription_packages` (
+  `id_paket` int(11) NOT NULL,
+  `nama_paket` varchar(100) NOT NULL,
+  `durasi_hari` int(11) NOT NULL,
+  `harga` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `subscription_packages`
+--
+
+INSERT INTO `subscription_packages` (`id_paket`, `nama_paket`, `durasi_hari`, `harga`) VALUES
+(1, 'Starter Studio', 7, 30000),
+(2, 'Pro Glam Artist', 30, 110000),
+(3, 'Elite Master Studio', 90, 300000);
 
 -- --------------------------------------------------------
 
@@ -178,6 +227,14 @@ ALTER TABLE `chats`
   ADD KEY `id_penerima` (`id_penerima`);
 
 --
+-- Indexes for table `mua_subscriptions`
+--
+ALTER TABLE `mua_subscriptions`
+  ADD PRIMARY KEY (`id_transaksi`),
+  ADD KEY `id_mua` (`id_mua`),
+  ADD KEY `id_paket` (`id_paket`);
+
+--
 -- Indexes for table `portfolios`
 --
 ALTER TABLE `portfolios`
@@ -190,6 +247,12 @@ ALTER TABLE `portfolios`
 ALTER TABLE `services`
   ADD PRIMARY KEY (`id_service`),
   ADD KEY `id_mua` (`id_mua`);
+
+--
+-- Indexes for table `subscription_packages`
+--
+ALTER TABLE `subscription_packages`
+  ADD PRIMARY KEY (`id_paket`);
 
 --
 -- Indexes for table `users`
@@ -215,6 +278,12 @@ ALTER TABLE `chats`
   MODIFY `id_chat` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `mua_subscriptions`
+--
+ALTER TABLE `mua_subscriptions`
+  MODIFY `id_transaksi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `portfolios`
 --
 ALTER TABLE `portfolios`
@@ -225,6 +294,12 @@ ALTER TABLE `portfolios`
 --
 ALTER TABLE `services`
   MODIFY `id_service` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `subscription_packages`
+--
+ALTER TABLE `subscription_packages`
+  MODIFY `id_paket` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -250,6 +325,13 @@ ALTER TABLE `bookings`
 ALTER TABLE `chats`
   ADD CONSTRAINT `chats_ibfk_1` FOREIGN KEY (`id_pengirim`) REFERENCES `users` (`id_user`),
   ADD CONSTRAINT `chats_ibfk_2` FOREIGN KEY (`id_penerima`) REFERENCES `users` (`id_user`);
+
+--
+-- Constraints for table `mua_subscriptions`
+--
+ALTER TABLE `mua_subscriptions`
+  ADD CONSTRAINT `fk_sub_mua` FOREIGN KEY (`id_mua`) REFERENCES `users` (`id_user`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_sub_paket` FOREIGN KEY (`id_paket`) REFERENCES `subscription_packages` (`id_paket`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `portfolios`
