@@ -5,6 +5,16 @@ include '../koneksi.php';
 
 $id_user = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
+// Proses aksi tombol setujui/tolak langsung dari halaman detail jika ditekan
+if (isset($_GET['action']) && isset($_GET['id'])) {
+    $action_id = intval($_GET['id']);
+    $status = $_GET['action'] == 'approve' ? 'approved' : 'rejected';
+    
+    mysqli_query($koneksi, "UPDATE users SET status_verifikasi='$status' WHERE id_user=$action_id AND role='mua'");
+    header("Location: detail_verifikasi.php?id=" . $action_id);
+    exit();
+}
+
 // Ambil data MUA berdasarkan ID
 $query_mua = mysqli_query($koneksi, "SELECT * FROM users WHERE id_user = $id_user AND role = 'mua' LIMIT 1");
 $mua = mysqli_fetch_assoc($query_mua);
@@ -94,9 +104,20 @@ $query_porto = mysqli_query($koneksi, "SELECT * FROM portfolios WHERE id_mua = $
                 <?php endif; ?>
             </div>
 
-            <div style="display: flex; gap: 12px; border-top: 1px solid #EFECE6; padding-top: 20px;">
-                <a href="verifikasi_mua.php?action=approve&id=<?= $mua['id_user']; ?>" style="background: #1B5E20; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px;">Setujui Akun MUA</a>
-                <a href="verifikasi_mua.php?action=reject&id=<?= $mua['id_user']; ?>" style="background: #C62828; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px;">Tolak Akun MUA</a>
+            <!-- Tombol Aksi Verifikasi / Kotak Informasi Status -->
+            <div style="border-top: 1px solid #EFECE6; padding-top: 20px;">
+                <?php if ($mua['status_verifikasi'] == 'pending') : ?>
+                    <div style="display: flex; gap: 12px;">
+                        <a href="detail_verifikasi.php?action=approve&id=<?= $mua['id_user']; ?>" style="background: #1B5E20; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px;">Setujui Akun MUA</a>
+                        <a href="detail_verifikasi.php?action=reject&id=<?= $mua['id_user']; ?>" style="background: #C62828; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px;">Tolak Akun MUA</a>
+                    </div>
+                <?php else : ?>
+                    <!-- Kotak Informasi dengan Ikon SVG Status/Shield Baru yang Lebih Estetis -->
+                    <div style="display: flex; align-items: center; gap: 12px; background: #FAFAFA; border: 1px solid #EFECE6; padding: 14px 20px; border-radius: 10px; color: #7A6F68; font-size: 13px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #4A3B32;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                        <span>Akun MUA ini sudah berstatus <strong><?= ucfirst($mua['status_verifikasi']); ?></strong>. Tidak ada tindakan lanjutan yang diperlukan.</span>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </main>
