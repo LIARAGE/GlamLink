@@ -2,8 +2,8 @@
 session_start();
 require __DIR__ . '/../Includes/klien.php';
 
-$kota     = array_column(q("SELECT DISTINCT lokasi FROM users WHERE role='mua' AND status_verifikasi='approved' AND lokasi <> '' ORDER BY lokasi"), 'lokasi');
-$kategori = array_column(q("SELECT DISTINCT s.kategori FROM services s JOIN users u ON u.id_user = s.id_mua WHERE u.status_verifikasi='approved' AND s.kategori <> '' ORDER BY s.kategori"), 'kategori');
+$kota     = WILAYAH;               // pilihan sama dengan filter di halaman Cari MUA
+$kategori = KATEGORI_LAYANAN;
 
 // 3 foto portfolio terbaru dari MUA terverifikasi
 $porto = q("SELECT p.foto, u.id_user, u.nama_brand, u.foto_profil,
@@ -21,8 +21,8 @@ include __DIR__ . '/../navbar.php';
     <p class="sub">Terhubung dengan para makeup artist profesional terverifikasi untuk momen pernikahan, wisuda, atau malam pesta Anda.</p>
 
     <form class="search-card" action="cari.php" method="GET">
-        <div><label for="lokasi">Lokasi</label>
-            <select id="lokasi" name="lokasi"><option value="">Pilih Kota</option>
+        <div><label for="wilayah">Lokasi</label>
+            <select id="wilayah" name="wilayah"><option value="">Pilih Kota</option>
                 <?php foreach ($kota as $k) echo '<option value="' . e($k) . '">' . e($k) . '</option>'; ?>
             </select></div>
         <div><label for="tanggal">Tanggal Acara</label>

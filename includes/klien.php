@@ -33,12 +33,18 @@ function foto($file, $kelas = '', $ikon = 'fa-user') {
     return '<div class="' . $kelas . ' foto-kosong"><i class="fa-solid ' . $ikon . '"></i></div>';
 }
 
-/** Daftar MUA yang SUDAH diverifikasi admin (+ cover, harga mulai, kategori) */
-function daftar_mua($where = '', $params = [], $urut = 'selesai DESC, u.dibuat_pada DESC', $limit = 60) {
+/** Pilihan tetap untuk filter (sesuai desain Cari MUA & form pendaftaran MUA) */
+const KATEGORI_LAYANAN = ['Bridal', 'Graduation', 'Party', 'Photoshoot'];
+const WILAYAH = ['Jakarta Utara', 'Jakarta Pusat', 'Jakarta Selatan', 'Jakarta Barat', 'Jakarta Timur', 'Bogor', 'Depok', 'Tangerang', 'Bekasi'];
+
+/** Daftar MUA yang SUDAH diverifikasi admin (+ cover, harga mulai, kategori, RATING dari bookings.rating) */
+function daftar_mua($where = '', $params = [], $urut = 'rating DESC, selesai DESC, u.dibuat_pada DESC', $limit = 60) {
     $rows = q("SELECT u.id_user, u.nama_brand, u.lokasi, u.foto_profil,
                 (SELECT foto FROM portfolios WHERE id_mua = u.id_user ORDER BY id_portfolio LIMIT 1) AS cover,
                 (SELECT MIN(harga) FROM services WHERE id_mua = u.id_user) AS harga_min,
-                (SELECT COUNT(*) FROM bookings WHERE id_mua = u.id_user AND status = 'selesai') AS selesai
+                (SELECT COUNT(*) FROM bookings WHERE id_mua = u.id_user AND status = 'selesai') AS selesai,
+                (SELECT ROUND(AVG(rating), 1) FROM bookings WHERE id_mua = u.id_user AND rating > 0) AS rating,
+                (SELECT COUNT(*) FROM bookings WHERE id_mua = u.id_user AND rating > 0) AS n_ulasan
               FROM users u
               WHERE u.role = 'mua' AND u.status_verifikasi = 'approved' $where
               ORDER BY $urut LIMIT " . (int)$limit, $params);
@@ -48,12 +54,52 @@ function daftar_mua($where = '', $params = [], $urut = 'selesai DESC, u.dibuat_p
     return $rows;
 }
 
+/** Bintang 1-5 (penuh / setengah / kosong) */
+function bintang($r) {
+    $h = '';
+    for ($i = 1; $i <= 5; $i++) {
+        $h .= $r >= $i ? '<i class="fa-solid fa-star"></i>' : ($r >= $i - 0.5 ? '<i class="fa-solid fa-star-half-stroke"></i>' : '<i class="fa-regular fa-star"></i>');
+    }
+    return '<span class="stars">' . $h . '</span>';
+}
+/** Baris rating ringkas: ★ 4.9 (124 reviews) */
+function rating_teks($m) {
+    if (empty($m['n_ulasan'])) return '<span class="rate muted small">Belum ada ulasan</span>';
+    return '<span class="rate"><i class="fa-solid fa-star"></i> <b>' . number_format((float)$m['rating'], 1) . '</b> <span class="muted">(' . (int)$m['n_ulasan'] . ' reviews)</span></span>';
+}
+/** "Jocelyn Nicole" -> "Jocelyn N." (nama klien di ulasan dipersingkat demi privasi) */
+function nama_singkat($nama) {
+    $p = preg_split('/\s+/', trim((string)$nama));
+    return count($p) > 1 ? $p[0] . ' ' . mb_strtoupper(mb_substr($p[1], 0, 1)) . '.' : ($p[0] ?: 'Klien');
+}
+/** 0812-... / 62812... -> ['tampil' => '+62 812-3456-789', 'link' => 'https://wa.me/62812...'] */
+function format_wa($tel) {
+    $d = preg_replace('/\D/', '', (string)$tel);
+    if ($d === '') return null;
+    if (strpos($d, '0') === 0) $d = '62' . substr($d, 1); elseif (strpos($d, '62') !== 0) $d = '62' . $d;
+    $r = substr($d, 2);
+    return ['tampil' => rtrim('+62 ' . substr($r, 0, 3) . '-' . substr($r, 3, 4) . '-' . substr($r, 7), '-'), 'link' => 'https://wa.me/' . $d];
+}
+
+/** Kartu MUA ringkas (dipakai di Home) */
 function kartu_mua($m, $tanggal = '') {
     $href = 'mua.php?id=' . $m['id_user'] . ($tanggal ? '&tanggal=' . urlencode($tanggal) : '');
     echo '<a class="mua-card" href="' . $href . '"><div class="mua-cover">' . foto($m['cover'], '', 'fa-image') . '</div><div class="mua-body">';
     echo '<div class="mua-head">' . foto($m['foto_profil'], 'avatar') . '<div><h3>' . e($m['nama_brand']) . '</h3><span class="muted"><i class="fa-solid fa-location-dot"></i> ' . e($m['lokasi']) . '</span></div></div>';
+    echo '<div class="mua-rate">' . rating_teks($m) . '</div>';
     echo '<div class="chips">'; foreach (array_slice($m['kats'], 0, 3) as $k) echo '<span class="chip">#' . e($k) . '</span>'; echo '</div>';
     echo '<div class="mua-foot"><span class="muted">Mulai dari</span><b>' . ($m['harga_min'] ? rupiah($m['harga_min']) : '-') . '</b></div></div></a>';
+}
+
+/** Kartu hasil Cari MUA (sesuai desain: foto, avatar, rating, lokasi, harga, 2 tombol) */
+function kartu_cari($m, $tanggal = '') {
+    $t = $tanggal ? '&tanggal=' . urlencode($tanggal) : '';
+    $id = (int)$m['id_user'];
+    echo '<article class="cari-card"><a class="cc-cover" href="mua.php?id=' . $id . $t . '">' . foto($m['cover'], '', 'fa-image') . '</a><div class="cc-body"><div class="cc-row">';
+    echo '<a href="mua.php?id=' . $id . $t . '">' . foto($m['foto_profil'], 'avatar lg') . '</a><div class="cc-info"><h3>' . e($m['nama_brand']) . '</h3>' . rating_teks($m);
+    echo '<div class="muted small"><i class="fa-solid fa-location-dot"></i> ' . e($m['lokasi']) . '</div>';
+    echo '<div class="cc-price"><span class="muted">Mulai dari</span> <b>' . ($m['harga_min'] ? rupiah($m['harga_min']) : '-') . '</b></div></div></div>';
+    echo '<div class="cc-actions"><a class="kb-outline" href="mua.php?id=' . $id . '&tab=layanan' . $t . '">Detail Layanan</a><a class="kb-fill" href="booking.php?mua=' . $id . $t . '">Booking Sekarang</a></div></div></article>';
 }
 
 /** Bagian <head> + pembuka <body>. Navbar di-include manual oleh tiap halaman. */
