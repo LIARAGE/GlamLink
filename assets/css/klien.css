@@ -188,3 +188,79 @@ dialog.rate-dlg { border: 0; border-radius: 22px; padding: 30px; width: min(460p
     .det-tabs { overflow-x: auto; justify-content: flex-start; margin: 26px 16px 0; } .det-tabs a { flex: none; padding: 12px 18px; font-size: 1rem; }
     .det-wrap { padding: 20px 16px 70px; } .rev-summary { grid-template-columns: 1fr; } .det-card { padding: 24px 20px; }
 }
+
+/* ======================================================================
+   TAMBAHAN: Detail MUA (Kembali, Laporkan, Favorit), Layanan, Jadwal, Portfolio
+   ====================================================================== */
+.banner-back { position: absolute; left: 75px; top: 100px; z-index: 3; display: flex; align-items: center; gap: 22px; font-weight: 700; font-size: 1.2rem; color: var(--ink); }
+.banner-back span { width: 52px; height: 52px; border-radius: 50%; background: rgba(120, 100, 105, .55); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; transition: background .2s; }
+.banner-back:hover span { background: var(--p); }
+.head-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 22px; align-self: stretch; justify-content: space-between; padding: 4px 0; }
+.lapor-btn { background: none; border: 0; color: #E5001C; font: 500 1.05rem 'Plus Jakarta Sans', sans-serif; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; } .lapor-btn:hover { text-decoration: underline; } .lapor-btn i { font-size: 1.3rem; }
+.head-actions-row { display: flex; align-items: center; gap: 26px; }
+.heart-btn { background: none; border: 0; cursor: pointer; font-size: 1.9rem; color: var(--p); padding: 4px; line-height: 1; transition: transform .2s; } .heart-btn:hover { transform: scale(1.15); } .heart-btn.on { color: #D6336C; }
+.fav-badge { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; background: rgba(255, 255, 255, .92); color: #D6336C; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+.cc-cover { position: relative; }
+
+/* --- Tab Layanan --- */
+.svc-search { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(126, 70, 85, .05); }
+.svc-search > div { position: relative; max-width: 520px; } .svc-search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.svc-search input { width: 100%; padding: 12px 14px 12px 42px; border: 1px solid var(--line); border-radius: 12px; background: #FBF8F4; font: inherit; outline: none; } .svc-search input:focus { border-color: var(--p); }
+.svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+.svc-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 22px 22px 20px; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(126, 70, 85, .05); transition: transform .25s, box-shadow .25s; }
+.svc-card:hover { transform: translateY(-4px); box-shadow: 0 12px 26px rgba(126, 70, 85, .13); }
+.svc-card h3 { margin: 0 0 8px; font-size: 1.1rem; } .svc-sub { margin: 0 0 16px; color: var(--muted); font-size: .88rem; } .svc-dur { margin: 0 0 18px; font-size: .88rem; color: var(--muted); } .svc-dur i { color: var(--p); margin-right: 6px; }
+.svc-foot { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; }
+.svc-foot small { display: block; font-size: .72rem; color: var(--muted); } .svc-foot b { font-size: 1.3rem; color: var(--p); }
+
+/* --- Tab Jadwal (kalender + slot jam) --- */
+.jd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; max-width: 1100px; margin: 0 auto; align-items: start; }
+.jd-card { background: #fff; border: 1px solid var(--line); border-radius: 26px; padding: 30px 36px 34px; box-shadow: 0 4px 18px rgba(126, 70, 85, .06); }
+.jd-head { display: flex; justify-content: center; align-items: center; gap: 34px; margin-bottom: 26px; } .jd-head h2 { margin: 0; font-size: 1.15rem; color: var(--p); min-width: 150px; text-align: center; font-weight: 600; }
+.jd-head a { color: #7a6a6d; font-size: 1.2rem; padding: 6px 10px; } .jd-head a.off { opacity: .25; pointer-events: none; } .jd-head a:hover { color: var(--p); }
+.jd-cal { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 8px; text-align: center; } .dow { font-size: .9rem; padding-bottom: 14px; } .dow.sun { color: #E5001C; }
+.jd-day { height: 52px; margin: 0 auto; width: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 8px; font-size: 1.05rem; border: 1.5px solid transparent; transition: background .2s; }
+.jd-day i { width: 6px; height: 6px; border-radius: 50%; display: block; } .jd-day.s-lewat { color: #c8bcc0; height: 44px; }
+.jd-day.s-tersedia i { background: var(--p); } .jd-day.s-cuti { color: #C4002B; } .jd-day.s-cuti i { background: #C4002B; } .jd-day.s-penuh { color: #9b8f93; } .jd-day.s-penuh i { background: #8a7a80; }
+a.jd-day:hover { background: var(--opt-bg); } .jd-day.sel { border-color: var(--p); background: #FBF3F1; }
+.jd-legend { display: flex; justify-content: center; gap: 34px; margin-top: 26px; font-size: 1rem; color: #7a6a6d; } .jd-legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 10px; } .dot.t { background: var(--p); } .dot.c { background: #C4002B; } .dot.p { background: #8a7a80; }
+.jd-over { font-size: .75rem; letter-spacing: 3px; color: #B1585F; font-weight: 700; } .jd-title { margin: 8px 0 4px; font-size: 1.45rem; color: #5b2e3b; font-weight: 600; } .jd-sub { margin: 0 0 18px; }
+.slot-grid { display: grid; gap: 14px; } .slot { display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E5D8DB; border-radius: 12px; padding: 16px 18px; font-size: .98rem; transition: border-color .2s, background .2s, transform .2s; }
+.slot small { font-size: .72rem; font-weight: 700; color: #3B7A57; } a.slot:hover { border-color: var(--p); background: #FBF3F1; transform: translateX(3px); }
+.slot.full { background: #F5F1EF; color: #b3a7ab; border-color: #EEE7E5; } .slot.full small { color: #6b5f63; }
+.jd-note { background: #FBF1DE; color: #8d5f14; border-radius: 12px; padding: 14px 16px; margin: 14px 0 0; } .jd-note i { margin-right: 8px; }
+
+/* --- Tab Portfolio (kartu foto + judul + tag + efek) --- */
+.pf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 345px)); gap: 38px; }
+.pf-card { position: relative; display: block; width: 100%; aspect-ratio: 345 / 353; padding: 0; border: 0; border-radius: 20px; overflow: hidden; cursor: zoom-in; background: #d9c6c9; text-align: left; font-family: inherit; box-shadow: 0 6px 18px rgba(60, 30, 40, .15); transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s; }
+.pf-card:hover, .pf-card:focus-visible { transform: translateY(-8px); box-shadow: 0 22px 40px rgba(60, 30, 40, .28); outline: none; }
+.pf-card .pf-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0; transition: transform .6s ease; } .pf-card:hover .pf-img { transform: scale(1.08); }
+.pf-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 42%, rgba(35, 15, 22, .55) 72%, rgba(35, 15, 22, .88) 100%); transition: opacity .3s; }
+.pf-card::before { content: ''; position: absolute; inset: 0; z-index: 2; background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .28) 50%, transparent 65%); transform: translateX(-120%); transition: transform .8s; pointer-events: none; } .pf-card:hover::before { transform: translateX(120%); }
+.pf-info { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; padding: 24px 28px; color: #fff; display: flex; flex-direction: column; gap: 10px; }
+.pf-info b { font-size: 1.25rem; font-weight: 600; text-shadow: 0 1px 6px rgba(0,0,0,.4); }
+.pf-info .chip { background: rgba(176, 82, 99, .88); color: #fff; border-radius: 6px; padding: 3px 10px; font-size: .8rem; }
+.pf-desc { font-size: .85rem; line-height: 1.55; opacity: 0; max-height: 0; overflow: hidden; transition: opacity .35s, max-height .45s; } .pf-card:hover .pf-desc, .pf-card:focus-visible .pf-desc { opacity: .95; max-height: 90px; }
+.pf-zoom { position: absolute; top: 16px; right: 16px; z-index: 3; width: 38px; height: 38px; border-radius: 50%; background: rgba(255, 255, 255, .9); color: var(--p); display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(.8); transition: opacity .3s, transform .3s; } .pf-card:hover .pf-zoom { opacity: 1; transform: scale(1); }
+dialog.lightbox { max-width: 94vw; } .lb-box { background: #fff; border-radius: 22px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(240px, 1fr); max-width: 1000px; } .lb-box img { max-width: none; width: 100%; height: 100%; max-height: 82vh; object-fit: cover; border-radius: 0; }
+.lb-text { padding: 32px 28px; align-self: center; } .lb-text h3 { margin: 0 0 12px; color: var(--p); font-size: 1.4rem; } .lb-text .chips { margin-bottom: 16px; } .lb-text p { line-height: 1.75; color: #5a4f53; margin: 0; }
+
+/* --- Pop-up Laporkan MUA --- */
+dialog.lapor-dlg { border: 1px solid var(--line); border-radius: 26px; padding: 40px 42px 38px; width: min(733px, 94vw); max-height: 92vh; } dialog.lapor-dlg::backdrop { background: rgba(20, 8, 14, .6); }
+.lapor-dlg h3 { margin: 0 0 8px; text-align: center; color: var(--p); font-size: 1.7rem; } .lapor-sub { text-align: center; color: #8a7a80; font-size: 1.05rem; line-height: 1.5; margin: 0 auto 30px; max-width: 480px; }
+.lapor-dlg h4 { margin: 0 0 16px; font-size: 1.1rem; } .req { color: #E5001C; }
+.radio-row { display: flex; align-items: center; gap: 16px; padding: 7px 0; color: #8a7a80; font-weight: 500; cursor: pointer; } .radio-row input { position: absolute; opacity: 0; }
+.radio-row .rd { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #8a7a80; flex: none; position: relative; transition: border-color .2s; }
+.radio-row input:checked + .rd { border-color: var(--p); } .radio-row input:checked + .rd::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: var(--p); } .radio-row input:checked ~ * { color: var(--ink); }
+.lapor-dlg textarea { width: 100%; padding: 16px 18px; border: 1.5px solid #8a7a80; border-radius: 12px; font: inherit; font-size: 1.05rem; resize: vertical; min-height: 120px; } .lapor-dlg textarea:focus { outline: none; border-color: var(--p); }
+.bukti-row { display: flex; align-items: center; gap: 18px; margin-top: 20px; padding: 18px 22px; border: 1px solid #E8E1DE; background: #FAF8F5; border-radius: 16px; cursor: pointer; } .bukti-row > i { color: var(--p); font-size: 1.4rem; }
+.bukti-row > span:nth-of-type(1) { flex: 1; } .bukti-row b { font-weight: 600; } .bukti-row em { color: #8a7a80; font-style: normal; } .bukti-row small { display: block; font-size: .8rem; color: #8a7a80; margin-top: 2px; word-break: break-all; }
+.bukti-row .plus { width: 30px; height: 30px; border-radius: 50%; background: var(--p); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .85rem; }
+.lapor-dlg .dlg-actions { margin-top: 26px; } .lapor-dlg .dlg-actions > * { padding: 14px; font-size: 1rem; }
+
+@media (max-width: 992px) { .svc-grid { grid-template-columns: repeat(2, 1fr); } .jd-grid { grid-template-columns: 1fr; } .head-actions { align-self: auto; align-items: center; } .banner-back { left: 24px; } }
+@media (max-width: 768px) {
+    .svc-grid { grid-template-columns: 1fr; } .jd-card { padding: 22px 16px; } .jd-day { width: 40px; height: 44px; font-size: .95rem; } .jd-head { gap: 14px; } .jd-legend { gap: 18px; font-size: .85rem; }
+    .pf-grid { grid-template-columns: 1fr; } .pf-desc { opacity: .95; max-height: 90px; } .lb-box { grid-template-columns: 1fr; } .lb-box img { max-height: 50vh; }
+    .banner-back { top: 90px; gap: 14px; font-size: 1.05rem; } .banner-back span { width: 42px; height: 42px; } dialog.lapor-dlg { padding: 28px 20px; } .head-actions-row { flex-direction: row; }
+}

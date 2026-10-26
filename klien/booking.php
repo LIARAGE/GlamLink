@@ -12,7 +12,7 @@ if (!$mua) { header('Location: cari.php'); exit(); }
 $layanan = q('SELECT * FROM services WHERE id_mua = ? ORDER BY harga', [$id_mua]);
 
 $error = '';
-$v = ['layanan' => $id_layanan ?: ($layanan[0]['id_service'] ?? 0), 'tanggal' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['tanggal'] ?? '') ? $_GET['tanggal'] : '', 'waktu' => '', 'lokasi' => '', 'catatan' => ''];
+$v = ['layanan' => $id_layanan ?: ($layanan[0]['id_service'] ?? 0), 'tanggal' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['tanggal'] ?? '') ? $_GET['tanggal'] : '', 'waktu' => in_array($_GET['jam'] ?? '', array_column(SLOT_JAM, 0), true) ? $_GET['jam'] : '', 'lokasi' => '', 'catatan' => ''];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $v = ['layanan' => (int)($_POST['layanan'] ?? 0), 'tanggal' => trim($_POST['tanggal'] ?? ''), 'waktu' => trim($_POST['waktu'] ?? ''), 'lokasi' => trim($_POST['lokasi'] ?? ''), 'catatan' => trim($_POST['catatan'] ?? '')];
@@ -20,11 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$s)                                                                                          $error = 'Pilih layanan yang tersedia.';
     elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $v['tanggal']) || $v['tanggal'] < date('Y-m-d'))   $error = 'Pilih tanggal acara hari ini atau setelahnya.';
-    elseif (!preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $v['waktu']))                                 $error = 'Jam mulai tidak valid.';
+    elseif (!in_array($v['waktu'], array_column(SLOT_JAM, 0), true))                                  $error = 'Pilih salah satu jam yang tersedia.';
+    elseif ($v['tanggal'] === date('Y-m-d') && $v['waktu'] <= date('H:i'))                            $error = 'Jam tersebut sudah lewat. Pilih jam berikutnya.';
+    elseif (q('SELECT 1 FROM mua_libur WHERE id_mua = ? AND tanggal = ?', [$id_mua, $v['tanggal']]))   $error = 'MUA sedang cuti pada tanggal tersebut. Silakan pilih tanggal lain.';
     elseif ($v['lokasi'] === '' || mb_strlen($v['lokasi']) > 255)                                     $error = 'Alamat lokasi acara wajib diisi (maksimal 255 karakter).';
     elseif (mb_strlen($v['catatan']) > 1000)                                                          $error = 'Catatan maksimal 1000 karakter.';
     else {
-        $bentrok = q("SELECT 1 FROM bookings WHERE id_mua = ? AND tanggal_booking = ? AND waktu_booking = ? AND status IN ('menunggu','dikonfirmasi')", [$id_mua, $v['tanggal'], $v['waktu'] . ':00']);
+        // Bentrok jika sudah ada booking aktif yang jamnya berada di dalam slot yang sama
+        [$mulai, $selesai] = SLOT_JAM[slot_index($v['waktu'])];
+        $bentrok = q("SELECT 1 FROM bookings WHERE id_mua = ? AND tanggal_booking = ? AND waktu_booking >= ? AND waktu_booking < ? AND status IN ('menunggu','dikonfirmasi')", [$id_mua, $v['tanggal'], $mulai . ':00', $selesai . ':00']);
         if ($bentrok) { $error = 'Jadwal tersebut sudah terisi. Silakan pilih tanggal atau jam lain (lihat tab Jadwal di profil MUA).'; }
         else {
             $total = (int)round($s['harga']); // harga selalu dari database, bukan dari form
@@ -61,7 +65,9 @@ include __DIR__ . '/../navbar.php';
                 <?php foreach ($layanan as $s) echo '<option value="' . (int)$s['id_service'] . '" data-nama="' . e($s['nama_layanan']) . '" data-durasi="' . e($s['durasi']) . '" data-harga="' . e(rupiah($s['harga'])) . '"' . ((int)$s['id_service'] === (int)$v['layanan'] ? ' selected' : '') . '>' . e($s['nama_layanan']) . ' - ' . rupiah($s['harga']) . '</option>'; ?>
             </select>
             <label>Tanggal Acara</label><input type="date" name="tanggal" min="<?php echo date('Y-m-d'); ?>" value="<?php echo e($v['tanggal']); ?>" required>
-            <label>Jam Mulai</label><input type="time" name="waktu" value="<?php echo e($v['waktu']); ?>" required>
+            <label>Jam Pengerjaan</label>
+            <select name="waktu" required><option value="">Pilih jam</option>
+                <?php foreach (SLOT_JAM as [$a, $b]) echo '<option value="' . $a . '"' . ($v['waktu'] === $a ? ' selected' : '') . '>' . $a . ' - ' . $b . '</option>'; ?></select>
             <label>Alamat Lokasi Acara</label><input type="text" name="lokasi" maxlength="255" placeholder="Contoh: Hotel Mulia, Jakarta Pusat" value="<?php echo e($v['lokasi']); ?>" required>
             <label>Catatan untuk MUA (opsional)</label><textarea name="catatan" rows="4" maxlength="1000" placeholder="Tema, preferensi, jumlah orang yang dirias..."><?php echo e($v['catatan']); ?></textarea>
             <button class="btn-cari full" type="submit">Kirim Permintaan Booking</button>

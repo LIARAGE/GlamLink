@@ -10,6 +10,7 @@ $f = [
     'wilayah'  => in_array($_GET['wilayah'] ?? '', WILAYAH, true) ? $_GET['wilayah'] : '',
     'harga'    => in_array($_GET['harga'] ?? '', ['rendah', 'sedang', 'tinggi'], true) ? $_GET['harga'] : '',
     'rating'   => in_array($_GET['rating'] ?? '', ['4', '4.5'], true) ? $_GET['rating'] : '',
+    'fav'      => ($_GET['fav'] ?? '') === '1' ? '1' : '',
 ];
 
 // ---- 2. Susun query (urutan parameter = urutan kondisi) ----
@@ -34,8 +35,10 @@ if ($f['harga'] !== '') $kond[] = $rentang[$f['harga']];
 if ($kond) { $w .= ' AND EXISTS (SELECT 1 FROM services s WHERE s.id_mua = u.id_user AND ' . implode(' AND ', $kond) . ')'; $p = array_merge($p, $kp); }
 if ($f['rating'] !== '') { $w .= ' AND (SELECT AVG(rating) FROM bookings WHERE id_mua = u.id_user AND rating > 0) >= ?'; $p[] = $f['rating']; }
 
+if ($f['fav'] === '1') { $w .= ' AND EXISTS (SELECT 1 FROM favorit f WHERE f.id_mua = u.id_user AND f.id_pelanggan = ?)'; $p[] = $id_klien; }
+
 $hasil  = daftar_mua($w, $p);
-$aktif  = $f['q'] !== '' || $f['kategori'] !== '' || $f['wilayah'] !== '' || $f['harga'] !== '' || $f['rating'] !== '';
+$aktif  = $f['q'] !== '' || $f['kategori'] !== '' || $f['wilayah'] !== '' || $f['harga'] !== '' || $f['rating'] !== '' || $f['fav'] !== '';
 
 function opsi($nama, $nilai, $label, $sekarang) {
     $on = ((string)$sekarang === (string)$nilai);
@@ -61,6 +64,8 @@ include __DIR__ . '/../navbar.php';
                     <?php echo opsi('harga', '', 'Semua', $f['harga']) . opsi('harga', 'rendah', '< 800k', $f['harga']) . opsi('harga', 'sedang', '800k - 1.5M', $f['harga']) . opsi('harga', 'tinggi', '> 1.5M', $f['harga']); ?></div>
                 <div class="filter-group"><h4>Rating Minimal</h4>
                     <?php echo opsi('rating', '', 'Semua', $f['rating']) . opsi('rating', '4', '4.0+ Bintang', $f['rating']) . opsi('rating', '4.5', '4.5+ Bintang', $f['rating']); ?></div>
+                <div class="filter-group"><h4>Favorit</h4>
+                    <?php echo opsi('fav', '', 'Semua MUA', $f['fav']) . opsi('fav', '1', 'Favorit Saya', $f['fav']); ?></div>
                 <noscript><button class="kb-fill" style="width:100%">Terapkan Filter</button></noscript>
                 <?php if ($aktif) echo '<a class="filter-reset" href="cari.php' . ($tgl ? '?tanggal=' . e($tgl) : '') . '"><i class="fa-solid fa-rotate-left"></i> Reset filter</a>'; ?>
             </aside>

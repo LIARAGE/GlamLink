@@ -37,6 +37,18 @@ function foto($file, $kelas = '', $ikon = 'fa-user') {
 const KATEGORI_LAYANAN = ['Bridal', 'Graduation', 'Party', 'Photoshoot'];
 const WILAYAH = ['Jakarta Utara', 'Jakarta Pusat', 'Jakarta Selatan', 'Jakarta Barat', 'Jakarta Timur', 'Bogor', 'Depok', 'Tangerang', 'Bekasi'];
 
+/** Slot jam tetap pada kalender Jadwal & form Booking (sesuai desain): [mulai, selesai] */
+const SLOT_JAM = [['08:00', '10:00'], ['10:00', '12:00'], ['12:00', '14:00'], ['14:00', '16:00'], ['16:00', '18:00']];
+const ALASAN_LAPORAN = ['Penipuan/Scam', 'Profil atau portfolio palsu', 'Perilaku tidak pantas', 'MUA tidak memenuhi layanan', 'MUA tidak aktif', 'Lainnya'];
+const NAMA_BULAN = [1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+const NAMA_HARI  = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+/** Token CSRF untuk form POST (favorit, laporan) */
+function csrf_field() { if (empty($_SESSION['csrf'])) $_SESSION['csrf'] = bin2hex(random_bytes(16)); return '<input type="hidden" name="csrf" value="' . $_SESSION['csrf'] . '">'; }
+function csrf_ok()    { return !empty($_POST['csrf']) && !empty($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], $_POST['csrf']); }
+/** 'HH:MM[:SS]' -> nomor slot yang memuat jam itu (0-4), atau -1 jika di luar slot */
+function slot_index($jam) { $j = substr((string)$jam, 0, 5); foreach (SLOT_JAM as $i => [$a, $b]) if ($j >= $a && $j < $b) return $i; return -1; }
+
 /** Daftar MUA yang SUDAH diverifikasi admin (+ cover, harga mulai, kategori, RATING dari bookings.rating) */
 function daftar_mua($where = '', $params = [], $urut = 'rating DESC, selesai DESC, u.dibuat_pada DESC', $limit = 60) {
     $rows = q("SELECT u.id_user, u.nama_brand, u.lokasi, u.foto_profil,
@@ -44,7 +56,8 @@ function daftar_mua($where = '', $params = [], $urut = 'rating DESC, selesai DES
                 (SELECT MIN(harga) FROM services WHERE id_mua = u.id_user) AS harga_min,
                 (SELECT COUNT(*) FROM bookings WHERE id_mua = u.id_user AND status = 'selesai') AS selesai,
                 (SELECT ROUND(AVG(rating), 1) FROM bookings WHERE id_mua = u.id_user AND rating > 0) AS rating,
-                (SELECT COUNT(*) FROM bookings WHERE id_mua = u.id_user AND rating > 0) AS n_ulasan
+                (SELECT COUNT(*) FROM bookings WHERE id_mua = u.id_user AND rating > 0) AS n_ulasan,
+                (SELECT COUNT(*) FROM favorit f WHERE f.id_mua = u.id_user AND f.id_pelanggan = " . (int)($GLOBALS['id_klien'] ?? 0) . ") AS fav
               FROM users u
               WHERE u.role = 'mua' AND u.status_verifikasi = 'approved' $where
               ORDER BY $urut LIMIT " . (int)$limit, $params);
@@ -95,7 +108,7 @@ function kartu_mua($m, $tanggal = '') {
 function kartu_cari($m, $tanggal = '') {
     $t = $tanggal ? '&tanggal=' . urlencode($tanggal) : '';
     $id = (int)$m['id_user'];
-    echo '<article class="cari-card"><a class="cc-cover" href="mua.php?id=' . $id . $t . '">' . foto($m['cover'], '', 'fa-image') . '</a><div class="cc-body"><div class="cc-row">';
+    echo '<article class="cari-card"><a class="cc-cover" href="mua.php?id=' . $id . $t . '">' . foto($m['cover'], '', 'fa-image') . (!empty($m['fav']) ? '<span class="fav-badge" title="Favorit Anda"><i class="fa-solid fa-heart"></i></span>' : '') . '</a><div class="cc-body"><div class="cc-row">';
     echo '<a href="mua.php?id=' . $id . $t . '">' . foto($m['foto_profil'], 'avatar lg') . '</a><div class="cc-info"><h3>' . e($m['nama_brand']) . '</h3>' . rating_teks($m);
     echo '<div class="muted small"><i class="fa-solid fa-location-dot"></i> ' . e($m['lokasi']) . '</div>';
     echo '<div class="cc-price"><span class="muted">Mulai dari</span> <b>' . ($m['harga_min'] ? rupiah($m['harga_min']) : '-') . '</b></div></div></div>';
