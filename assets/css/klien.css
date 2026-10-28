@@ -264,3 +264,16 @@ dialog.lapor-dlg { border: 1px solid var(--line); border-radius: 26px; padding: 
     .pf-grid { grid-template-columns: 1fr; } .pf-desc { opacity: .95; max-height: 90px; } .lb-box { grid-template-columns: 1fr; } .lb-box img { max-height: 50vh; }
     .banner-back { top: 90px; gap: 14px; font-size: 1.05rem; } .banner-back span { width: 42px; height: 42px; } dialog.lapor-dlg { padding: 28px 20px; } .head-actions-row { flex-direction: row; }
 }
+
+/* --- Home: Make Up Artist Populer (deret kartu yang bisa digeser, sesuai desain Home) --- */
+.pop-scroll { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 4px 18px; scrollbar-width: thin; scrollbar-color: #d9c2c7 transparent; }
+.pop-card { position: relative; flex: 0 0 calc((100% - 48px) / 3); min-width: 0; scroll-snap-align: start; background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 22px 24px 24px; box-shadow: 0 4px 16px rgba(126, 70, 85, .06); transition: transform .25s, box-shadow .25s; }
+.pop-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(126, 70, 85, .13); }
+.pop-link { display: flex; gap: 18px; align-items: center; padding-right: 40px; }
+.avatar.pop { width: 90px; height: 90px; }
+.pop-info { min-width: 0; } .pop-info h3 { margin: 0 0 4px; font-size: 1.05rem; } .pop-info > * { margin-bottom: 2px; }
+.pop-fav { position: absolute; top: 22px; right: 20px; margin: 0; }
+.pop-heart { background: none; border: 0; padding: 4px; font-size: 1.6rem; line-height: 1; color: var(--p); cursor: pointer; transition: transform .2s; } .pop-heart:hover { transform: scale(1.12); } .pop-heart.on { color: #D6336C; }
+.pop-tags { margin: 16px 0 0; } .pop-tag { background: #FBF1EE; color: var(--p); border-radius: 6px; padding: 3px 10px; font-size: .78rem; }
+@media (max-width: 992px) { .pop-card { flex-basis: calc((100% - 24px) / 2); } }
+@media (max-width: 768px) { .pop-card { flex-basis: 86%; } }

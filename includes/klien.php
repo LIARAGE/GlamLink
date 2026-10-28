@@ -104,6 +104,22 @@ function kartu_mua($m, $tanggal = '') {
     echo '<div class="mua-foot"><span class="muted">Mulai dari</span><b>' . ($m['harga_min'] ? rupiah($m['harga_min']) : '-') . '</b></div></div></a>';
 }
 
+/** Kartu MUA Populer di Home (sesuai desain: avatar, rating, lokasi, harga, hati, tag, 2 tombol) */
+function kartu_populer($m) {
+    $id  = (int)$m['id_user'];
+    $fav = !empty($m['fav']);
+    $aria = $fav ? 'Hapus dari favorit' : 'Simpan ke favorit';
+    echo '<article class="pop-card">';
+    echo '<form class="pop-fav" method="POST" action="favorit.php">' . csrf_field() . '<input type="hidden" name="id_mua" value="' . $id . '"><input type="hidden" name="dari" value="home">';
+    echo '<button type="submit" class="pop-heart' . ($fav ? ' on' : '') . '" aria-pressed="' . ($fav ? 'true' : 'false') . '" aria-label="' . $aria . '" title="' . $aria . '"><i class="' . ($fav ? 'fa-solid' : 'fa-regular') . ' fa-heart"></i></button></form>';
+    echo '<a class="pop-link" href="mua.php?id=' . $id . '">' . foto($m['foto_profil'], 'avatar pop') . '<div class="pop-info"><h3>' . e($m['nama_brand']) . '</h3>' . rating_teks($m);
+    echo '<div class="muted small"><i class="fa-solid fa-location-dot"></i> ' . e($m['lokasi']) . '</div>';
+    echo '<div class="cc-price"><span class="muted">Mulai dari</span> <b>' . ($m['harga_min'] ? rupiah($m['harga_min']) : '-') . '</b></div></div></a>';
+    echo '<div class="chips pop-tags">'; foreach (array_slice($m['kats'], 0, 2) as $k) echo '<span class="pop-tag">' . e($k) . '</span>'; echo '</div>';
+    echo '<div class="cc-actions"><a class="kb-outline" href="mua.php?id=' . $id . '&tab=layanan">Detail Layanan</a><a class="kb-fill" href="booking.php?mua=' . $id . '">Booking Sekarang</a></div>';
+    echo '</article>';
+}
+
 /** Kartu hasil Cari MUA (sesuai desain: foto, avatar, rating, lokasi, harga, 2 tombol) */
 function kartu_cari($m, $tanggal = '') {
     $t = $tanggal ? '&tanggal=' . urlencode($tanggal) : '';

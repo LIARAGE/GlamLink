@@ -10,7 +10,7 @@ $porto = q("SELECT p.foto, u.id_user, u.nama_brand, u.foto_profil,
               (SELECT kategori FROM services WHERE id_mua = u.id_user ORDER BY id_service LIMIT 1) AS kategori
             FROM portfolios p JOIN users u ON u.id_user = p.id_mua
             WHERE u.role='mua' AND u.status_verifikasi='approved' ORDER BY p.id_portfolio DESC LIMIT 3");
-$populer = daftar_mua('', [], 'selesai DESC, u.dibuat_pada DESC', 6);
+$populer = daftar_mua('', [], 'rating DESC, selesai DESC, u.dibuat_pada DESC', 6);   // 6 MUA dengan rating tertinggi
 
 head_klien('Home');
 include __DIR__ . '/../navbar.php';
@@ -36,6 +36,17 @@ include __DIR__ . '/../navbar.php';
 </section>
 
 <main class="kl-wrap">
+    <section id="populer">
+        <div class="kl-title-row">
+            <h2 class="kl-title">Make Up Artist Populer</h2>
+            <a href="cari.php" class="lihat-semua">Lihat Semua</a>
+        </div>
+        <div class="pop-scroll">
+            <?php foreach ($populer as $m) kartu_populer($m); ?>
+            <?php if (!$populer) echo '<p class="muted">Belum ada MUA terverifikasi.</p>'; ?>
+        </div>
+    </section>
+
     <h2 class="kl-title">Jelajahi Portfolio dari MUA Kami</h2>
     <div class="grid-3">
         <?php foreach ($porto as $p): ?>
@@ -50,15 +61,6 @@ include __DIR__ . '/../navbar.php';
             </a>
         <?php endforeach; ?>
         <?php if (!$porto) echo '<p class="muted">Belum ada portfolio yang ditampilkan.</p>'; ?>
-    </div>
-
-    <div class="kl-title-row">
-        <h2 class="kl-title">Make Up Artist Populer</h2>
-        <a href="cari.php" class="lihat-semua">Lihat Semua</a>
-    </div>
-    <div class="grid-3">
-        <?php foreach ($populer as $m) kartu_mua($m); ?>
-        <?php if (!$populer) echo '<p class="muted">Belum ada MUA terverifikasi.</p>'; ?>
     </div>
 </main>
 <?php bottom_nav();
