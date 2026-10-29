@@ -306,7 +306,7 @@ $month_name_id = str_replace(
                              data-time="<?php echo date('H:i', strtotime($bk['waktu_booking'])); ?>"
                              data-location="<?php echo htmlspecialchars($bk['lokasi_acara'] ?? 'Belum ditentukan'); ?>"
                              data-phone="<?php echo htmlspecialchars($bk['nomor_telepon'] ?? '-'); ?>"
-                             data-notes="<?php echo htmlspecialchars($bk['catatan'] ?? '-'); ?>"
+                             data-notes="<?php $info_acara = trim(implode(' - ', array_filter([$bk['jenis_acara'] ?? '', $bk['nama_acara'] ?? '']))); echo htmlspecialchars(($info_acara !== '' ? '[Acara: ' . $info_acara . '] ' : '') . ($bk['catatan'] ?? '-')); ?>"
                              data-price="Rp <?php echo number_format($bk['total_harga'], 0, ',', '.'); ?>">
                              
                             <!-- ELEMEN TERSEMBUNYI UNTUK TOMBOL MODAL POP-UP -->

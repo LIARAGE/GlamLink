@@ -39,6 +39,11 @@ const WILAYAH = ['Jakarta Utara', 'Jakarta Pusat', 'Jakarta Selatan', 'Jakarta B
 
 /** Slot jam tetap pada kalender Jadwal & form Booking (sesuai desain): [mulai, selesai] */
 const SLOT_JAM = [['08:00', '10:00'], ['10:00', '12:00'], ['12:00', '14:00'], ['14:00', '16:00'], ['16:00', '18:00']];
+/** Biaya platform GlamLink (persen dari harga layanan) dan metode bayar di langkah terakhir Booking: [nama => keterangan] */
+const BIAYA_PLATFORM_PERSEN = 5;
+const METODE_BAYAR = ['Transfer Bank' => 'BCA, Mandiri, BNI, BRI', 'E-Wallet' => 'GoPay, OVO, DANA', 'Kartu Debit / Kredit' => 'Visa, Mastercard'];
+/** Biaya platform dalam rupiah bulat. Total dibayar klien = harga layanan + biaya platform */
+function biaya_platform($harga) { return (int)round((float)$harga * BIAYA_PLATFORM_PERSEN / 100); }
 const ALASAN_LAPORAN = ['Penipuan/Scam', 'Profil atau portfolio palsu', 'Perilaku tidak pantas', 'MUA tidak memenuhi layanan', 'MUA tidak aktif', 'Lainnya'];
 const NAMA_BULAN = [1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 const NAMA_HARI  = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
