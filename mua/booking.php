@@ -43,7 +43,7 @@ if (isset($_POST['terima_pesanan'])) {
 }
 if (isset($_POST['tolak_pesanan']) || isset($_POST['batalkan_pesanan'])) {
     $id_b = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
-    mysqli_query($koneksi, "UPDATE bookings SET status = 'ditolak' WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
+    mysqli_query($koneksi, "UPDATE bookings SET status = 'ditolak', dibatalkan_oleh = 'mua', dibatalkan_pada = NOW() WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
     header("Location: booking.php?tab=scheduled");
     exit();
 }

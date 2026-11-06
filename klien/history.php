@@ -1,113 +1,78 @@
 <?php
 session_start();
 require __DIR__ . '/../Includes/klien.php';
+require __DIR__ . '/../Includes/riwayat.php';
 
-// ---- Aksi klien (PRG: setelah diproses, redirect agar refresh tidak mengulang) ----
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $idb = (int)($_POST['id_booking'] ?? 0);
-    $aksi = $_POST['aksi'] ?? '';
+aksi_booking($id_klien);   // proses batal / konfirmasi selesai / review (lalu redirect)
 
-    if ($aksi === 'selesai') {
-        // Klien mengonfirmasi pesanan selesai. Hanya boleh SETELAH MUA menandai selesai (is_mua_done = 1).
-        // Karena kedua pihak sudah konfirmasi, status menjadi 'selesai' (sama seperti logika di mua/booking.php).
-        q("UPDATE bookings SET is_client_done = 1, status = 'selesai' WHERE id_booking = ? AND id_pelanggan = ? AND status = 'dikonfirmasi' AND is_mua_done = 1 AND is_client_done = 0", [$idb, $id_klien]);
-        $ok = q('SELECT status FROM bookings WHERE id_booking = ? AND id_pelanggan = ?', [$idb, $id_klien])[0]['status'] ?? '';
-        header('Location: history.php?' . ($ok === 'selesai' ? 'done=1' : 'err=selesai')); exit();
-    }
-    if ($aksi === 'rating') {
-        $r = (int)($_POST['rating'] ?? 0); $ul = trim($_POST['ulasan'] ?? '');
-        if ($r < 1 || $r > 5)          { header('Location: history.php?err=rating'); exit(); }
-        if (mb_strlen($ul) > 1000)     { header('Location: history.php?err=ulasan'); exit(); }
-        // Hanya pemilik pesanan & hanya pesanan yang sudah selesai
-        q("UPDATE bookings SET rating = ?, ulasan = ? WHERE id_booking = ? AND id_pelanggan = ? AND status = 'selesai'", [$r, $ul, $idb, $id_klien]);
-        $cek = q('SELECT rating FROM bookings WHERE id_booking = ? AND id_pelanggan = ?', [$idb, $id_klien])[0]['rating'] ?? 0;
-        header('Location: history.php?' . ((int)$cek === $r ? 'rated=1' : 'err=rating')); exit();
-    }
-}
+/* ---------- Tab aktif & jumlah per tab ---------- */
+$tab    = tab_valid(is_string($_GET['tab'] ?? null) ? $_GET['tab'] : '');
+$status = TAB_RIWAYAT[$tab][1];
+$jml = [];
+foreach (q('SELECT status, COUNT(*) AS n FROM bookings WHERE id_pelanggan = ? GROUP BY status', [$id_klien]) as $r) { $jml[$r['status']] = (int)$r['n']; }
 
-// Label disamakan dengan halaman Booking MUA (mua/booking.php)
-$status = ['menunggu' => 'Menunggu Konfirmasi', 'dikonfirmasi' => 'Terkonfirmasi', 'selesai' => 'Selesai', 'ditolak' => 'Dibatalkan'];
-$tab = isset($status[$_GET['tab'] ?? '']) ? $_GET['tab'] : '';
-$sql = "SELECT b.*, s.nama_layanan, u.nama_brand, u.foto_profil FROM bookings b
-        JOIN services s ON s.id_service = b.id_layanan JOIN users u ON u.id_user = b.id_mua
-        WHERE b.id_pelanggan = ?" . ($tab ? ' AND b.status = ?' : '') . ' ORDER BY b.tanggal_booking DESC, b.id_booking DESC';
-$data = q($sql, $tab ? [$id_klien, $tab] : [$id_klien]);
-$pesan = ['done' => ['ok', 'Pesanan dikonfirmasi selesai. Terima kasih! Silakan beri rating untuk MUA.'], 'rated' => ['ok', 'Rating dan ulasan Anda tersimpan dan ikut menghitung rating MUA.'],
-          'err' => ['err', 'Aksi tidak dapat diproses. Pastikan data yang diisi benar.']];
+// Urutan per tab: pending = terbaru dibuat; upcoming = jadwal terdekat dulu; lainnya = terbaru dulu
+$urut = ['menunggu' => 'b.created_at DESC, b.id_booking DESC', 'dikonfirmasi' => 'b.tanggal_booking ASC, b.waktu_booking ASC, b.id_booking ASC',
+         'selesai' => 'b.tanggal_booking DESC, b.id_booking DESC', 'ditolak' => 'b.tanggal_booking DESC, b.id_booking DESC'][$status];
+$data = q("SELECT b.*, s.nama_layanan, u.nama_brand, u.foto_profil, u.nomor_telepon
+           FROM bookings b JOIN services s ON s.id_service = b.id_layanan JOIN users u ON u.id_user = b.id_mua
+           WHERE b.id_pelanggan = ? AND b.status = ? ORDER BY $urut", [$id_klien, $status]);
+
+$notif = pesan_riwayat(is_string($_GET['msg'] ?? null) ? $_GET['msg'] : '');
+$kosong = ['pending' => 'Belum ada booking yang menunggu konfirmasi.', 'upcoming' => 'Belum ada booking yang akan datang.',
+           'completed' => 'Belum ada booking yang selesai.', 'cancelled' => 'Tidak ada booking yang dibatalkan.'][$tab];
 
 head_klien('History');
 include __DIR__ . '/../navbar.php';
 ?>
 <main class="kl-wrap page-top">
-    <h1 class="kl-title big">History Pesanan</h1>
-    <?php if (isset($_GET['ok'])) echo '<p class="alert-ok"><i class="fa-solid fa-circle-check"></i> Permintaan booking <b>' . e($_GET['ok']) . '</b> terkirim. Menunggu konfirmasi MUA.</p>';
-    foreach ($pesan as $k => [$t, $isi]) if (isset($_GET[$k])) echo '<p class="alert-' . $t . '">' . e($isi) . '</p>'; ?>
-    <div class="tabs"><a href="history.php" class="<?php echo $tab ? '' : 'on'; ?>">Semua</a>
-        <?php foreach ($status as $k => $l) echo '<a href="?tab=' . $k . '" class="' . ($tab === $k ? 'on' : '') . '">' . $l . '</a>'; ?></div>
+    <h1 class="kl-title big hs-judul">Booking Saya</h1>
+    <?php if (isset($_GET['ok']) && is_string($_GET['ok'])) echo '<p class="alert-ok"><i class="fa-solid fa-circle-check"></i> Pembayaran berhasil. Booking <b>' . e($_GET['ok']) . '</b> terkirim dan menunggu konfirmasi MUA.</p>';
+    if ($notif) echo '<p class="alert-' . $notif[0] . '" role="status">' . e($notif[1]) . '</p>'; ?>
 
-    <div class="order-list">
-        <?php foreach ($data as $b):
-            $st = $b['status']; $label = $status[$st] ?? e($st); $kelas = 's-' . e($st);
-            $tunggu_klien = ($st === 'dikonfirmasi' && $b['is_mua_done'] && !$b['is_client_done']);
-            if ($tunggu_klien) { $label = 'Menunggu Konfirmasi Anda'; $kelas = 's-menunggu-klien'; } ?>
-            <div class="order-card">
-                <div class="order-top"><span class="inv"><?php echo e($b['no_invoice']); ?></span><span class="badge-status <?php echo $kelas; ?>"><?php echo $label; ?></span></div>
-                <div class="order-mua"><?php echo foto($b['foto_profil'], 'avatar'); ?>
-                    <div><h3><a href="mua.php?id=<?php echo (int)$b['id_mua']; ?>"><?php echo e($b['nama_brand']); ?></a></h3><span class="muted"><?php echo e($b['nama_layanan']); ?></span></div></div>
-                <div class="order-meta">
-                    <span><i class="fa-regular fa-calendar"></i> <?php echo date('d/m/Y', strtotime($b['tanggal_booking'])) . ', ' . substr($b['waktu_booking'], 0, 5) . ' WIB'; ?></span>
-                    <span><i class="fa-solid fa-location-dot"></i> <?php echo e($b['lokasi_acara'] ?: '-'); ?></span>
-                    <b><?php echo rupiah($b['total_harga']); ?></b>
-                </div>
+    <nav class="hs-tabs" aria-label="Status booking">
+        <?php foreach (TAB_RIWAYAT as $k => [$label, $st]) echo '<a class="' . ($tab === $k ? 'on' : '') . '" href="history.php?tab=' . $k . '"' . ($tab === $k ? ' aria-current="page"' : '') . '>' . $label . (!empty($jml[$st]) ? '<span class="hs-n">' . $jml[$st] . '</span>' : '') . '</a>'; ?>
+    </nav>
 
-                <?php if ($tunggu_klien): ?>
-                    <div class="order-extra">
-                        <div class="dokum"><?php if ($b['foto_dokumentasi']) echo foto($b['foto_dokumentasi'], 'porto-img', 'fa-image'); ?><span>MUA menandai sesi ini selesai.<br>Mohon konfirmasi jika riasan sudah Anda terima.</span></div>
-                        <form method="POST" onsubmit="return confirm('Konfirmasi bahwa pesanan ini sudah selesai?');">
-                            <input type="hidden" name="aksi" value="selesai"><input type="hidden" name="id_booking" value="<?php echo (int)$b['id_booking']; ?>">
-                            <button class="kb-fill" type="submit"><i class="fa-solid fa-circle-check"></i> Konfirmasi Selesai</button></form>
-                    </div>
-                <?php elseif ($st === 'dikonfirmasi'): ?>
-                    <div class="order-extra"><span class="muted small"><i class="fa-regular fa-clock"></i> Pesanan dikonfirmasi MUA. Anda dapat mengonfirmasi selesai setelah MUA menandai sesi selesai.</span></div>
-                <?php elseif ($st === 'selesai'): ?>
-                    <div class="order-extra">
-                        <?php if ((int)$b['rating'] > 0): ?>
-                            <div class="my-rate"><?php echo bintang((int)$b['rating']); ?><span class="ul"><?php echo trim((string)$b['ulasan']) !== '' ? '"' . e(mb_strimwidth($b['ulasan'], 0, 90, '...')) . '"' : 'Tanpa ulasan tertulis'; ?></span></div>
-                            <button type="button" class="kb-outline sm js-rate" data-id="<?php echo (int)$b['id_booking']; ?>" data-mua="<?php echo e($b['nama_brand']); ?>" data-rating="<?php echo (int)$b['rating']; ?>" data-ulasan="<?php echo e($b['ulasan']); ?>">Ubah Ulasan</button>
-                        <?php else: ?>
-                            <span class="muted small"><i class="fa-regular fa-star"></i> Bagikan pengalaman Anda untuk membantu klien lain.</span>
-                            <button type="button" class="kb-fill sm js-rate" data-id="<?php echo (int)$b['id_booking']; ?>" data-mua="<?php echo e($b['nama_brand']); ?>" data-rating="0" data-ulasan="">Beri Rating</button>
-                        <?php endif; ?>
-                    </div>
-                <?php endif; ?>
+    <?php foreach ($data as $b):
+        [$label, $kelas, $pesan] = info_status($b);
+        $id = (int)$b['id_booking'];
+        $wa = format_wa($b['nomor_telepon']);
+        $detail = 'detail_booking.php?id=' . $id; ?>
+        <article class="hs-card">
+            <div class="hs-mua">
+                <?php echo foto($b['foto_profil'], 'avatar'); ?>
+                <div><b><a href="mua.php?id=<?php echo (int)$b['id_mua']; ?>"><?php echo e($b['nama_brand']); ?></a></b>
+                    <span class="hs-layanan"><?php echo e($b['nama_layanan']); ?></span>
+                    <small class="muted"><?php echo e($b['no_invoice']); ?></small></div>
             </div>
-        <?php endforeach; ?>
-    </div>
-    <?php if (!$data): ?><div class="kosong"><i class="fa-regular fa-calendar-xmark"></i><p>Belum ada pesanan.</p><a class="btn-cari" href="cari.php">Cari MUA</a></div><?php endif; ?>
-</main>
+            <div class="hs-meta">
+                <span><i class="fa-regular fa-calendar"></i> <?php echo tgl_lengkap($b['tanggal_booking']); ?></span>
+                <span><i class="fa-regular fa-clock"></i> <?php echo e(jam_tampil($b['waktu_booking'])); ?></span>
+            </div>
+            <div class="hs-pesan">
+                <?php if ($b['status'] === 'selesai' && (int)$b['rating'] > 0): ?>
+                    <?php echo bintang((int)$b['rating']); ?>
+                    <span><?php echo trim((string)$b['ulasan']) !== '' ? '“' . e(mb_strimwidth($b['ulasan'], 0, 70, '…', 'UTF-8')) . '”' : 'Tanpa ulasan tertulis'; ?></span>
+                <?php else: echo e($pesan); endif; ?>
+            </div>
+            <div class="hs-aksi">
+                <span class="hs-badge <?php echo e($kelas); ?>"><?php echo e($label); ?></span>
+                <div class="hs-btns">
+                    <?php if (in_array($b['status'], ['menunggu', 'dikonfirmasi'], true) && $wa): ?>
+                        <a class="kb-fill hs-btn" href="<?php echo e($wa['link']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-comment"></i> Chat</a>
+                    <?php elseif ($b['status'] === 'selesai'): ?>
+                        <button type="button" class="kb-fill hs-btn js-rate" data-id="<?php echo $id; ?>" data-mua="<?php echo e($b['nama_brand']); ?>" data-rating="<?php echo (int)$b['rating']; ?>" data-ulasan="<?php echo e($b['ulasan']); ?>">
+                            <i class="fa-solid fa-star"></i> <?php echo (int)$b['rating'] > 0 ? 'Ubah Review' : 'Beri Review'; ?></button>
+                    <?php elseif ($b['status'] === 'ditolak'): ?>
+                        <a class="kb-fill hs-btn" href="booking.php?mua=<?php echo (int)$b['id_mua']; ?>">Booking Lagi</a>
+                    <?php endif; ?>
+                    <a class="kb-outline hs-btn" href="<?php echo $detail; ?>">Lihat Detail</a>
+                </div>
+            </div>
+        </article>
+    <?php endforeach; ?>
 
-<!-- Pop-up beri rating -->
-<dialog class="rate-dlg" id="dlg-rate">
-    <form method="POST">
-        <input type="hidden" name="aksi" value="rating"><input type="hidden" name="id_booking" id="rate-id">
-        <h3>Beri Rating</h3><p class="muted" id="rate-mua" style="margin:0"></p>
-        <div class="star-input">
-            <?php for ($i = 5; $i >= 1; $i--) echo '<input type="radio" name="rating" id="st' . $i . '" value="' . $i . '" required><label for="st' . $i . '" title="' . $i . ' bintang"><i class="fa-solid fa-star"></i></label>'; ?>
-        </div>
-        <textarea name="ulasan" id="rate-ulasan" rows="4" maxlength="1000" placeholder="Ceritakan pengalaman Anda (opsional)"></textarea>
-        <div class="dlg-actions"><button type="button" class="kb-outline" onclick="document.getElementById('dlg-rate').close()">Batal</button><button type="submit" class="kb-fill">Kirim</button></div>
-    </form>
-</dialog>
-<script>
-    var dlg = document.getElementById('dlg-rate');
-    document.querySelectorAll('.js-rate').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            document.getElementById('rate-id').value = btn.dataset.id;
-            document.getElementById('rate-mua').textContent = btn.dataset.mua;
-            document.getElementById('rate-ulasan').value = btn.dataset.ulasan;
-            document.querySelectorAll('.star-input input').forEach(function (r) { r.checked = (r.value === btn.dataset.rating); });
-            dlg.showModal();
-        });
-    });
-</script>
-<?php bottom_nav();
+    <?php if (!$data): ?><div class="kosong"><i class="fa-regular fa-calendar-xmark"></i><p><?php echo e($kosong); ?></p><a class="btn-cari" href="cari.php">Cari MUA</a></div><?php endif; ?>
+</main>
+<?php dialog_rating('list'); bottom_nav();

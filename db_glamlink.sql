@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 29, 2026 at 06:27 PM
+-- Generation Time: Nov 06, 2026 at 03:17 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -50,23 +50,25 @@ CREATE TABLE `bookings` (
   `kota_acara` varchar(50) DEFAULT NULL,
   `biaya_platform` int(11) NOT NULL DEFAULT 0,
   `metode_bayar` varchar(50) DEFAULT NULL,
-  `dibayar_pada` timestamp NULL DEFAULT NULL
+  `dibayar_pada` timestamp NULL DEFAULT NULL,
+  `dibatalkan_oleh` enum('klien','mua') DEFAULT NULL,
+  `dibatalkan_pada` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `bookings`
 --
 
-INSERT INTO `bookings` (`id_booking`, `no_invoice`, `id_mua`, `id_pelanggan`, `id_layanan`, `tanggal_booking`, `waktu_booking`, `lokasi_acara`, `catatan`, `total_harga`, `status`, `is_mua_done`, `is_client_done`, `foto_dokumentasi`, `rating`, `ulasan`, `created_at`, `nama_acara`, `jenis_acara`, `kota_acara`, `biaya_platform`, `metode_bayar`, `dibayar_pada`) VALUES
-(2, 'GL-8921', 2, 1, 1, '2026-10-24', '04:00:00', NULL, NULL, 3000000, 'ditolak', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL),
-(3, 'GL-7742', 2, 1, 1, '2026-10-30', '16:00:00', NULL, NULL, 3000000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL),
-(4, 'GL-6001', 2, 1, 1, '2026-10-10', '08:00:00', 'Fairmont Jakarta, Gelora Bung Karno', 'Makeup natural aja', 3000000, 'selesai', 1, 1, 'dokum_sample_1.jpg', 5, 'Suka banget sama hasilnya! Tahan seharian walau keringetan.', '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL),
-(5, 'GL-6002', 2, 1, 1, '2026-10-12', '10:00:00', 'Plataran Dharmawangsa, Jakarta Selatan', 'Minta flawless complexion', 3000000, 'selesai', 1, 1, 'dokum_5_1792401121.jpg', 4, 'Bagus, MUA-nya ramah dan on time. Sayang lipstiknya agak gampang hilang kalau dipakai makan.', '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL),
-(6, 'GL-4288', 2, 1, 1, '2026-09-14', '10:00:00', 'Hutan Kota by Plataran, GBK', 'Smokey eyes agak bold', 3000000, 'selesai', 1, 1, 'dokum_6_1792401183.jpg', NULL, NULL, '2026-10-19 08:25:30', NULL, NULL, NULL, 0, NULL, NULL),
-(7, 'GL-9820', 2, 1, 2, '2026-10-19', '14:00:00', 'Hotel Mulia Senayan', 'Acaraku mulai jam 7 sebenarnya, tapi aku mau kelar sblm jam 6', 750000, 'dikonfirmasi', 0, 0, NULL, NULL, NULL, '2026-10-19 08:25:30', NULL, NULL, NULL, 0, NULL, NULL),
-(8, 'GL-3950', 2, 6, 2, '2026-10-27', '10:00:00', 'St. Regis', 'yang bener ya', 750000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-26 14:00:38', NULL, NULL, NULL, 0, NULL, NULL),
-(9, 'GL-7558', 2, 6, 1, '2026-10-28', '16:00:00', 'sebrang cilok bojot aa', 'apa aja dah', 3000000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-26 14:02:06', NULL, NULL, NULL, 0, NULL, NULL),
-(10, 'GL-5256', 4, 6, 3, '2026-10-30', '12:00:00', 'Hotel YTTA, Jakarta Barat', 'yang mantab ya', 100000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-29 17:23:21', 'Yang tau tau aja', 'Party', 'Jakarta Barat', 5000, 'Transfer Bank', '2026-10-29 17:23:21');
+INSERT INTO `bookings` (`id_booking`, `no_invoice`, `id_mua`, `id_pelanggan`, `id_layanan`, `tanggal_booking`, `waktu_booking`, `lokasi_acara`, `catatan`, `total_harga`, `status`, `is_mua_done`, `is_client_done`, `foto_dokumentasi`, `rating`, `ulasan`, `created_at`, `nama_acara`, `jenis_acara`, `kota_acara`, `biaya_platform`, `metode_bayar`, `dibayar_pada`, `dibatalkan_oleh`, `dibatalkan_pada`) VALUES
+(2, 'GL-8921', 2, 1, 1, '2026-10-24', '04:00:00', NULL, NULL, 3000000, 'ditolak', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL, 'mua', NULL),
+(3, 'GL-7742', 2, 1, 1, '2026-10-30', '16:00:00', NULL, NULL, 3000000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL),
+(4, 'GL-6001', 2, 1, 1, '2026-10-10', '08:00:00', 'Fairmont Jakarta, Gelora Bung Karno', 'Makeup natural aja', 3000000, 'selesai', 1, 1, 'dokum_sample_1.jpg', 5, 'Suka banget sama hasilnya! Tahan seharian walau keringetan.', '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL),
+(5, 'GL-6002', 2, 1, 1, '2026-10-12', '10:00:00', 'Plataran Dharmawangsa, Jakarta Selatan', 'Minta flawless complexion', 3000000, 'selesai', 1, 1, 'dokum_5_1792401121.jpg', 4, 'Bagus, MUA-nya ramah dan on time. Sayang lipstiknya agak gampang hilang kalau dipakai makan.', '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL),
+(6, 'GL-4288', 2, 1, 1, '2026-09-14', '10:00:00', 'Hutan Kota by Plataran, GBK', 'Smokey eyes agak bold', 3000000, 'selesai', 1, 1, 'dokum_6_1792401183.jpg', NULL, NULL, '2026-10-19 08:25:30', NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL),
+(7, 'GL-9820', 2, 1, 2, '2026-10-19', '14:00:00', 'Hotel Mulia Senayan', 'Acaraku mulai jam 7 sebenarnya, tapi aku mau kelar sblm jam 6', 750000, 'dikonfirmasi', 0, 0, NULL, NULL, NULL, '2026-10-19 08:25:30', NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL),
+(8, 'GL-3950', 2, 6, 2, '2026-10-27', '10:00:00', 'St. Regis', 'yang bener ya', 750000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-26 14:00:38', NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL),
+(9, 'GL-7558', 2, 6, 1, '2026-10-28', '16:00:00', 'sebrang cilok bojot aa', 'apa aja dah', 3000000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-26 14:02:06', NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL),
+(10, 'GL-5256', 4, 6, 3, '2026-10-30', '12:00:00', 'Hotel YTTA, Jakarta Barat', 'yang mantab ya', 100000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-29 17:23:21', 'Yang tau tau aja', 'Party', 'Jakarta Barat', 5000, 'Transfer Bank', '2026-10-29 17:23:21', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -366,7 +368,7 @@ ALTER TABLE `chats`
 -- AUTO_INCREMENT for table `favorit`
 --
 ALTER TABLE `favorit`
-  MODIFY `id_favorit` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_favorit` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `laporan_mua`

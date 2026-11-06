@@ -374,3 +374,57 @@ button.bk-day { cursor: pointer; } button.bk-day:hover { border-color: #c9a5ae; 
     .bk-card { padding: 22px 18px; } .bk-lbl { font-size: .68rem; } .bk-dot { width: 34px; height: 34px; } .bk-stepper::before { top: 16px; }
     .bk-two { grid-template-columns: 1fr; gap: 0; } .bk-svc { padding: 14px 16px; gap: 14px; } .bk-actions { gap: 12px; }
 }
+
+/* =====================================================================
+   HISTORY (daftar booking) + DETAIL BOOKING. Class diawali "hs-".
+   ===================================================================== */
+.hs-tabs { display: flex; max-width: 830px; border-bottom: 1px solid #b9a3a8; margin: 8px 0 28px; }
+.hs-tabs a { flex: 1; text-align: center; padding: 14px 8px; font-weight: 600; font-size: 1.05rem; color: #8c7f83; border-bottom: 3px solid transparent; margin-bottom: -1px; transition: color .2s; white-space: nowrap; }
+.hs-tabs a:hover { color: var(--p); } .hs-tabs a.on { color: var(--p); border-bottom-color: var(--p); }
+.hs-n { display: inline-block; min-width: 20px; padding: 0 6px; margin-left: 8px; border-radius: 20px; background: #EBD9DC; color: var(--p); font-size: .72rem; line-height: 20px; vertical-align: 2px; }
+.hs-tabs a.on .hs-n { background: var(--p); color: #fff; }
+
+.hs-card { display: grid; grid-template-columns: minmax(230px, 1.25fr) minmax(160px, .8fr) minmax(170px, 1fr) auto; align-items: center; gap: 22px; background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 22px 30px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(126, 70, 85, .05); transition: box-shadow .25s; }
+.hs-card:hover { box-shadow: 0 8px 22px rgba(126, 70, 85, .12); }
+.hs-mua { display: flex; align-items: center; gap: 22px; min-width: 0; } .hs-mua .avatar { width: 76px; height: 76px; flex: none; }
+.hs-mua > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; } .hs-mua b { font-size: .98rem; } .hs-mua b a:hover { color: var(--p); }
+.hs-layanan { color: #8c6f77; font-weight: 600; font-size: .95rem; }
+.hs-meta { display: flex; flex-direction: column; gap: 10px; border-left: 3px solid var(--p); padding-left: 20px; font-size: .86rem; color: #6f6266; } .hs-meta i { width: 18px; color: #6f6266; margin-right: 4px; }
+.hs-pesan { font-size: .82rem; color: #6f6266; line-height: 1.5; display: flex; flex-direction: column; gap: 4px; }
+.hs-aksi { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.hs-btns { display: flex; gap: 14px; }
+.hs-btn { padding: 9px 24px; font-size: .88rem; white-space: nowrap; cursor: pointer; border: 1.5px solid var(--p); font-family: inherit; font-weight: 700; }
+.hs-badge { display: inline-block; padding: 6px 24px; border-radius: 30px; font-size: .78rem; font-weight: 700; background: #FAF3F0; color: #A9696F; white-space: nowrap; }
+.hs-badge.s-selesai { background: #E8F3E6; color: #4B7A4F; } .hs-badge.s-ditolak { background: #FBE3E3; color: #C0262D; }
+.hs-badge.s-dikonfirmasi { background: #E3EEFB; color: #2D63A8; } .hs-badge.s-menunggu-klien { background: #F6E4EE; color: #8A3A66; }
+
+/* --- Detail booking --- */
+.hs-det { width: 100%; max-width: 940px; margin: 0 auto; padding: 0 24px 70px; }
+.bk-stepper.s3 { max-width: 640px; } .bk-stepper.s3::before { left: 16.667%; right: 16.667%; }
+.bk-step.x .bk-dot { background: #D3202A; border-color: #D3202A; color: #fff; font-size: 1.05rem; } .bk-step.x .bk-lbl { color: #D3202A; }
+.hs-info { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 18px; margin: 0 0 22px; font-size: .9rem; color: #5b4c51; }
+.hs-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-bottom: 26px; }
+.hs-grid2 .bk-card h2 { color: #7E4655; margin-bottom: 12px; }
+.hs-rows { margin: 0; } .hs-rows > div { display: flex; justify-content: space-between; gap: 18px; padding: 11px 0; font-size: .88rem; } .hs-rows dt { color: #6b5a60; flex: none; } .hs-rows dd { margin: 0; font-weight: 700; text-align: right; overflow-wrap: anywhere; }
+.hs-grid2 .bk-total { margin: 6px 0 8px; padding-top: 18px; }
+.hs-muacard h2 { font-size: 1.05rem; color: #7E4655; margin-bottom: 14px; } .hs-muacard h2 i { color: #8c7f83; margin-right: 8px; }
+.hs-muabody { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 44px; }
+.hs-muaid { display: flex; align-items: center; gap: 20px; flex: 1; min-width: 220px; } .hs-muaid .avatar { width: 84px; height: 84px; } .hs-muaid b { font-size: 1.2rem; color: #7E4655; font-weight: 600; } .hs-muaid:hover b { text-decoration: underline; }
+.hs-kontak { display: flex; gap: 12px; align-items: flex-start; font-size: .84rem; } .hs-kontak > i { color: var(--p); margin-top: 3px; } .hs-kontak b { display: block; } .hs-kontak span { color: #6b5a60; overflow-wrap: anywhere; }
+.hs-chat { padding: 8px 40px; font-size: .88rem; }
+.hs-dok, .hs-review { margin-top: 26px; } .hs-dok h2, .hs-review h2 { font-size: 1.05rem; color: #7E4655; margin-bottom: 14px; } .hs-dok h2 i, .hs-review h2 i { color: #8c7f83; margin-right: 8px; }
+.hs-dokfoto { width: 100%; max-width: 420px; max-height: 320px; object-fit: cover; border-radius: 14px; display: block; }
+.hs-review p { margin: 0 0 8px; } .hs-review .kb-fill { margin-top: 8px; border: 0; cursor: pointer; font-family: inherit; font-weight: 700; }
+.hs-foot { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 14px; margin-top: 26px; } .hs-foot form { margin: 0; } .hs-foot .bk-btn { min-width: 290px; } .hs-catat { margin: 0; }
+.hs-linkbtn { display: inline-block; text-align: center; }
+
+@media (max-width: 1100px) { .hs-card { grid-template-columns: 1fr 1fr; gap: 18px 24px; } .hs-aksi { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; align-items: center; } }
+@media (max-width: 992px) { .hs-grid2 { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+    .hs-tabs a { font-size: .85rem; padding: 12px 4px; } .hs-n { margin-left: 4px; padding: 0 5px; }
+    .hs-card { grid-template-columns: 1fr; padding: 20px 18px; } .hs-meta { border-left: 0; padding-left: 0; flex-direction: row; gap: 18px; flex-wrap: wrap; }
+    .hs-aksi { flex-direction: column; align-items: stretch; } .hs-btns { flex-direction: column; } .hs-btn { text-align: center; }
+    .hs-det { padding: 0 16px 60px; } .hs-foot .bk-btn { min-width: 0; width: 100%; } .hs-foot { flex-direction: column-reverse; align-items: stretch; } .hs-foot form { width: 100%; }
+    .hs-muaid .avatar { width: 64px; height: 64px; }
+}
+.kl-title.hs-judul { color: #241a1d; }
