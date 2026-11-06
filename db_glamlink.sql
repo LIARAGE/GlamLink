@@ -3,14 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 19, 2026 at 12:10 PM
+-- Generation Time: Oct 29, 2026 at 06:27 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-SET FOREIGN_KEY_CHECKS = 0;
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -21,11 +20,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 --
 -- Database: `db_glamlink`
 --
--- FILE GABUNGAN: dump terbaru dari tim (19 Okt 2026) + tabel/kolom fitur Detail MUA
--- (favorit, laporan_mua, mua_libur, portfolios.judul/deskripsi/tag).
--- Cara pakai: phpMyAdmin > db_glamlink > Import. PERINGATAN: semua tabel DIGANTI (DROP + CREATE).
--- File migrasi_detail_mua.sql TIDAK perlu dijalankan lagi.
---
 
 -- --------------------------------------------------------
 
@@ -33,7 +27,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Table structure for table `bookings`
 --
 
-DROP TABLE IF EXISTS `bookings`;
 CREATE TABLE `bookings` (
   `id_booking` int(11) NOT NULL,
   `no_invoice` varchar(20) NOT NULL,
@@ -51,20 +44,29 @@ CREATE TABLE `bookings` (
   `foto_dokumentasi` varchar(255) DEFAULT NULL,
   `rating` int(1) DEFAULT NULL,
   `ulasan` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `nama_acara` varchar(150) DEFAULT NULL,
+  `jenis_acara` varchar(50) DEFAULT NULL,
+  `kota_acara` varchar(50) DEFAULT NULL,
+  `biaya_platform` int(11) NOT NULL DEFAULT 0,
+  `metode_bayar` varchar(50) DEFAULT NULL,
+  `dibayar_pada` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `bookings`
 --
 
-INSERT INTO `bookings` (`id_booking`, `no_invoice`, `id_mua`, `id_pelanggan`, `id_layanan`, `tanggal_booking`, `waktu_booking`, `lokasi_acara`, `catatan`, `total_harga`, `status`, `is_mua_done`, `is_client_done`, `foto_dokumentasi`, `rating`, `ulasan`, `created_at`) VALUES
-(2, 'GL-8921', 2, 1, 1, '2026-10-24', '04:00:00', NULL, NULL, 3000000, 'ditolak', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27'),
-(3, 'GL-7742', 2, 1, 1, '2026-10-30', '16:00:00', NULL, NULL, 3000000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27'),
-(4, 'GL-6001', 2, 1, 1, '2026-10-10', '08:00:00', 'Fairmont Jakarta, Gelora Bung Karno', 'Makeup natural aja', 3000000, 'selesai', 1, 1, 'dokum_sample_1.jpg', 5, 'Suka banget sama hasilnya! Tahan seharian walau keringetan.', '2026-10-16 18:25:27'),
-(5, 'GL-6002', 2, 1, 1, '2026-10-12', '10:00:00', 'Plataran Dharmawangsa, Jakarta Selatan', 'Minta flawless complexion', 3000000, 'selesai', 1, 1, 'dokum_5_1792401121.jpg', 4, 'Bagus, MUA-nya ramah dan on time. Sayang lipstiknya agak gampang hilang kalau dipakai makan.', '2026-10-16 18:25:27'),
-(6, 'GL-4288', 2, 1, 1, '2026-09-14', '10:00:00', 'Hutan Kota by Plataran, GBK', 'Smokey eyes agak bold', 3000000, 'selesai', 1, 1, 'dokum_6_1792401183.jpg', NULL, NULL, '2026-10-19 08:25:30'),
-(7, 'GL-9820', 2, 1, 2, '2026-10-19', '14:00:00', 'Hotel Mulia Senayan', 'Acaraku mulai jam 7 sebenarnya, tapi aku mau kelar sblm jam 6', 750000, 'dikonfirmasi', 0, 0, NULL, NULL, NULL, '2026-10-19 08:25:30');
+INSERT INTO `bookings` (`id_booking`, `no_invoice`, `id_mua`, `id_pelanggan`, `id_layanan`, `tanggal_booking`, `waktu_booking`, `lokasi_acara`, `catatan`, `total_harga`, `status`, `is_mua_done`, `is_client_done`, `foto_dokumentasi`, `rating`, `ulasan`, `created_at`, `nama_acara`, `jenis_acara`, `kota_acara`, `biaya_platform`, `metode_bayar`, `dibayar_pada`) VALUES
+(2, 'GL-8921', 2, 1, 1, '2026-10-24', '04:00:00', NULL, NULL, 3000000, 'ditolak', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL),
+(3, 'GL-7742', 2, 1, 1, '2026-10-30', '16:00:00', NULL, NULL, 3000000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL),
+(4, 'GL-6001', 2, 1, 1, '2026-10-10', '08:00:00', 'Fairmont Jakarta, Gelora Bung Karno', 'Makeup natural aja', 3000000, 'selesai', 1, 1, 'dokum_sample_1.jpg', 5, 'Suka banget sama hasilnya! Tahan seharian walau keringetan.', '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL),
+(5, 'GL-6002', 2, 1, 1, '2026-10-12', '10:00:00', 'Plataran Dharmawangsa, Jakarta Selatan', 'Minta flawless complexion', 3000000, 'selesai', 1, 1, 'dokum_5_1792401121.jpg', 4, 'Bagus, MUA-nya ramah dan on time. Sayang lipstiknya agak gampang hilang kalau dipakai makan.', '2026-10-16 18:25:27', NULL, NULL, NULL, 0, NULL, NULL),
+(6, 'GL-4288', 2, 1, 1, '2026-09-14', '10:00:00', 'Hutan Kota by Plataran, GBK', 'Smokey eyes agak bold', 3000000, 'selesai', 1, 1, 'dokum_6_1792401183.jpg', NULL, NULL, '2026-10-19 08:25:30', NULL, NULL, NULL, 0, NULL, NULL),
+(7, 'GL-9820', 2, 1, 2, '2026-10-19', '14:00:00', 'Hotel Mulia Senayan', 'Acaraku mulai jam 7 sebenarnya, tapi aku mau kelar sblm jam 6', 750000, 'dikonfirmasi', 0, 0, NULL, NULL, NULL, '2026-10-19 08:25:30', NULL, NULL, NULL, 0, NULL, NULL),
+(8, 'GL-3950', 2, 6, 2, '2026-10-27', '10:00:00', 'St. Regis', 'yang bener ya', 750000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-26 14:00:38', NULL, NULL, NULL, 0, NULL, NULL),
+(9, 'GL-7558', 2, 6, 1, '2026-10-28', '16:00:00', 'sebrang cilok bojot aa', 'apa aja dah', 3000000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-26 14:02:06', NULL, NULL, NULL, 0, NULL, NULL),
+(10, 'GL-5256', 4, 6, 3, '2026-10-30', '12:00:00', 'Hotel YTTA, Jakarta Barat', 'yang mantab ya', 100000, 'menunggu', 0, 0, NULL, NULL, NULL, '2026-10-29 17:23:21', 'Yang tau tau aja', 'Party', 'Jakarta Barat', 5000, 'Transfer Bank', '2026-10-29 17:23:21');
 
 -- --------------------------------------------------------
 
@@ -72,7 +74,6 @@ INSERT INTO `bookings` (`id_booking`, `no_invoice`, `id_mua`, `id_pelanggan`, `i
 -- Table structure for table `chats`
 --
 
-DROP TABLE IF EXISTS `chats`;
 CREATE TABLE `chats` (
   `id_chat` int(11) NOT NULL,
   `id_pengirim` int(11) NOT NULL,
@@ -84,10 +85,59 @@ CREATE TABLE `chats` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `favorit`
+--
+
+CREATE TABLE `favorit` (
+  `id_favorit` int(11) NOT NULL,
+  `id_pelanggan` int(11) NOT NULL,
+  `id_mua` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `laporan_mua`
+--
+
+CREATE TABLE `laporan_mua` (
+  `id_laporan` int(11) NOT NULL,
+  `id_pelapor` int(11) NOT NULL,
+  `id_mua` int(11) NOT NULL,
+  `alasan` varchar(100) NOT NULL,
+  `detail` text NOT NULL,
+  `bukti` varchar(255) DEFAULT NULL,
+  `status` enum('baru','diproses','selesai') NOT NULL DEFAULT 'baru',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `laporan_mua`
+--
+
+INSERT INTO `laporan_mua` (`id_laporan`, `id_pelapor`, `id_mua`, `alasan`, `detail`, `bukti`, `status`, `created_at`) VALUES
+(1, 6, 2, 'Lainnya', 'saya juga bingung', 'bukti_70b252c73bab484e.jpg', 'baru', '2026-10-26 13:59:05');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mua_libur`
+--
+
+CREATE TABLE `mua_libur` (
+  `id_libur` int(11) NOT NULL,
+  `id_mua` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `keterangan` varchar(150) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `mua_subscriptions`
 --
 
-DROP TABLE IF EXISTS `mua_subscriptions`;
 CREATE TABLE `mua_subscriptions` (
   `id_transaksi` int(11) NOT NULL,
   `no_invoice` varchar(50) NOT NULL,
@@ -115,7 +165,6 @@ INSERT INTO `mua_subscriptions` (`id_transaksi`, `no_invoice`, `id_mua`, `id_pak
 -- Table structure for table `portfolios`
 --
 
-DROP TABLE IF EXISTS `portfolios`;
 CREATE TABLE `portfolios` (
   `id_portfolio` int(11) NOT NULL,
   `id_mua` int(11) NOT NULL,
@@ -140,7 +189,6 @@ INSERT INTO `portfolios` (`id_portfolio`, `id_mua`, `foto`, `judul`, `deskripsi`
 -- Table structure for table `services`
 --
 
-DROP TABLE IF EXISTS `services`;
 CREATE TABLE `services` (
   `id_service` int(11) NOT NULL,
   `id_mua` int(11) NOT NULL,
@@ -168,7 +216,6 @@ INSERT INTO `services` (`id_service`, `id_mua`, `nama_layanan`, `kategori`, `har
 -- Table structure for table `subscription_packages`
 --
 
-DROP TABLE IF EXISTS `subscription_packages`;
 CREATE TABLE `subscription_packages` (
   `id_paket` int(11) NOT NULL,
   `nama_paket` varchar(100) NOT NULL,
@@ -191,7 +238,6 @@ INSERT INTO `subscription_packages` (`id_paket`, `nama_paket`, `durasi_hari`, `h
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id_user` int(11) NOT NULL,
   `nama` varchar(100) NOT NULL,
@@ -243,6 +289,29 @@ ALTER TABLE `chats`
   ADD KEY `id_penerima` (`id_penerima`);
 
 --
+-- Indexes for table `favorit`
+--
+ALTER TABLE `favorit`
+  ADD PRIMARY KEY (`id_favorit`),
+  ADD UNIQUE KEY `uq_favorit` (`id_pelanggan`,`id_mua`),
+  ADD KEY `id_mua` (`id_mua`);
+
+--
+-- Indexes for table `laporan_mua`
+--
+ALTER TABLE `laporan_mua`
+  ADD PRIMARY KEY (`id_laporan`),
+  ADD KEY `id_pelapor` (`id_pelapor`),
+  ADD KEY `id_mua` (`id_mua`);
+
+--
+-- Indexes for table `mua_libur`
+--
+ALTER TABLE `mua_libur`
+  ADD PRIMARY KEY (`id_libur`),
+  ADD UNIQUE KEY `uq_libur` (`id_mua`,`tanggal`);
+
+--
 -- Indexes for table `mua_subscriptions`
 --
 ALTER TABLE `mua_subscriptions`
@@ -285,13 +354,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id_booking` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_booking` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `chats`
 --
 ALTER TABLE `chats`
   MODIFY `id_chat` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `favorit`
+--
+ALTER TABLE `favorit`
+  MODIFY `id_favorit` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `laporan_mua`
+--
+ALTER TABLE `laporan_mua`
+  MODIFY `id_laporan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `mua_libur`
+--
+ALTER TABLE `mua_libur`
+  MODIFY `id_libur` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `mua_subscriptions`
@@ -343,6 +430,26 @@ ALTER TABLE `chats`
   ADD CONSTRAINT `chats_ibfk_2` FOREIGN KEY (`id_penerima`) REFERENCES `users` (`id_user`);
 
 --
+-- Constraints for table `favorit`
+--
+ALTER TABLE `favorit`
+  ADD CONSTRAINT `favorit_ibfk_1` FOREIGN KEY (`id_pelanggan`) REFERENCES `users` (`id_user`) ON DELETE CASCADE,
+  ADD CONSTRAINT `favorit_ibfk_2` FOREIGN KEY (`id_mua`) REFERENCES `users` (`id_user`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `laporan_mua`
+--
+ALTER TABLE `laporan_mua`
+  ADD CONSTRAINT `laporan_mua_ibfk_1` FOREIGN KEY (`id_pelapor`) REFERENCES `users` (`id_user`) ON DELETE CASCADE,
+  ADD CONSTRAINT `laporan_mua_ibfk_2` FOREIGN KEY (`id_mua`) REFERENCES `users` (`id_user`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `mua_libur`
+--
+ALTER TABLE `mua_libur`
+  ADD CONSTRAINT `mua_libur_ibfk_1` FOREIGN KEY (`id_mua`) REFERENCES `users` (`id_user`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `mua_subscriptions`
 --
 ALTER TABLE `mua_subscriptions`
@@ -360,62 +467,6 @@ ALTER TABLE `portfolios`
 --
 ALTER TABLE `services`
   ADD CONSTRAINT `services_ibfk_1` FOREIGN KEY (`id_mua`) REFERENCES `users` (`id_user`) ON DELETE CASCADE;
--- --------------------------------------------------------
-
---
--- Tabel baru (fitur Detail MUA): favorit klien
---
-
-DROP TABLE IF EXISTS `favorit`;
-CREATE TABLE `favorit` (
-  `id_favorit` int(11) NOT NULL AUTO_INCREMENT,
-  `id_pelanggan` int(11) NOT NULL,
-  `id_mua` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id_favorit`),
-  UNIQUE KEY `uq_favorit` (`id_pelanggan`,`id_mua`),
-  KEY `id_mua` (`id_mua`),
-  CONSTRAINT `favorit_ibfk_1` FOREIGN KEY (`id_pelanggan`) REFERENCES `users` (`id_user`) ON DELETE CASCADE,
-  CONSTRAINT `favorit_ibfk_2` FOREIGN KEY (`id_mua`) REFERENCES `users` (`id_user`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Tabel baru: laporan klien terhadap MUA (ditinjau admin)
---
-
-DROP TABLE IF EXISTS `laporan_mua`;
-CREATE TABLE `laporan_mua` (
-  `id_laporan` int(11) NOT NULL AUTO_INCREMENT,
-  `id_pelapor` int(11) NOT NULL,
-  `id_mua` int(11) NOT NULL,
-  `alasan` varchar(100) NOT NULL,
-  `detail` text NOT NULL,
-  `bukti` varchar(255) DEFAULT NULL,
-  `status` enum('baru','diproses','selesai') NOT NULL DEFAULT 'baru',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id_laporan`),
-  KEY `id_pelapor` (`id_pelapor`),
-  KEY `id_mua` (`id_mua`),
-  CONSTRAINT `laporan_mua_ibfk_1` FOREIGN KEY (`id_pelapor`) REFERENCES `users` (`id_user`) ON DELETE CASCADE,
-  CONSTRAINT `laporan_mua_ibfk_2` FOREIGN KEY (`id_mua`) REFERENCES `users` (`id_user`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Tabel baru: hari cuti MUA (merah di kalender Jadwal, tidak bisa dibooking)
---
-
-DROP TABLE IF EXISTS `mua_libur`;
-CREATE TABLE `mua_libur` (
-  `id_libur` int(11) NOT NULL AUTO_INCREMENT,
-  `id_mua` int(11) NOT NULL,
-  `tanggal` date NOT NULL,
-  `keterangan` varchar(150) DEFAULT NULL,
-  PRIMARY KEY (`id_libur`),
-  UNIQUE KEY `uq_libur` (`id_mua`,`tanggal`),
-  CONSTRAINT `mua_libur_ibfk_1` FOREIGN KEY (`id_mua`) REFERENCES `users` (`id_user`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-SET FOREIGN_KEY_CHECKS = 1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
