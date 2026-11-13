@@ -1,14 +1,9 @@
 <?php
 session_start();
-require '../koneksi.php';
 
-// 1. OTENTIKASI: Cek sesi MUA
-if (!isset($_SESSION['status_login']) || $_SESSION['role'] != 'mua') {
-    header("Location: ../login.php");
-    exit();
-}
-
-$id_mua = $_SESSION['id_user']; 
+// 1. OTENTIKASI: auth_mua.php = koneksi + cek login MUA + blokir MUA yang belum di-approve, mengisi $id_mua
+require_once '../includes/auth_mua.php';
+require_once '../includes/mua_ui.php'; // toast notifikasi
 
 // 2. FETCH DAFTAR LAYANAN
 $query_services = mysqli_query($koneksi, "SELECT * FROM services WHERE id_mua = '$id_mua' ORDER BY id_service DESC") or die('Error Services: ' . mysqli_error($koneksi));
@@ -30,6 +25,7 @@ if ($query_services) {
     
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/mua_services.css">
+    <link rel="stylesheet" href="../assets/css/mua_ui.css">
 </head>
 <body>
 
@@ -86,5 +82,7 @@ if ($query_services) {
             if(navLinks[1]) navLinks[1].classList.add('active');
         });
     </script>
+    <?php mua_toast_render(); ?>
+    <script src="../assets/js/mua_ui.js"></script>
 </body>
 </html>

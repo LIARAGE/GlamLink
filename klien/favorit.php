@@ -1,7 +1,7 @@
 <?php
 // Tambah / hapus MUA dari favorit (dipanggil dari tombol hati di halaman detail MUA)
 session_start();
-require __DIR__ . '/../Includes/klien.php';
+require __DIR__ . '/../includes/klien.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: cari.php'); exit(); }
 $id  = (int)($_POST['id_mua'] ?? 0);

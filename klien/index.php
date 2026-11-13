@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/../Includes/klien.php';
+require __DIR__ . '/../includes/klien.php';
 
 $kota     = WILAYAH;               // pilihan sama dengan filter di halaman Cari MUA
 $kategori = KATEGORI_LAYANAN;

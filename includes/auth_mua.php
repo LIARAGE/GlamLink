@@ -25,3 +25,9 @@ if ($status_verifikasi !== 'approved' && basename($_SERVER['SCRIPT_NAME']) !== '
     header('Location: status.php');
     exit();
 }
+
+// Langganan yang tanggal_berakhir-nya sudah lewat otomatis ditandai 'kedaluwarsa'
+// (dijalankan setiap halaman MUA dibuka, jadi status di database selalu sesuai tanggal)
+$st_exp = $koneksi->prepare("UPDATE mua_subscriptions SET status = 'kedaluwarsa' WHERE id_mua = ? AND status = 'aktif' AND tanggal_berakhir < CURDATE()");
+$st_exp->bind_param('i', $id_mua);
+$st_exp->execute();

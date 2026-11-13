@@ -1,13 +1,8 @@
 <?php
 session_start();
-require '../koneksi.php';
-
-if (!isset($_SESSION['status_login']) || $_SESSION['role'] != 'mua') {
-    header("Location: ../login.php");
-    exit();
-}
-
-$id_mua = $_SESSION['id_user'];
+// auth_mua.php: koneksi + cek login MUA + blokir MUA belum di-approve + update otomatis langganan kedaluwarsa
+require_once '../includes/auth_mua.php';
+require_once '../includes/mua_ui.php'; // toast notifikasi
 $id_paket_aktif = isset($_GET['id_paket']) ? (int)$_GET['id_paket'] : 2; // Default Pro Glam (id=2)
 
 // --- AMBIL DATA MASTER PAKET DARI DATABASE ---
@@ -31,9 +26,17 @@ while($row = mysqli_fetch_assoc($q_paket)){
 
 // --- PROSES PEMBAYARAN KE TABEL TRANSAKSI ---
 if (isset($_POST['bayar_sekarang'])) {
-    $id_paket_pilihan = (int)$_POST['id_paket'];
-    $metode = mysqli_real_escape_string($koneksi, $_POST['metode_bayar']);
-    
+    $id_paket_pilihan = (int)($_POST['id_paket'] ?? 0);
+    $metode = trim($_POST['metode_bayar'] ?? '');
+
+    // Tolak jika paket tidak ada di database atau metode bayar kosong (mencegah form dimanipulasi)
+    if (!isset($pakets[$id_paket_pilihan]) || $metode === '') {
+        mua_toast('Pilih paket dan metode pembayaran terlebih dahulu.', 'error');
+        header('Location: subscription_pay.php');
+        exit();
+    }
+    $metode = mb_substr($metode, 0, 50); // kolom metode_bayar = varchar(50)
+
     $paket_info = $pakets[$id_paket_pilihan];
     $durasi = $paket_info['durasi_hari'];
     $harga_normal = $paket_info['harga'];
@@ -41,11 +44,20 @@ if (isset($_POST['bayar_sekarang'])) {
     $diskon = ($id_paket_pilihan > 1) ? ($harga_normal * 0.1) : 0;
     $nominal_bayar = $harga_normal - $diskon;
 
-    $no_invoice = 'INV-SUB-' . date('Y') . '-' . rand(1000, 9999);
+    $nominal_bayar = (int)round($nominal_bayar); // kolom nominal_bayar = int
+
+    // Nomor invoice unik: ulangi acak sampai tidak ada yang sama di database
+    $st_inv = $koneksi->prepare("SELECT 1 FROM mua_subscriptions WHERE no_invoice = ?");
+    do {
+        $no_invoice = 'INV-SUB-' . date('Y') . '-' . random_int(100000, 999999);
+        $st_inv->bind_param('s', $no_invoice);
+        $st_inv->execute();
+        $sudah_ada = $st_inv->get_result()->num_rows > 0;
+    } while ($sudah_ada);
 
     // Cek apakah ada paket aktif, jika ada, tambahkan durasi dari tanggal berakhir saat ini
     $q_cek_aktif = mysqli_query($koneksi, "SELECT tanggal_berakhir FROM mua_subscriptions WHERE id_mua = '$id_mua' AND status = 'aktif' AND tanggal_berakhir >= CURDATE() ORDER BY tanggal_berakhir DESC LIMIT 1");
-    
+
     if(mysqli_num_rows($q_cek_aktif) > 0) {
         $row_aktif = mysqli_fetch_assoc($q_cek_aktif);
         $base_date = $row_aktif['tanggal_berakhir'];
@@ -55,14 +67,19 @@ if (isset($_POST['bayar_sekarang'])) {
 
     $tgl_berakhir = date('Y-m-d', strtotime($base_date . " + $durasi days"));
 
-    // Insert ke tabel riwayat transaksi (mua_subscriptions)
-    $query_insert = "INSERT INTO mua_subscriptions (no_invoice, id_mua, id_paket, metode_bayar, nominal_bayar, tanggal_berakhir, status) 
-                     VALUES ('$no_invoice', '$id_mua', '$id_paket_pilihan', '$metode', '$nominal_bayar', '$tgl_berakhir', 'aktif')";
-    
-    if (mysqli_query($koneksi, $query_insert)) {
-        echo "<script>alert('Pembayaran Berhasil! Paket langganan Anda telah diperbarui.'); window.location.href='subscription.php';</script>";
+    // Insert ke tabel riwayat transaksi (mua_subscriptions) dengan prepared statement
+    $st_ins = $koneksi->prepare("INSERT INTO mua_subscriptions (no_invoice, id_mua, id_paket, metode_bayar, nominal_bayar, tanggal_berakhir, status)
+                                 VALUES (?, ?, ?, ?, ?, ?, 'aktif')");
+    $st_ins->bind_param('siisis', $no_invoice, $id_mua, $id_paket_pilihan, $metode, $nominal_bayar, $tgl_berakhir);
+
+    if ($st_ins->execute()) {
+        mua_toast('Pembayaran berhasil! Paket langganan Anda telah diperbarui.', 'success');
+        header('Location: subscription.php');
         exit();
     }
+    mua_toast('Pembayaran gagal diproses. Silakan coba lagi.', 'error');
+    header('Location: subscription_pay.php?id_paket=' . $id_paket_pilihan);
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -75,6 +92,7 @@ if (isset($_POST['bayar_sekarang'])) {
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/mua_subscription.css">
+    <link rel="stylesheet" href="../assets/css/mua_ui.css">
 </head>
 <body>
 
@@ -262,7 +280,7 @@ if (isset($_POST['bayar_sekarang'])) {
                         </div>
                     </div>
 
-                    <button type="submit" name="bayar_sekarang" class="btn-bayar">
+                    <button type="submit" name="bayar_sekarang" class="btn-bayar" data-loading-text="Memproses pembayaran...">
                         <i class="fa-solid fa-bolt"></i> Bayar Sekarang &middot; <span id="btnTotal">Rp 0</span>
                     </button>
                     <p class="secure-text"><i class="fa-solid fa-shield-halved"></i> Transaksi Aman Terenkripsi 256-bit SSL</p>
@@ -318,5 +336,7 @@ if (isset($_POST['bayar_sekarang'])) {
         // Jalankan saat pertama dimuat
         document.addEventListener('DOMContentLoaded', updateSummary);
     </script>
+    <?php mua_toast_render(); ?>
+    <script src="../assets/js/mua_ui.js"></script>
 </body>
 </html>

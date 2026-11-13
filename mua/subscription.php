@@ -1,13 +1,8 @@
 <?php
 session_start();
-require '../koneksi.php';
-
-if (!isset($_SESSION['status_login']) || $_SESSION['role'] != 'mua') {
-    header("Location: ../login.php");
-    exit();
-}
-
-$id_mua = $_SESSION['id_user'];
+// auth_mua.php: koneksi + cek login MUA + blokir MUA belum di-approve + update otomatis langganan kedaluwarsa
+require_once '../includes/auth_mua.php';
+require_once '../includes/mua_ui.php'; // toast notifikasi (mis. setelah pembayaran berhasil)
 
 // Ambil Status Langganan Aktif Terakhir dengan JOIN
 $q_aktif = mysqli_query($koneksi, "
@@ -59,6 +54,7 @@ if($q_riwayat) {
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/mua_subscription.css">
+    <link rel="stylesheet" href="../assets/css/mua_ui.css">
 </head>
 <body>
 
@@ -107,7 +103,7 @@ if($q_riwayat) {
             </div>
 
             <div class="pricing-card popular">
-                <div class="popular-badge"><i class="fa-solid fa-sparkles"></i> PALING BANYAK DIPILIH</div>
+                <div class="popular-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> PALING BANYAK DIPILIH</div>
                 <div class="pc-header">
                     <span class="pc-tier text-maroon"><i class="fa-solid fa-crown"></i> PROFESIONAL</span>
                     <h4>Pro Glam Artist</h4>
@@ -196,5 +192,7 @@ if($q_riwayat) {
             if(navLinks[3]) navLinks[3].classList.add('active'); 
         });
     </script>
+    <?php mua_toast_render(); ?>
+    <script src="../assets/js/mua_ui.js"></script>
 </body>
-</html>
+</html> 

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/../Includes/klien.php';
+require __DIR__ . '/../includes/klien.php';
 
 /**
  * BOOKING MUA - wizard 4 langkah (sesuai desain): 1 Pilih Layanan -> 2 Jadwal -> 3 Detail Acara -> 4 Pembayaran.

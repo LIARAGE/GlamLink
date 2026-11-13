@@ -1,7 +1,7 @@
 <?php
 session_start();
-require __DIR__ . '/../Includes/klien.php';
-require __DIR__ . '/../Includes/upload.php';
+require __DIR__ . '/../includes/klien.php';
+require __DIR__ . '/../includes/upload.php';
 
 $pesan = ''; $tipe = 'ok';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

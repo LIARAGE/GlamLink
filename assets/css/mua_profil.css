@@ -1,0 +1,462 @@
+/* =========================================================
+   HALAMAN PROFIL MUA
+   Dipakai: mua/profil.php, mua/profil_edit.php, mua/portfolio_tambah.php
+   ========================================================= */
+
+.pf-body {
+    background-color: #FAF5F6;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #2b2326;
+    margin: 0;
+    padding-top: 80px;               /* tinggi navbar */
+}
+.pf-body *, .pf-body *::before, .pf-body *::after { box-sizing: border-box; }
+.pf-muted { color: #8c8286; }
+.pf-body [hidden] { display: none !important; }   /* atribut hidden selalu menang atas display:flex */
+
+/* ---------- TOMBOL ---------- */
+.pf-btn-outline, .pf-btn-filled, .pf-btn-danger, .pf-btn-ghost {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: inherit; font-weight: 600; font-size: 0.95rem;
+    padding: 12px 22px; border-radius: 14px; cursor: pointer; text-decoration: none;
+    transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    white-space: nowrap;
+}
+.pf-btn-outline { background: #FBF8F6; color: #7E4655; border: 1px solid #e6d9d6; box-shadow: 0 4px 12px rgba(126,70,85,0.08); }
+.pf-btn-outline:hover { background: #fff; border-color: #7E4655; transform: translateY(-1px); }
+.pf-btn-filled { background: #7E4655; color: #fff; border: 1px solid #7E4655; }
+.pf-btn-filled:hover { background: #633642; }
+.pf-btn-danger { background: #B8324A; color: #fff; border: 1px solid #B8324A; }
+.pf-btn-danger:hover { background: #962639; }
+.pf-btn-ghost { background: #fff; color: #2b2326; border: 1px solid #eae5e3; }
+.pf-btn-ghost:hover { border-color: #8c8286; }
+.pf-btn-sm { padding: 9px 16px; font-size: 0.85rem; border-radius: 10px; }
+.pf-btn-block { width: 100%; }
+
+/* ---------- FOTO SAMPUL & KARTU HEADER ---------- */
+.pf-cover {
+    height: 230px;
+    background-size: cover;
+    background-position: center;
+}
+.pf-cover--default {
+    background: radial-gradient(circle at 15% 30%, #f3cdd5 0, transparent 40%),
+                radial-gradient(circle at 85% 20%, #e9c3b9 0, transparent 35%),
+                linear-gradient(135deg, #f6e4e8 0%, #efdcd6 100%);
+}
+
+.pf-main {
+    max-width: 1200px;
+    margin: -150px auto 0;
+    padding: 0 20px 70px;
+    position: relative;
+}
+
+.pf-head-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px 60px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    box-shadow: 0 12px 34px rgba(43, 35, 38, 0.08);
+}
+.pf-avatar {
+    width: 128px; height: 128px; flex-shrink: 0;
+    border-radius: 50%; overflow: hidden; background: #efe6e8;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 2.5rem;
+}
+.pf-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.pf-head-info { flex: 1; min-width: 0; }
+.pf-head-info h1 { margin: 0 0 12px; color: #7E4655; font-size: 1.65rem; font-weight: 600; }
+.pf-head-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; margin-bottom: 14px; }
+.pf-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid #8c8286; border-radius: 20px;
+    padding: 5px 14px; font-size: 0.78rem; color: #5c5357;
+}
+.pf-rating { display: inline-flex; align-items: center; gap: 7px; font-size: 0.85rem; }
+.pf-rating i { color: #E8954E; }
+.pf-rating small { color: #8c8286; }
+.pf-tagline { margin: 0; font-size: 1rem; line-height: 1.5; }
+
+/* ---------- TAB MENU ---------- */
+.pf-tabs {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: 30px auto 26px;
+    border-bottom: 1px solid #8c8286;
+}
+.pf-tab {
+    background: none; border: none; cursor: pointer;
+    font-family: inherit; font-size: 1.15rem; font-weight: 600;
+    color: #a39a9d; padding: 10px 14px 14px;
+    transition: color 0.2s;
+}
+.pf-tab:hover { color: #7E4655; }
+.pf-tab.active { color: #7E4655; }
+.pf-tab-indicator {
+    position: absolute; left: 0; bottom: -1px;
+    height: 3px; width: 0; border-radius: 3px 3px 0 0;
+    background: #7E4655;
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), width 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pf-panel { display: none; }
+.pf-panel.active { display: block; }
+
+/* ---------- KARTU UMUM ---------- */
+.pf-card {
+    background: #fff;
+    border: 1px solid #eae5e3;
+    border-radius: 18px;
+    padding: 30px;
+}
+.pf-card-title { margin: 0 0 18px; font-size: 1.15rem; font-weight: 600; }
+.pf-sub-title { display: block; font-size: 0.85rem; margin-bottom: 10px; }
+.pf-divider { height: 1px; background: #eae5e3; margin: 20px 0; }
+.pf-label { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; color: #B05F6D; margin-bottom: 8px; }
+
+.pf-panel-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 22px; }
+.pf-panel-head h3 { margin: 0 0 4px; font-size: 1.2rem; }
+.pf-panel-head p { margin: 0; font-size: 0.88rem; }
+
+.pf-empty {
+    background: #fff; border: 1px dashed #dcd2d4; border-radius: 18px;
+    padding: 50px 20px; text-align: center; color: #8c8286;
+}
+.pf-empty > i { font-size: 2rem; color: #c9b5ba; margin-bottom: 10px; }
+.pf-empty p { margin: 0 0 18px; }
+
+/* ---------- CHIP ---------- */
+.pf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pf-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid #e7c9cf; color: #7E4655; background: #fff;
+    border-radius: 20px; padding: 6px 14px; font-size: 0.82rem; font-family: inherit;
+}
+.pf-chip-sm { border-radius: 8px; padding: 5px 10px; font-size: 0.76rem; }
+
+/* ---------- TAB TENTANG ---------- */
+.pf-grid-about { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
+.pf-bio { font-size: 0.95rem; line-height: 1.75; color: #3d3438; }
+.pf-contact { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.pf-contact li { display: flex; gap: 14px; align-items: flex-start; }
+.pf-contact i { color: #7E4655; width: 18px; text-align: center; margin-top: 3px; }
+.pf-contact b { display: block; font-size: 0.85rem; margin-bottom: 2px; }
+.pf-contact span { font-size: 0.82rem; color: #5c5357; line-height: 1.5; word-break: break-word; }
+
+.pf-preview-note {
+    margin-top: 40px; background: #fff; border: 1px solid #eae5e3; border-radius: 14px;
+    padding: 18px 22px; font-size: 0.82rem; color: #5c5357;
+    display: flex; align-items: center; gap: 12px;
+}
+.pf-dot-live { width: 8px; height: 8px; border-radius: 50%; background: #1f8a5b; box-shadow: 0 0 0 4px rgba(31,138,91,0.15); flex-shrink: 0; }
+
+/* ---------- TAB LAYANAN ---------- */
+.pf-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.pf-service { padding: 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
+.pf-service h4 { margin: 0 0 6px; font-size: 1.05rem; }
+.pf-service .pf-muted { margin: 0 0 14px; font-size: 0.85rem; }
+.pf-service-dur { margin: 0; font-size: 0.85rem; color: #5c5357; }
+.pf-service-dur i { color: #B05F6D; margin-right: 4px; }
+.pf-service-foot { border-top: 1px solid #eae5e3; padding-top: 16px; }
+.pf-service-foot small { display: block; font-size: 0.72rem; color: #8c8286; margin-bottom: 3px; }
+.pf-service-foot b { color: #7E4655; font-size: 1.15rem; }
+
+/* ---------- TAB PORTFOLIO ---------- */
+.pf-porto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 26px; }
+.pf-porto-card, .pf-porto-add {
+    position: relative; aspect-ratio: 1 / 1.02; border-radius: 14px; overflow: hidden;
+}
+.pf-porto-card { background: #efe6e8; box-shadow: 0 6px 18px rgba(43,35,38,0.08); }
+.pf-porto-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.pf-porto-card:hover img { transform: scale(1.04); }
+.pf-porto-missing { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #c9b5ba; font-size: 2.5rem; }
+.pf-porto-card::after {
+    content: ''; position: absolute; inset: 45% 0 0 0; pointer-events: none;
+    background: linear-gradient(180deg, transparent 0%, rgba(43,35,38,0.72) 100%);
+}
+.pf-porto-info { position: absolute; left: 24px; right: 24px; bottom: 22px; z-index: 1; color: #fff; }
+.pf-porto-info b { display: block; font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; }
+.pf-porto-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.pf-porto-tags span { background: rgba(176,95,109,0.85); border-radius: 5px; padding: 3px 8px; font-size: 0.8rem; }
+.pf-porto-del {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.92); color: #B8324A; font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0; transform: scale(0.85);
+    transition: opacity 0.2s, transform 0.2s, background-color 0.2s;
+}
+.pf-porto-card:hover .pf-porto-del, .pf-porto-del:focus-visible { opacity: 1; transform: scale(1); }
+.pf-porto-del:hover { background: #B8324A; color: #fff; }
+@media (hover: none) { .pf-porto-del { opacity: 1; transform: none; } }  /* HP/tablet: selalu tampil */
+
+.pf-porto-add {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    background: #ececec; border: 2px dashed #d6d0d1; color: #fff; text-decoration: none;
+    transition: background-color 0.2s, border-color 0.2s, transform 0.25s;
+}
+.pf-porto-add i { font-size: 2.6rem; }
+.pf-porto-add span { color: #8c8286; font-weight: 600; font-size: 0.9rem; }
+.pf-porto-add:hover { background: #e4dadc; border-color: #7E4655; transform: translateY(-3px); }
+.pf-porto-add:hover i { color: #7E4655; }
+
+/* ---------- TAB JADWAL ---------- */
+.pf-info-box {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: #FBEFF2; border: 1px solid #f0d7dd; border-radius: 14px;
+    padding: 14px 18px; margin-bottom: 22px; font-size: 0.86rem; color: #5c5357; line-height: 1.55;
+}
+.pf-info-box i { color: #7E4655; margin-top: 3px; }
+.pf-info-box p { margin: 0; }
+
+.pf-grid-jadwal { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+.pf-cal-card { padding: 30px 40px; }
+.pf-cal-head { display: flex; align-items: center; justify-content: center; gap: 30px; margin-bottom: 22px; }
+.pf-cal-head h3 { margin: 0; font-size: 1.2rem; font-weight: 600; min-width: 160px; text-align: center; }
+.pf-cal-nav { background: none; border: none; color: #7E4655; font-size: 1.1rem; cursor: pointer; padding: 6px 10px; border-radius: 8px; }
+.pf-cal-nav:hover:not(:disabled) { background: #FAF5F6; }
+.pf-cal-nav:disabled { color: #d8cfd1; cursor: not-allowed; }
+
+.pf-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+.pf-cal-days { margin-bottom: 10px; font-size: 0.85rem; }
+.pf-cal-days .pf-sun { color: #D0103A; }
+.pf-cal-day {
+    position: relative; height: 48px; border-radius: 8px; border: 1px solid transparent;
+    background: none; cursor: pointer; font-family: inherit; font-size: 1.05rem; color: #2b2326;
+    transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+}
+.pf-cal-day:hover { background: #FAF5F6; transform: translateY(-1px); }
+.pf-cal-day.pf-sun { color: #D0103A; }
+.pf-cal-day.is-past { color: #c4bcbe; }
+.pf-cal-day.is-today { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.pf-cal-day.is-cuti { color: #D0103A; background: #FDECEF; }
+.pf-cal-day.is-cuti::before { content: 'CUTI'; position: absolute; top: 3px; left: 0; right: 0; font-size: 0.5rem; font-weight: 700; letter-spacing: 1px; }
+.pf-cal-day.is-selected { border-color: #7E4655; background: #fff; box-shadow: 0 3px 10px rgba(126,70,85,0.15); }
+.pf-cal-dot { position: absolute; left: 50%; bottom: 6px; width: 6px; height: 6px; border-radius: 50%; background: #7E4655; transform: translateX(-50%); }
+
+.pf-cal-legend { display: flex; justify-content: center; gap: 28px; margin-top: 22px; font-size: 0.88rem; color: #5c5357; }
+.pf-cal-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.pf-lg { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.pf-lg-book { background: #7E4655; }
+.pf-lg-cuti { background: #D0103A; }
+.pf-lg-today { background: none; border: 2px solid #2b2326; }
+
+.pf-day-card { padding: 30px 40px; min-height: 100%; }
+.pf-day-card h3 { margin: 0 0 12px; font-size: 1.3rem; font-weight: 600; }
+.pf-day-badge { display: inline-block; font-size: 0.78rem; font-weight: 600; border-radius: 20px; padding: 5px 12px; margin-bottom: 20px; }
+.pf-day-badge.is-open { background: #E6F4EC; color: #1f7a4f; }
+.pf-day-badge.is-cuti { background: #FDECEF; color: #B8324A; }
+.pf-day-badge.is-past { background: #f1edee; color: #8c8286; }
+.pf-day-list { display: flex; flex-direction: column; gap: 10px; }
+.pf-day-empty { margin: 0; font-size: 0.88rem; }
+.pf-day-row {
+    display: flex; align-items: center; gap: 14px;
+    border: 1px solid #e6dcdc; border-radius: 10px; padding: 14px 16px;
+    animation: glFadeUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.pf-day-time { font-weight: 600; font-size: 0.9rem; min-width: 78px; }
+.pf-day-info { flex: 1; min-width: 0; }
+.pf-day-info b { display: block; font-size: 0.9rem; }
+.pf-day-info small { color: #8c8286; font-size: 0.76rem; }
+.pf-status { font-size: 0.72rem; font-weight: 600; border-radius: 6px; padding: 4px 8px; white-space: nowrap; }
+.pf-status-menunggu { background: #FFF4E0; color: #B26A00; }
+.pf-status-dikonfirmasi { background: #E6F4EC; color: #1f7a4f; }
+.pf-status-selesai { background: #f1edee; color: #8c8286; }
+.pf-day-action { margin-top: 22px; padding-top: 20px; border-top: 1px solid #eae5e3; }
+.pf-day-action:empty { display: none; }
+.pf-day-action form { display: flex; flex-direction: column; gap: 10px; }
+.pf-day-warn { margin: 0; font-size: 0.84rem; color: #8a5a00; background: #FFF8EA; border-radius: 10px; padding: 12px 14px; line-height: 1.5; }
+
+/* ---------- TAB REVIEW ---------- */
+.pf-stars { color: #E8954E; letter-spacing: 3px; font-size: 1.3rem; }
+.pf-stars-sm { font-size: 0.85rem; letter-spacing: 2px; }
+.pf-review-summary { display: flex; justify-content: space-between; align-items: center; gap: 40px; padding: 26px 46px; margin-bottom: 24px; }
+.pf-review-score { display: flex; align-items: center; gap: 22px; margin-bottom: 6px; }
+.pf-review-score b { font-size: 2rem; font-weight: 600; }
+.pf-review-bars { width: 320px; display: flex; flex-direction: column; gap: 6px; }
+.pf-bar-row { display: grid; grid-template-columns: 34px 1fr 26px; align-items: center; gap: 10px; font-size: 0.8rem; color: #5c5357; }
+.pf-bar-row i.fa-star { color: #E8954E; font-size: 0.7rem; }
+.pf-bar { height: 7px; background: #f1ebec; border-radius: 6px; overflow: hidden; }
+.pf-bar i { display: block; height: 100%; background: #E8954E; border-radius: 6px; }
+.pf-bar-row small { text-align: right; }
+
+.pf-review { padding: 22px 34px; margin-bottom: 18px; }
+.pf-review-top { display: flex; gap: 22px; align-items: flex-start; margin-bottom: 14px; }
+.pf-review-avatar { width: 58px; height: 58px; border-radius: 50%; overflow: hidden; background: #efe6e8; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pf-review-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.pf-review-who { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.pf-review-who b { font-size: 0.92rem; }
+.pf-review-who small { font-size: 0.78rem; color: #5c5357; }
+.pf-review-time { color: #5c5357; font-size: 0.82rem; white-space: nowrap; }
+.pf-review p { margin: 0; font-size: 0.95rem; line-height: 1.6; }
+
+/* ---------- MODAL ---------- */
+.pf-modal {
+    display: none; position: fixed; inset: 0; z-index: 1500;
+    background: rgba(43, 35, 38, 0.45); align-items: center; justify-content: center; padding: 20px;
+}
+.pf-modal-box { background: #fff; width: 100%; max-width: 420px; border-radius: 20px; padding: 32px; text-align: center; }
+.pf-modal-icon { width: 58px; height: 58px; margin: 0 auto 14px; border-radius: 50%; background: #FDECEF; color: #B8324A; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+.pf-modal-box h3 { margin: 0 0 8px; }
+.pf-modal-box p { margin: 0 0 24px; font-size: 0.9rem; line-height: 1.5; }
+.pf-modal-actions { display: flex; gap: 12px; }
+.pf-modal-actions button { flex: 1; }
+
+/* =========================================================
+   HALAMAN EDIT PROFIL & BUAT POSTINGAN
+   ========================================================= */
+.pf-topbar {
+    background: linear-gradient(180deg, #F8E3E7 0%, #FAF5F6 100%);
+    padding: 34px 0 30px;
+}
+.pf-topbar-inner { max-width: 1240px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; gap: 44px; }
+.pf-btn-back {
+    background: #A99C9F; color: #fff; width: 52px; height: 52px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.3rem;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.pf-btn-back:hover { background: #8c8286; transform: translateX(-2px); }
+.pf-topbar h2 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+
+.pf-edit-main { max-width: 1240px; margin: 0 auto; padding: 0 20px 70px; }
+
+/* Kartu sampul di halaman edit */
+.pf-edit-cover-card { background: #fff; border: 1px solid #eae5e3; border-radius: 22px; padding: 8px 8px 30px; margin-bottom: 30px; }
+.pf-edit-cover {
+    position: relative; height: 230px; border-radius: 16px 16px 0 0;
+    background-size: cover; background-position: center;
+}
+.pf-edit-cover::after {
+    content: ''; position: absolute; inset: 60% 0 0 0; pointer-events: none;
+    background: linear-gradient(180deg, transparent, #fff);
+}
+.pf-cover-btn {
+    position: absolute; top: 16px; right: 16px; z-index: 2;
+    background: rgba(255,255,255,0.92); color: #2b2326; border-radius: 10px; padding: 9px 14px;
+    font-size: 0.82rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12); transition: background-color 0.2s;
+}
+.pf-cover-btn:hover { background: #fff; }
+.pf-edit-identity { display: flex; align-items: flex-end; gap: 26px; margin: -90px 0 0 32px; position: relative; z-index: 2; padding-right: 32px; }
+.pf-edit-avatar { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+.pf-edit-avatar img, .pf-avatar-ph {
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #fff;
+    background: #efe6e8; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 2.4rem;
+}
+.pf-avatar-btn {
+    position: absolute; right: 4px; bottom: 6px; width: 38px; height: 38px; border-radius: 50%;
+    background: #7E4655; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    border: 3px solid #fff; transition: transform 0.2s;
+}
+.pf-avatar-btn:hover { transform: scale(1.08); }
+.pf-edit-names { flex: 1; min-width: 0; padding-bottom: 8px; }
+.pf-input-title {
+    width: 100%; border: 1px dashed transparent; border-radius: 8px; background: transparent;
+    font-family: inherit; font-size: 1.8rem; font-weight: 700; color: #2b2326; padding: 4px 8px; margin-left: -8px;
+}
+.pf-input-sub {
+    width: 100%; border: 1px dashed transparent; border-radius: 8px; background: transparent;
+    font-family: inherit; font-style: italic; font-size: 0.88rem; color: #5c5357; padding: 4px 8px; margin-left: -8px;
+}
+.pf-input-title:hover, .pf-input-sub:hover { border-color: #dcd2d4; }
+.pf-input-title:focus, .pf-input-sub:focus { outline: none; border-color: #7E4655; background: #FCFAFA; }
+
+.pf-edit-grid { display: grid; grid-template-columns: 1fr 405px; gap: 32px; align-items: start; }
+.pf-edit-side { display: flex; flex-direction: column; gap: 30px; position: sticky; top: 100px; }
+
+.pf-field { display: block; margin-bottom: 18px; }
+.pf-field:last-child { margin-bottom: 0; }
+.pf-field > span { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 600; margin-bottom: 7px; }
+.pf-field > span small { font-weight: 500; color: #8c8286; }
+.pf-field-icon { display: flex; gap: 12px; align-items: flex-start; }
+.pf-field-icon > i { color: #7E4655; width: 18px; text-align: center; margin-top: 34px; }
+.pf-field-icon > label { flex: 1; }
+.pf-field-lbl { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 7px; }
+.pf-input, .pf-textarea {
+    width: 100%; font-family: inherit; font-size: 0.9rem; color: #2b2326;
+    background: #FAF8F8; border: 1px solid #e6dcdc; border-radius: 10px; padding: 11px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+.pf-textarea { resize: vertical; min-height: 130px; line-height: 1.65; }
+.pf-input:focus, .pf-textarea:focus { outline: none; border-color: #7E4655; background: #fff; box-shadow: 0 0 0 4px rgba(126,70,85,0.08); }
+.pf-help { display: block; font-size: 0.75rem; color: #8c8286; margin-top: 6px; }
+
+/* Input chip */
+.pf-chip-input { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.pf-chip-item { animation: glFadeUp 0.2s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.pf-chip-x { background: none; border: none; color: #D0103A; cursor: pointer; padding: 0 0 0 2px; font-size: 1rem; line-height: 1; }
+.pf-chip-add { cursor: pointer; color: #8c8286; padding: 6px 12px; border-color: #e6dcdc; }
+.pf-chip-add:hover { color: #7E4655; border-color: #7E4655; }
+.pf-chip-field {
+    font-family: inherit; font-size: 0.82rem; border: 1px solid #7E4655; border-radius: 20px;
+    padding: 6px 14px; width: 190px; outline: none; box-shadow: 0 0 0 4px rgba(126,70,85,0.08);
+}
+
+.pf-btn-save { width: 100%; padding: 15px; font-size: 1.05rem; border-radius: 14px; }
+
+/* Halaman Buat Postingan */
+.pf-post-grid { display: grid; grid-template-columns: 1fr 460px; gap: 34px; align-items: start; max-width: 1150px; margin: 0 auto; }
+.pf-post-form { padding: 34px 32px; }
+.pf-post-form .pf-field > span { text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.8rem; }
+.pf-req { color: #D0103A; }
+.pf-koleksi { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 12px; }
+.pf-koleksi-item {
+    position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: pointer;
+    border: 2px solid transparent; padding: 0; background: #efe6e8;
+    transition: border-color 0.2s, transform 0.2s;
+}
+.pf-koleksi-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pf-koleksi-item:hover { transform: translateY(-2px); }
+.pf-koleksi-item.selected { border-color: #7E4655; box-shadow: 0 4px 12px rgba(126,70,85,0.3); }
+.pf-koleksi-item.selected::after {
+    content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; background: rgba(126,70,85,0.55);
+    color: #fff; font-size: 0.7rem; display: flex; align-items: center; justify-content: center;
+}
+.pf-upload-row { display: flex; gap: 10px; align-items: center; }
+.pf-upload-btn { flex-shrink: 0; }
+.pf-upload-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-form-actions { display: flex; justify-content: flex-end; gap: 14px; border-top: 1px solid #eae5e3; padding-top: 24px; margin-top: 26px; }
+
+.pf-preview-label { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #5c5357; margin: 0 0 12px; }
+.pf-preview-card { background: #fff; border: 1px solid #eae5e3; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 28px rgba(43,35,38,0.08); position: sticky; top: 100px; }
+.pf-preview-img { position: relative; aspect-ratio: 4 / 3; background: #efe6e8; }
+.pf-preview-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pf-preview-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #b9a9ad; font-size: 0.85rem; }
+.pf-preview-empty i { font-size: 2.2rem; }
+.pf-preview-badge { position: absolute; top: 14px; left: 14px; background: rgba(43,35,38,0.75); color: #fff; font-size: 0.75rem; padding: 5px 10px; border-radius: 6px; }
+.pf-preview-body { padding: 22px; }
+.pf-preview-body b { display: block; font-size: 1rem; padding-bottom: 14px; border-bottom: 1px solid #eae5e3; margin-bottom: 12px; word-break: break-word; }
+.pf-preview-tags { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; color: #B05F6D; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1000px) {
+    .pf-grid-about, .pf-grid-jadwal, .pf-edit-grid, .pf-post-grid { grid-template-columns: 1fr; }
+    .pf-grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .pf-edit-side, .pf-preview-card { position: static; }
+}
+@media (max-width: 700px) {
+    .pf-head-card { flex-direction: column; text-align: center; padding: 30px 22px; gap: 18px; }
+    .pf-head-meta { justify-content: center; }
+    .pf-tabs { overflow-x: auto; justify-content: flex-start; gap: 6px; }
+    .pf-tab { font-size: 0.95rem; white-space: nowrap; }
+    .pf-grid-3 { grid-template-columns: 1fr; }
+    .pf-cal-card, .pf-day-card { padding: 22px; }
+    .pf-review-summary { flex-direction: column; align-items: flex-start; padding: 24px; }
+    .pf-review-bars { width: 100%; }
+    .pf-koleksi { grid-template-columns: repeat(3, 1fr); }
+    .pf-edit-identity { flex-direction: column; align-items: flex-start; margin-left: 20px; }
+    .pf-panel-head { flex-direction: column; align-items: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pf-tab-indicator, .pf-porto-card img, .pf-cal-day, .pf-porto-del { transition: none; }
+    .pf-day-row, .pf-chip-item { animation: none; }
+}

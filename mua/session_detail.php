@@ -1,30 +1,29 @@
 <?php
 session_start();
-require '../koneksi.php';
+// auth_mua.php: koneksi + cek login MUA + blokir MUA yang belum di-approve, mengisi $id_mua (integer)
+require_once '../includes/auth_mua.php';
+require_once '../includes/upload.php';
+require_once '../includes/mua_ui.php'; // toast notifikasi
 
-if (!isset($_SESSION['status_login']) || $_SESSION['role'] != 'mua') {
-    header("Location: ../login.php");
-    exit();
-}
-
-$id_mua = $_SESSION['id_user'];
-$id_booking = isset($_GET['id']) ? mysqli_real_escape_string($koneksi, $_GET['id']) : 0;
+$id_booking = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // --- PROSES UPDATE FOTO DOKUMENTASI ---
-if (isset($_FILES['update_foto']) && $_FILES['update_foto']['error'] === 0) {
-    $ext = strtolower(pathinfo($_FILES['update_foto']['name'], PATHINFO_EXTENSION));
-    $allowed_ext = ['jpg', 'jpeg', 'png'];
-    
-    if (in_array($ext, $allowed_ext)) {
-        $nama_foto = 'dokum_' . $id_booking . '_' . time() . '.' . $ext;
-        if (move_uploaded_file($_FILES['update_foto']['tmp_name'], '../assets/img/' . $nama_foto)) {
-            mysqli_query($koneksi, "UPDATE bookings SET foto_dokumentasi = '$nama_foto' WHERE id_booking = '$id_booking' AND id_mua = '$id_mua'");
-            echo "<script>alert('Foto dokumentasi berhasil diperbarui!'); window.location.href='session_detail.php?id=$id_booking';</script>";
-            exit();
-        }
+if (isset($_FILES['update_foto']) && $_FILES['update_foto']['error'] !== UPLOAD_ERR_NO_FILE) {
+    // simpan_gambar() mengecek isi file (JPG/PNG/WEBP asli), bukan hanya ekstensi nama file
+    $alasan = null;
+    $nama_foto = simpan_gambar($_FILES['update_foto'], 'dokum_' . $id_booking, 10, $alasan);
+
+    if ($nama_foto) {
+        $st = $koneksi->prepare("UPDATE bookings SET foto_dokumentasi = ? WHERE id_booking = ? AND id_mua = ?");
+        $st->bind_param('sii', $nama_foto, $id_booking, $id_mua);
+        $st->execute();
+        mua_toast('Foto dokumentasi berhasil diperbarui!', 'success');
     } else {
-        echo "<script>alert('Format file tidak didukung! Gunakan format JPG atau PNG.');</script>";
+        mua_toast('Foto gagal diunggah: ' . strip_tags(pesan_upload($alasan)), 'error');
     }
+    // Redirect supaya refresh halaman tidak mengirim ulang file
+    header("Location: session_detail.php?id=$id_booking");
+    exit();
 }
 
 // Ambil detail pesanan spesifik
@@ -40,7 +39,8 @@ $query = mysqli_query($koneksi, "
 $detail = mysqli_fetch_assoc($query);
 
 if (!$detail) {
-    echo "<script>alert('Data pesanan tidak ditemukan!'); window.location.href='booking.php?tab=done';</script>";
+    mua_toast('Data pesanan tidak ditemukan!', 'error');
+    header("Location: booking.php?tab=done");
     exit();
 }
 
@@ -62,6 +62,7 @@ $tanggal_selesai = date('d/m/Y', strtotime($detail['tanggal_booking']));
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/mua_booking.css">
+    <link rel="stylesheet" href="../assets/css/mua_ui.css">
 </head>
 <body>
 
@@ -135,8 +136,8 @@ $tanggal_selesai = date('d/m/Y', strtotime($detail['tanggal_booking']));
                     <div class="sf-actions">
                         <!-- Form Upload Foto Tersembunyi -->
                         <form method="POST" enctype="multipart/form-data" style="margin: 0; display: inline-block;">
-                            <input type="file" name="update_foto" id="fileUpdateDokum" style="display: none;" accept="image/png, image/jpeg, image/jpg" onchange="this.form.submit();">
-                            <button type="button" class="btn-outline-grey" onclick="document.getElementById('fileUpdateDokum').click();">
+                            <input type="file" name="update_foto" id="fileUpdateDokum" style="display: none;" accept="image/png, image/jpeg, image/jpg, image/webp" data-preview-bg=".sc-left" data-auto-submit>
+                            <button type="button" class="btn-outline-grey" data-loading-button data-loading-text="Mengunggah..." onclick="document.getElementById('fileUpdateDokum').click();">
                                 <i class="fa-solid fa-camera"></i> Ganti / Tambah Foto
                             </button>
                         </form>
@@ -147,5 +148,7 @@ $tanggal_selesai = date('d/m/Y', strtotime($detail['tanggal_booking']));
         </div>
     </main>
 
+    <?php mua_toast_render(); ?>
+    <script src="../assets/js/mua_ui.js"></script>
 </body>
 </html>

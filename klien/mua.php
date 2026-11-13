@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/../Includes/klien.php';
+require __DIR__ . '/../includes/klien.php';
 
 $id  = (int)($_GET['id'] ?? 0);
 $tgl = preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['tanggal'] ?? '') ? $_GET['tanggal'] : '';

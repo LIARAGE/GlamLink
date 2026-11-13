@@ -1,7 +1,7 @@
 <?php
 session_start();
-require __DIR__ . '/../Includes/klien.php';
-require __DIR__ . '/../Includes/riwayat.php';
+require __DIR__ . '/../includes/klien.php';
+require __DIR__ . '/../includes/riwayat.php';
 
 aksi_booking($id_klien);   // batal / konfirmasi selesai / review dari halaman ini (lalu redirect kembali ke sini)
 

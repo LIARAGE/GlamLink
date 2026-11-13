@@ -3,17 +3,27 @@ session_start();
 require '../koneksi.php';
 
 require __DIR__ . '/../includes/auth_mua.php'; // wajib login sebagai MUA dan sudah diverifikasi admin
+require_once __DIR__ . '/../includes/mua_ui.php'; // toast notifikasi
 
 // --- 1. PROSES TERIMA / TOLAK PESANAN ---
+// Hanya pesanan berstatus 'menunggu' milik MUA ini yang bisa diterima/ditolak (sama seperti halaman Booking)
 if (isset($_POST['terima_pesanan'])) {
-    $id_b = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
-    mysqli_query($koneksi, "UPDATE bookings SET status = 'dikonfirmasi' WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
+    $id_b = (int)($_POST['id_booking'] ?? 0);
+    $st = $koneksi->prepare("UPDATE bookings SET status = 'dikonfirmasi' WHERE id_booking = ? AND id_mua = ? AND status = 'menunggu'");
+    $st->bind_param('ii', $id_b, $id_mua);
+    $st->execute();
+    if ($st->affected_rows > 0) mua_toast('Pesanan berhasil dikonfirmasi.', 'success');
+    else mua_toast('Pesanan tidak ditemukan atau sudah diproses.', 'error');
     header("Location: index.php");
     exit();
 }
 if (isset($_POST['tolak_pesanan'])) {
-    $id_b = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
-    mysqli_query($koneksi, "UPDATE bookings SET status = 'ditolak' WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
+    $id_b = (int)($_POST['id_booking'] ?? 0);
+    $st = $koneksi->prepare("UPDATE bookings SET status = 'ditolak', dibatalkan_oleh = 'mua', dibatalkan_pada = NOW() WHERE id_booking = ? AND id_mua = ? AND status = 'menunggu'");
+    $st->bind_param('ii', $id_b, $id_mua);
+    $st->execute();
+    if ($st->affected_rows > 0) mua_toast('Pesanan telah ditolak.', 'info');
+    else mua_toast('Pesanan tidak ditemukan atau sudah diproses.', 'error');
     header("Location: index.php");
     exit();
 }
@@ -81,6 +91,7 @@ if ($query_bookings) {
     
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/mua_dashboard.css">
+    <link rel="stylesheet" href="../assets/css/mua_ui.css">
 </head>
 <body>
 
@@ -101,7 +112,7 @@ if ($query_bookings) {
                     <span>Total Pesanan Masuk</span>
                     <i class="fa-regular fa-calendar"></i>
                 </div>
-                <h3><?php echo $stat_total; ?></h3>
+                <h3 data-countup="<?php echo (int)$stat_total; ?>"><?php echo $stat_total; ?></h3>
                 <span class="stat-desc <?php echo $trend_class; ?>"><?php echo $trend_text; ?></span>
             </div>
             <div class="stat-card">
@@ -109,7 +120,7 @@ if ($query_bookings) {
                     <span>Permintaan Menunggu</span>
                     <i class="fa-solid fa-exclamation"></i>
                 </div>
-                <h3 class="text-warning"><?php echo $stat_menunggu; ?></h3>
+                <h3 class="text-warning" data-countup="<?php echo (int)$stat_menunggu; ?>"><?php echo $stat_menunggu; ?></h3>
                 <span class="stat-desc">Konfirmasi dalam 24 jam</span>
             </div>
             <div class="stat-card">
@@ -117,7 +128,7 @@ if ($query_bookings) {
                     <span>Acara Selesai</span>
                     <i class="fa-solid fa-check"></i>
                 </div>
-                <h3 class="text-success"><?php echo $stat_selesai; ?></h3>
+                <h3 class="text-success" data-countup="<?php echo (int)$stat_selesai; ?>"><?php echo $stat_selesai; ?></h3>
                 <span class="stat-desc">100% ulasan bintang 5</span>
             </div>
             <div class="stat-card">
@@ -125,7 +136,7 @@ if ($query_bookings) {
                     <span>Total Pendapatan</span>
                     <i class="fa-solid fa-arrow-trend-up"></i>
                 </div>
-                <h3 class="text-primary">Rp <?php echo number_format($stat_pendapatan, 0, ',', '.'); ?></h3>
+                <h3 class="text-primary" data-countup="<?php echo (int)$stat_pendapatan; ?>" data-prefix="Rp ">Rp <?php echo number_format($stat_pendapatan, 0, ',', '.'); ?></h3>
                 <span class="stat-desc text-success">Penyaluran langsung via GlamLink</span>
             </div>
         </section>
@@ -232,20 +243,23 @@ if ($query_bookings) {
 
     <!-- JavaScript untuk membuka dan menutup modal -->
     <script>
+        // Buka/tutup modal dengan animasi (fungsi GL dari assets/js/mua_ui.js)
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
+            GL.openModal(document.getElementById(modalId));
         }
 
         function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+            GL.closeModal(document.getElementById(modalId));
         }
 
         // Menutup modal jika area gelap di luar kotak diklik
         window.onclick = function(event) {
             if (event.target.classList.contains('modal-overlay')) {
-                event.target.style.display = "none";
+                GL.closeModal(event.target);
             }
         }
     </script>
+    <?php mua_toast_render(); ?>
+    <script src="../assets/js/mua_ui.js"></script>
 </body>
 </html>

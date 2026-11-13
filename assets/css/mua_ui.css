@@ -1,0 +1,190 @@
+/* ==========================================================
+   GLAMLINK - ANIMASI & KOMPONEN UI BERSAMA (KHUSUS HALAMAN MUA)
+   Dipanggil SETELAH file CSS halaman, contoh:
+   <link rel="stylesheet" href="../assets/css/mua_ui.css">
+   Isi:
+   1. Tombol "sedang memproses"
+   2. Animasi buka-tutup modal
+   3. Toast notifikasi
+   4. Preview foto upload
+   5. (count-up tidak butuh CSS)
+   6. Fade hasil pencarian
+   7. Garis bawah tab yang bergeser
+   8. Hover kartu layanan
+   ========================================================== */
+
+:root {
+    --gl-maroon: #7E4655;
+    --gl-maroon-soft: rgba(126, 70, 85, 0.18);
+    --gl-green: #059669;
+    --gl-red: #E23636;
+    --gl-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- 1. TOMBOL SEDANG MEMPROSES ---------- */
+.gl-btn-loading {
+    pointer-events: none;
+    opacity: 0.75;
+    cursor: progress !important;
+}
+.gl-btn-muted {
+    /* tombol lain di form yang sama ikut dikunci */
+    pointer-events: none;
+    opacity: 0.45;
+}
+.gl-spinner {
+    display: inline-block;
+    width: 0.95em;
+    height: 0.95em;
+    margin-right: 6px;
+    vertical-align: -0.12em;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: glSpin 0.7s linear infinite;
+}
+@keyframes glSpin { to { transform: rotate(360deg); } }
+
+/* ---------- 2. ANIMASI MODAL ---------- */
+/* Berlaku untuk .modal-overlay di halaman Booking & Dashboard.
+   JS menambahkan class .gl-modal-open setelah display:flex */
+.modal-overlay {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.modal-overlay.gl-modal-open {
+    opacity: 1;
+}
+.modal-overlay .modal-box {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+    transition: opacity 0.22s var(--gl-ease), transform 0.22s var(--gl-ease);
+}
+.modal-overlay.gl-modal-open .modal-box {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* ---------- 3. TOAST NOTIFIKASI ---------- */
+.gl-toast-wrap {
+    position: fixed;
+    top: 96px;               /* di bawah navbar (tinggi navbar 80px) */
+    right: 24px;
+    z-index: 2000;           /* di atas navbar & modal */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    max-width: calc(100vw - 48px);
+}
+.gl-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 340px;
+    max-width: 100%;
+    background: #fff;
+    border: 1px solid #eae5e3;
+    border-left: 4px solid var(--gl-maroon);
+    border-radius: 12px;
+    padding: 14px 14px 14px 16px;
+    box-shadow: 0 12px 30px rgba(43, 35, 38, 0.12);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    color: #2b2326;
+    line-height: 1.45;
+    opacity: 0;
+    transform: translateX(24px);
+    transition: opacity 0.25s var(--gl-ease), transform 0.25s var(--gl-ease);
+}
+.gl-toast.gl-toast-show { opacity: 1; transform: translateX(0); }
+.gl-toast-icon { font-size: 1.1rem; margin-top: 1px; color: var(--gl-maroon); }
+.gl-toast-msg { flex: 1; }
+.gl-toast-close {
+    background: none; border: none; cursor: pointer;
+    color: #8c8286; font-size: 0.95rem; padding: 0 2px; line-height: 1;
+}
+.gl-toast-close:hover { color: #2b2326; }
+.gl-toast.success { border-left-color: var(--gl-green); }
+.gl-toast.success .gl-toast-icon { color: var(--gl-green); }
+.gl-toast.error { border-left-color: var(--gl-red); }
+.gl-toast.error .gl-toast-icon { color: var(--gl-red); }
+/* garis waktu tersisa */
+.gl-toast { position: relative; overflow: hidden; }
+.gl-toast::after {
+    content: '';
+    position: absolute; left: 0; bottom: 0; height: 3px; width: 100%;
+    background: currentColor; opacity: 0.12;
+    transform-origin: left;
+    animation: glToastTimer var(--gl-toast-durasi, 3s) linear forwards;
+}
+@keyframes glToastTimer { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+@media (max-width: 600px) {
+    .gl-toast-wrap { left: 16px; right: 16px; top: 88px; max-width: none; }
+    .gl-toast { width: 100%; }
+}
+
+/* ---------- 4. PREVIEW FOTO UPLOAD ---------- */
+.gl-upload-preview {
+    display: block;
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #eae5e3;
+    margin-top: 2px;
+    animation: glFadeUp 0.3s var(--gl-ease) both;
+}
+.gl-upload-preview-info {
+    display: block;
+    font-size: 0.75rem;
+    color: #8c8286;
+    margin-top: 4px;
+}
+.gl-bg-swap { animation: glFadeIn 0.35s ease both; }
+
+/* ---------- 6. FADE HASIL PENCARIAN ---------- */
+.gl-fade-in { animation: glFadeUp 0.28s var(--gl-ease) both; }
+
+@keyframes glFadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes glFadeIn { from { opacity: 0.35; } to { opacity: 1; } }
+
+/* ---------- 7. GARIS BAWAH TAB BERGESER ---------- */
+.booking-tabs.gl-has-slider { position: relative; }
+.booking-tabs.gl-has-slider .tab-link.active::after { display: none; }  /* pakai indikator JS */
+.gl-tab-indicator {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    height: 3px;
+    width: 0;
+    background-color: var(--gl-maroon);
+    border-radius: 3px 3px 0 0;
+    transition: transform 0.25s var(--gl-ease), width 0.25s var(--gl-ease);
+    pointer-events: none;
+}
+
+/* ---------- 8. HOVER KARTU LAYANAN ---------- */
+.service-card {
+    transition: transform 0.3s var(--gl-ease), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.service-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(126, 70, 85, 0.4);
+    box-shadow: 0 16px 34px rgba(126, 70, 85, 0.12),
+                0 0 0 4px rgba(126, 70, 85, 0.05),
+                0 0 24px var(--gl-maroon-soft);
+}
+
+/* ---------- Hormati setting "kurangi animasi" ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .modal-overlay, .modal-overlay .modal-box, .gl-toast,
+    .gl-tab-indicator, .service-card { transition: none !important; }
+    .gl-fade-in, .gl-upload-preview, .gl-bg-swap, .gl-toast::after { animation: none !important; }
+    .service-card:hover { transform: none; }
+}

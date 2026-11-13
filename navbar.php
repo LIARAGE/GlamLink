@@ -47,6 +47,8 @@ if ($nav_logged_in && in_array($nav_role, ['mua', 'pelanggan']) && isset($koneks
                 <a href="#" class="icon-btn"><i class="fa-solid fa-message"></i><span class="badge">2</span></a>
                 <a href="#" class="icon-btn"><i class="fa-solid fa-bell"></i><span class="badge">2</span></a>
             </div>
+            <!-- Klik foto & nama -> halaman Profil MUA -->
+            <a href="<?php echo $path_prefix; ?>mua/profil.php" style="text-decoration:none;color:inherit;" title="Lihat & edit profil">
             <div class="profile-info">
                 <?php if(!empty($nav_profil['foto_profil'])): ?>
                     <img src="<?php echo $path_prefix; ?>assets/img/<?php echo htmlspecialchars($nav_profil['foto_profil']); ?>" alt="Profile">
@@ -58,6 +60,7 @@ if ($nav_logged_in && in_array($nav_role, ['mua', 'pelanggan']) && isset($koneks
                     <span class="role-text"><?php echo ($nav_profil['status_verifikasi'] ?? 'approved') === 'approved' ? 'MUA' : 'Belum terverifikasi'; ?></span>
                 </div>
             </div>
+            </a>
             <a href="<?php echo $path_prefix; ?>logout.php" class="logout-link">Logout</a>
         </div>
     <?php elseif ($nav_role == 'pelanggan'): ?>

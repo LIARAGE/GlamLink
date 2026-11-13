@@ -1,34 +1,41 @@
 <?php
 session_start();
-require '../koneksi.php';
-
-if (!isset($_SESSION['status_login']) || $_SESSION['role'] != 'mua') {
-    header("Location: ../login.php");
-    exit();
-}
-
-$id_mua = $_SESSION['id_user'];
+// auth_mua.php sudah memanggil koneksi.php, mengecek login + role MUA,
+// memblokir MUA yang belum di-approve admin, dan mengisi $id_mua (integer)
+require_once '../includes/auth_mua.php';
+require_once '../includes/upload.php';
+require_once '../includes/mua_ui.php'; // toast notifikasi
 
 // --- PROSES KONFIRMASI SELESAI & UPLOAD FOTO (ONGOING) ---
 if (isset($_POST['konfirmasi_selesai_mua'])) {
-    $id_booking_done = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
-    
-    $nama_foto = NULL;
-    if (isset($_FILES['foto_dokum']) && $_FILES['foto_dokum']['error'] === 0) {
-        $ext = pathinfo($_FILES['foto_dokum']['name'], PATHINFO_EXTENSION);
-        $nama_foto = 'dokum_' . $id_booking_done . '_' . time() . '.' . $ext;
-        move_uploaded_file($_FILES['foto_dokum']['tmp_name'], '../assets/img/' . $nama_foto);
-    }
-    
-    if ($nama_foto) {
-        mysqli_query($koneksi, "UPDATE bookings SET is_mua_done = 1, foto_dokumentasi = '$nama_foto' WHERE id_booking = '$id_booking_done' AND id_mua = '$id_mua'");
-        
-        $cek = mysqli_query($koneksi, "SELECT is_mua_done, is_client_done FROM bookings WHERE id_booking = '$id_booking_done'");
-        if ($row = mysqli_fetch_assoc($cek)) {
-            if ($row['is_mua_done'] == 1 && $row['is_client_done'] == 1) {
-                mysqli_query($koneksi, "UPDATE bookings SET status = 'selesai' WHERE id_booking = '$id_booking_done'");
-            }
+    $id_booking_done = (int)($_POST['id_booking'] ?? 0);
+
+    // Pastikan booking ini milik MUA yang login dan statusnya memang sedang berjalan
+    $st = $koneksi->prepare("SELECT id_booking FROM bookings WHERE id_booking = ? AND id_mua = ? AND status = 'dikonfirmasi' AND is_mua_done = 0");
+    $st->bind_param('ii', $id_booking_done, $id_mua);
+    $st->execute();
+    $valid = $st->get_result()->fetch_assoc();
+
+    if ($valid) {
+        // simpan_gambar() mengecek ISI file (bukan cuma nama/ekstensi), jadi file .php tidak bisa lolos
+        $alasan = null;
+        $nama_foto = simpan_gambar($_FILES['foto_dokum'] ?? [], 'dokum_' . $id_booking_done, 10, $alasan);
+
+        if ($nama_foto) {
+            $st = $koneksi->prepare("UPDATE bookings SET is_mua_done = 1, foto_dokumentasi = ? WHERE id_booking = ? AND id_mua = ?");
+            $st->bind_param('sii', $nama_foto, $id_booking_done, $id_mua);
+            $st->execute();
+
+            // Jika klien juga sudah konfirmasi, pesanan otomatis selesai
+            $st = $koneksi->prepare("UPDATE bookings SET status = 'selesai' WHERE id_booking = ? AND is_mua_done = 1 AND is_client_done = 1");
+            $st->bind_param('i', $id_booking_done);
+            $st->execute();
+            mua_toast('Rias selesai! Foto dokumentasi berhasil diunggah.', 'success');
+        } else {
+            mua_toast('Foto dokumentasi gagal diunggah: ' . strip_tags(pesan_upload($alasan)), 'error');
         }
+    } else {
+        mua_toast('Pesanan tidak ditemukan atau sudah diproses.', 'error');
     }
     header("Location: booking.php?tab=ongoing");
     exit();
@@ -36,17 +43,29 @@ if (isset($_POST['konfirmasi_selesai_mua'])) {
 
 // --- PROSES TERIMA / TOLAK / BATALKAN (SCHEDULED) ---
 if (isset($_POST['terima_pesanan'])) {
-    $id_b = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
-    mysqli_query($koneksi, "UPDATE bookings SET status = 'dikonfirmasi' WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
+    $id_b = (int)($_POST['id_booking'] ?? 0);
+    // Hanya pesanan berstatus 'menunggu' yang bisa dikonfirmasi
+    $st = $koneksi->prepare("UPDATE bookings SET status = 'dikonfirmasi' WHERE id_booking = ? AND id_mua = ? AND status = 'menunggu'");
+    $st->bind_param('ii', $id_b, $id_mua);
+    $st->execute();
+    if ($st->affected_rows > 0) mua_toast('Pesanan berhasil dikonfirmasi.', 'success');
+    else mua_toast('Pesanan tidak ditemukan atau sudah diproses.', 'error');
     header("Location: booking.php?tab=scheduled");
     exit();
 }
 if (isset($_POST['tolak_pesanan']) || isset($_POST['batalkan_pesanan'])) {
-    $id_b = mysqli_real_escape_string($koneksi, $_POST['id_booking']);
-    mysqli_query($koneksi, "UPDATE bookings SET status = 'ditolak', dibatalkan_oleh = 'mua', dibatalkan_pada = NOW() WHERE id_booking = '$id_b' AND id_mua = '$id_mua'");
+    $id_b = (int)($_POST['id_booking'] ?? 0);
+    // Tolak = dari 'menunggu', Batalkan = dari 'dikonfirmasi'. Pesanan selesai tidak bisa dibatalkan.
+    $status_asal = isset($_POST['tolak_pesanan']) ? 'menunggu' : 'dikonfirmasi';
+    $st = $koneksi->prepare("UPDATE bookings SET status = 'ditolak', dibatalkan_oleh = 'mua', dibatalkan_pada = NOW() WHERE id_booking = ? AND id_mua = ? AND status = ?");
+    $st->bind_param('iis', $id_b, $id_mua, $status_asal);
+    $st->execute();
+    if ($st->affected_rows > 0) mua_toast(isset($_POST['tolak_pesanan']) ? 'Pesanan telah ditolak.' : 'Sesi telah dibatalkan.', 'info');
+    else mua_toast('Pesanan tidak ditemukan atau sudah diproses.', 'error');
     header("Location: booking.php?tab=scheduled");
     exit();
 }
+
 
 // --- AMBIL PARAMETER WAKTU & TAB ---
 $month = isset($_GET['m']) ? (int)$_GET['m'] : (int)date('m');
@@ -147,6 +166,7 @@ $month_name_id = str_replace(
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/mua_booking.css">
+    <link rel="stylesheet" href="../assets/css/mua_ui.css">
 </head>
 <body>
 
@@ -174,29 +194,29 @@ $month_name_id = str_replace(
             <div class="done-stats-grid">
                <div class="stat-box">
                   <div class="stat-title">Acara Terselesaikan <i class="fa-regular fa-circle-check text-green"></i></div>
-                  <div class="stat-value"><?php echo $total_sesi; ?> Sesi</div>
+                  <div class="stat-value"><span data-countup="<?php echo $total_sesi; ?>"><?php echo $total_sesi; ?></span> Sesi</div>
                   <div class="stat-desc text-green">100% Terlaksana Tepat Waktu</div>
                </div>
                <div class="stat-box">
                   <div class="stat-title">Total Pendapatan Bersih <span class="badge-lunas">Lunas</span></div>
-                  <div class="stat-value text-maroon">Rp <?php echo number_format($total_pendapatan, 0, ',', '.'); ?></div>
+                  <div class="stat-value text-maroon"><span data-countup="<?php echo (int)$total_pendapatan; ?>" data-prefix="Rp ">Rp <?php echo number_format($total_pendapatan, 0, ',', '.'); ?></span></div>
                   <div class="stat-desc">Telah ditransfer ke rekening bank</div>
                </div>
                <div class="stat-box">
                   <div class="stat-title">Kepuasan Rata-rata <i class="fa-solid fa-star text-yellow"></i></div>
-                  <div class="stat-value"><?php echo $rata_rata_rating > 0 ? number_format($rata_rata_rating, 1) : '-'; ?> <span class="sub-val">/ 5.0</span></div>
+                  <div class="stat-value"><?php if ($rata_rata_rating > 0): ?><span data-countup="<?php echo $rata_rata_rating; ?>" data-decimals="1"><?php echo number_format($rata_rata_rating, 1); ?></span><?php else: ?>-<?php endif; ?> <span class="sub-val">/ 5.0</span></div>
                   <div class="stat-desc text-green">Berdasarkan <?php echo $jumlah_ulasan; ?> ulasan terverifikasi</div>
                </div>
                <div class="stat-box">
                   <div class="stat-title">Dokumentasi <i class="fa-regular fa-image text-maroon"></i></div>
-                  <div class="stat-value"><?php echo $dokum_terisi; ?> Pesanan</div>
+                  <div class="stat-value"><span data-countup="<?php echo $dokum_terisi; ?>"><?php echo $dokum_terisi; ?></span> Pesanan</div>
                   <div class="stat-desc text-maroon"><?php echo $dokum_kosong; ?> Belum Diunggah</div>
                </div>
             </div>
 
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Cari nama klien, kode, atau tanggal">
+                <input type="text" id="bookingSearch" placeholder="Cari nama klien, kode, atau tanggal" autocomplete="off">
             </div>
 
             <div class="done-table-container">
@@ -216,7 +236,7 @@ $month_name_id = str_replace(
                     </thead>
                     <tbody>
                         <?php foreach ($all_bookings as $bk): ?>
-                        <tr onclick="window.location.href='session_detail.php?id=<?php echo $bk['id_booking']; ?>'" style="cursor: pointer; transition: 0.2s;" onmouseover="this.style.backgroundColor='#faf5f6'" onmouseout="this.style.backgroundColor='transparent'">
+                        <tr class="history-row" data-search="<?php echo htmlspecialchars(strtolower(implode(' ', [$bk['no_invoice'], $bk['nama_klien'], $bk['nama_layanan'], $bk['lokasi_acara'] ?? '', date('d/m/Y', strtotime($bk['tanggal_booking'])), date('d-m-Y', strtotime($bk['tanggal_booking'])), date('H:i', strtotime($bk['waktu_booking']))]))); ?>" onclick="window.location.href='session_detail.php?id=<?php echo $bk['id_booking']; ?>'" style="cursor: pointer; transition: 0.2s;" onmouseover="this.style.backgroundColor='#faf5f6'" onmouseout="this.style.backgroundColor='transparent'">
                             <td><?php echo htmlspecialchars($bk['no_invoice']); ?></td>
                             <td class="td-client"><img src="../assets/img/<?php echo htmlspecialchars($bk['foto_klien'] ?? 'default.jpg'); ?>" alt="klien"> <?php echo htmlspecialchars($bk['nama_klien']); ?></td>
                             <td><?php echo htmlspecialchars($bk['nama_layanan']); ?></td>
@@ -234,6 +254,7 @@ $month_name_id = str_replace(
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <div id="search-empty-done" class="empty-state" style="display: none;">Tidak ada pesanan yang cocok dengan pencarian.</div>
                 <?php else: ?>
                     <div class="empty-state">Belum ada riwayat jadwal selesai.</div>
                 <?php endif; ?>
@@ -246,7 +267,7 @@ $month_name_id = str_replace(
 
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Cari nama klien, kode, atau tanggal">
+                <input type="text" id="bookingSearch" placeholder="Cari nama klien, kode, atau tanggal" autocomplete="off">
             </div>
 
             <div class="booking-grid" style="<?php echo $tab == 'ongoing' ? 'display: block;' : ''; ?>">
@@ -316,7 +337,7 @@ $month_name_id = str_replace(
                                         <form method="POST" action="" enctype="multipart/form-data" class="modal-form-stretch">
                                             <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
                                             <div style="display:flex; flex-direction:column; gap:10px; width:100%;">
-                                                <input type="file" name="foto_dokum" required accept="image/*" style="font-size: 0.8rem; padding: 5px; border: 1px dashed #ccc; border-radius: 8px;">
+                                                <input type="file" name="foto_dokum" data-preview required accept="image/*" style="font-size: 0.8rem; padding: 5px; border: 1px dashed #ccc; border-radius: 8px;">
                                                 <button type="submit" name="konfirmasi_selesai_mua" class="btn-filled-green btn-stretch"><i class="fa-solid fa-circle-check"></i> Selesai Rias</button>
                                             </div>
                                         </form>
@@ -380,7 +401,7 @@ $month_name_id = str_replace(
                                         <?php if ($bk['is_mua_done'] == 0): ?>
                                             <form method="POST" action="" enctype="multipart/form-data" onclick="event.stopPropagation()" style="display:flex; flex-direction:column; gap:8px;">
                                                 <input type="hidden" name="id_booking" value="<?php echo $bk['id_booking']; ?>">
-                                                <input type="file" name="foto_dokum" required accept="image/*" style="font-size: 0.75rem; width: 100%; border: 1px dashed #dcd7d5; padding: 5px; border-radius: 6px;">
+                                                <input type="file" name="foto_dokum" data-preview required accept="image/*" style="font-size: 0.75rem; width: 100%; border: 1px dashed #dcd7d5; padding: 5px; border-radius: 6px;">
                                                 <button type="submit" name="konfirmasi_selesai_mua" class="btn-filled-green"><i class="fa-solid fa-circle-check"></i> Konfirmasi Selesai</button>
                                             </form>
                                         <?php else: ?>
@@ -505,56 +526,121 @@ $month_name_id = str_replace(
                     const actionData = this.querySelector('.card-action-data');
                     document.getElementById('modalActionButtons').innerHTML = actionData ? actionData.innerHTML : '';
                     
-                    document.getElementById('bookingModal').style.display = 'flex';
+                    GL.openModal(document.getElementById('bookingModal'));
                 });
             });
 
-            // Logika Filter Kalender
-            <?php if ($tab != 'ongoing' &&$tab != 'done'): ?>
-            const dateBtns = document.querySelectorAll('.date-filter-btn');
-            const emptyState = document.getElementById('empty-state-msg');
-            const titleElement = document.getElementById('dynamic-list-title');
+            // ==========================================================
+            // FILTER GABUNGAN: SEARCH BAR (semua tab) + KALENDER (Scheduled & Cancelled)
+            // Kartu/baris tampil hanya jika cocok dengan kata kunci DAN tanggal yang dipilih.
+            // ==========================================================
+            const searchInput   = document.getElementById('bookingSearch');
+            const historyRows   = document.querySelectorAll('.history-row');           // tabel tab Done
+            const emptyState    = document.getElementById('empty-state-msg');          // tab Scheduled/Ongoing/Cancelled
+            const emptyDone     = document.getElementById('search-empty-done');        // tab Done
+            const titleElement  = document.getElementById('dynamic-list-title');
+            const dateBtns      = document.querySelectorAll('.date-filter-btn');
+            const emptyTextAsli = emptyState ? emptyState.textContent.trim() : '';
             let currentSelectedDate = null;
-            let totalCards = bookingCards.length;
 
+            // Teks yang bisa dicari dari sebuah kartu booking (diambil dari atribut data-* yang sudah ada)
+            function teksKartu(card) {
+                const tgl = card.getAttribute('data-filter-date') || '';             // 2026-10-30
+                const p = tgl.split('-');
+                const tglStrip = p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : '';     // 30-10-2026
+                return [
+                    card.getAttribute('data-inv'),
+                    card.getAttribute('data-name'),
+                    card.getAttribute('data-service'),
+                    card.getAttribute('data-date-str'),                               // 30/10/2026
+                    tglStrip,
+                    card.getAttribute('data-time'),
+                    card.getAttribute('data-location')
+                ].join(' ').toLowerCase();
+            }
+
+            // Semua kata yang diketik harus ada (urutan bebas), contoh: "kayla wedding"
+            function cocok(teks, keyword) {
+                if (keyword === '') return true;
+                return keyword.split(/\s+/).every(kata => teks.includes(kata));
+            }
+
+            function terapkanFilter() {
+                const keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+                // --- Tab Done: baris tabel ---
+                if (historyRows.length > 0) {
+                    let tampil = 0;
+                    historyRows.forEach(row => {
+                        const ok = cocok(row.getAttribute('data-search') || '', keyword);
+                        if (ok && row.style.display === 'none') GL.fadeIn(row);   // muncul halus
+                        row.style.display = ok ? '' : 'none';
+                        if (ok) tampil++;
+                    });
+                    if (emptyDone) emptyDone.style.display = tampil === 0 ? 'block' : 'none';
+                }
+
+                // --- Tab lain: kartu booking ---
+                if (emptyState) {
+                    let tampil = 0;
+                    bookingCards.forEach(card => {
+                        const okTanggal = !currentSelectedDate || card.getAttribute('data-filter-date') === currentSelectedDate;
+                        const ok = okTanggal && cocok(teksKartu(card), keyword);
+                        if (ok && card.style.display === 'none') GL.fadeIn(card); // muncul halus
+                        card.style.display = ok ? '' : 'none';
+                        if (ok) tampil++;
+                    });
+
+                    if (tampil === 0) {
+                        emptyState.textContent = (bookingCards.length > 0 && (keyword !== '' || currentSelectedDate))
+                            ? 'Tidak ada pesanan yang cocok dengan pencarian.'
+                            : emptyTextAsli;
+                        emptyState.style.display = 'block';
+                    } else {
+                        emptyState.style.display = 'none';
+                    }
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', terapkanFilter);
+                // Tekan Esc untuk mengosongkan pencarian
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') { this.value = ''; terapkanFilter(); }
+                });
+            }
+
+            // Logika Filter Kalender (hanya ada di tab Scheduled & Cancelled)
+            <?php if ($tab != 'ongoing' && $tab != 'done'): ?>
             dateBtns.forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
                     const selectedDate = this.getAttribute('data-filter-date');
-                    
+
+                    // Klik tanggal yang sama lagi = batalkan filter tanggal
                     if (currentSelectedDate === selectedDate) {
                         currentSelectedDate = null;
                         this.classList.remove('selected-date');
                         titleElement.innerHTML = 'Semua Pesanan Bulan Ini';
-                        bookingCards.forEach(card => card.style.display = ''); 
-                        emptyState.style.display = totalCards === 0 ? 'block' : 'none';
+                        terapkanFilter();
                         return;
                     }
 
                     dateBtns.forEach(b => b.classList.remove('selected-date'));
                     this.classList.add('selected-date');
                     currentSelectedDate = selectedDate;
-                    
-                    const dStr = selectedDate.split('-'); 
+
+                    const dStr = selectedDate.split('-');
                     const formatted = `${dStr[2]}/${dStr[1]}/${dStr[0]}`;
                     titleElement.innerHTML = `Pesanan: ${formatted} <a href="#" id="clear-filter" style="font-size: 0.85rem; color: #7E4655; text-decoration: none; font-weight: 600; float:right;">Lihat Semua &times;</a>`;
-                    
-                    let visibleCount = 0;
-                    bookingCards.forEach(card => {
-                        if (card.getAttribute('data-filter-date') === selectedDate) {
-                            card.style.display = '';
-                            visibleCount++;
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                    emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-                    
+
+                    terapkanFilter();
+
                     const clearBtn = document.getElementById('clear-filter');
-                    if(clearBtn) {
+                    if (clearBtn) {
                         clearBtn.addEventListener('click', (ev) => {
                             ev.preventDefault();
-                            btn.click(); 
+                            btn.click();
                         });
                     }
                 });
@@ -562,10 +648,12 @@ $month_name_id = str_replace(
             <?php endif; ?>
         });
 
-        function closeBookingModal() { document.getElementById('bookingModal').style.display = 'none'; }
+        function closeBookingModal() { GL.closeModal(document.getElementById('bookingModal')); }
         document.getElementById('bookingModal').addEventListener('click', function(e) {
             if(e.target === this) closeBookingModal();
         });
     </script>
+    <?php mua_toast_render(); ?>
+    <script src="../assets/js/mua_ui.js"></script>
 </body>
 </html>
