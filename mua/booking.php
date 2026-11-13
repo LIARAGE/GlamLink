@@ -407,7 +407,7 @@ $month_name_id = str_replace(
                                         <?php else: ?>
                                             <button class="btn-outline-grey" style="cursor: default;" onclick="event.stopPropagation()"><i class="fa-solid fa-clock-rotate-left"></i> Menunggu Klien</button>
                                         <?php endif; ?>
-                                        <button class="btn-outline-grey" onclick="event.stopPropagation()"><i class="fa-regular fa-comment-dots"></i> Chat Klien</button>
+                                        <button class="btn-outline-grey" onclick="event.stopPropagation(); window.location.href='chat.php?dengan=<?php echo (int)$bk['id_pelanggan']; ?>'"><i class="fa-regular fa-comment-dots"></i> Chat Klien</button>
                                     </div>
                                 </div>
                                 <?php endif; ?>
@@ -415,7 +415,7 @@ $month_name_id = str_replace(
                             
                             <?php if ($tab != 'ongoing'): ?>
                             <div class="bk-footer-actions">
-                                <button class="btn-outline-grey" onclick="event.stopPropagation()"><i class="fa-regular fa-comment-dots"></i> Chat Klien</button>
+                                <button class="btn-outline-grey" onclick="event.stopPropagation(); window.location.href='chat.php?dengan=<?php echo (int)$bk['id_pelanggan']; ?>'"><i class="fa-regular fa-comment-dots"></i> Chat Klien</button>
                                 <div class="action-group">
                                     <?php if ($tab == 'scheduled' && strtolower($bk['status']) == 'menunggu'): ?>
                                         <form method="POST" class="form-inline" onclick="event.stopPropagation()">

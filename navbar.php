@@ -44,8 +44,24 @@ if ($nav_logged_in && in_array($nav_role, ['mua', 'pelanggan']) && isset($koneks
         
         <div class="nav-profile-mua">
             <div class="nav-icons">
-                <a href="#" class="icon-btn"><i class="fa-solid fa-message"></i><span class="badge">2</span></a>
-                <a href="#" class="icon-btn"><i class="fa-solid fa-bell"></i><span class="badge">2</span></a>
+                <?php
+                // Ikon chat MUA: jumlah pesan belum dibaca
+                require_once __DIR__ . '/includes/chat.php';
+                $nav_chat_baru = (($koneksi ?? null) instanceof mysqli) ? chat_belum_dibaca($koneksi, (int)$_SESSION['id_user']) : 0;
+                ?>
+                <a href="<?php echo $path_prefix; ?>mua/chat.php" class="icon-btn" title="Chat">
+                    <i class="fa-solid fa-message"></i>
+                    <span class="badge" id="navChatBadge" <?php echo $nav_chat_baru ? '' : 'hidden'; ?>><?php echo $nav_chat_baru > 99 ? '99+' : $nav_chat_baru; ?></span>
+                </a>
+                <?php
+                // Lonceng notifikasi MUA: jumlah belum dibaca dari tabel mua_notifikasi
+                require_once __DIR__ . '/includes/mua_notifikasi.php';
+                $nav_notif_baru = isset($koneksi) ? mua_notif_jumlah_baru($koneksi, (int)$_SESSION['id_user']) : 0;
+                ?>
+                <a href="<?php echo $path_prefix; ?>mua/notifikasi.php" class="icon-btn" title="Notifikasi">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="badge" id="navNotifBadge" <?php echo $nav_notif_baru ? '' : 'hidden'; ?>><?php echo $nav_notif_baru > 99 ? '99+' : $nav_notif_baru; ?></span>
+                </a>
             </div>
             <!-- Klik foto & nama -> halaman Profil MUA -->
             <a href="<?php echo $path_prefix; ?>mua/profil.php" style="text-decoration:none;color:inherit;" title="Lihat & edit profil">
@@ -75,7 +91,15 @@ if ($nav_logged_in && in_array($nav_role, ['mua', 'pelanggan']) && isset($koneks
         </div>
         <div class="nav-profile-mua">
             <div class="nav-icons">
-                <a href="#" class="icon-btn" title="Segera hadir"><i class="fa-solid fa-message"></i></a>
+                <?php
+                // Ikon chat klien: buka klien/chat.php + jumlah pesan belum dibaca
+                require_once __DIR__ . '/includes/chat.php';
+                $nav_chat_baru = (($koneksi ?? null) instanceof mysqli) ? chat_belum_dibaca($koneksi, (int)$_SESSION['id_user']) : 0;
+                ?>
+                <a href="<?php echo $path_prefix; ?>klien/chat.php" class="icon-btn" title="Chat">
+                    <i class="fa-solid fa-message"></i>
+                    <span class="badge" id="navChatBadge" <?php echo $nav_chat_baru ? '' : 'hidden'; ?>><?php echo $nav_chat_baru > 99 ? '99+' : $nav_chat_baru; ?></span>
+                </a>
                 <a href="#" class="icon-btn" title="Segera hadir"><i class="fa-solid fa-bell"></i></a>
             </div>
             <a href="<?php echo $path_prefix; ?>klien/profil.php" style="text-decoration:none;color:inherit;">

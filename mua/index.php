@@ -131,14 +131,16 @@ if ($query_bookings) {
                 <h3 class="text-success" data-countup="<?php echo (int)$stat_selesai; ?>"><?php echo $stat_selesai; ?></h3>
                 <span class="stat-desc">100% ulasan bintang 5</span>
             </div>
-            <div class="stat-card">
+            <!-- Kartu pendapatan bisa diklik -> halaman Keuangan -->
+            <a href="keuangan.php" class="stat-card stat-card-link" title="Lihat detail keuangan">
                 <div class="stat-header">
                     <span>Total Pendapatan</span>
                     <i class="fa-solid fa-arrow-trend-up"></i>
                 </div>
                 <h3 class="text-primary" data-countup="<?php echo (int)$stat_pendapatan; ?>" data-prefix="Rp ">Rp <?php echo number_format($stat_pendapatan, 0, ',', '.'); ?></h3>
                 <span class="stat-desc text-success">Penyaluran langsung via GlamLink</span>
-            </div>
+                <span class="stat-card-more">Lihat Keuangan <i class="fa-solid fa-arrow-right"></i></span>
+            </a>
         </section>
 
         <section class="recent-bookings">

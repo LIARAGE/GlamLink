@@ -1,0 +1,119 @@
+/* =========================================================
+   HALAMAN NOTIFIKASI MUA (mua/notifikasi.php)
+   ========================================================= */
+.nt-body {
+    margin: 0;
+    padding-top: 80px;                 /* tinggi navbar */
+    background: #FBF7F6;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #2b2326;
+}
+.nt-body *, .nt-body *::before, .nt-body *::after { box-sizing: border-box; }
+.nt-body [hidden] { display: none !important; }
+
+/* ---------- HEADER ---------- */
+.nt-header { background: linear-gradient(180deg, #F6DCE1 0%, #FBF7F6 100%); padding: 42px 20px 34px; }
+.nt-header-inner { position: relative; max-width: 1025px; margin: 0 auto; text-align: center; }
+.nt-header h1 { margin: 0; font-size: 2.4rem; font-weight: 700; letter-spacing: -0.5px; }
+.nt-readall-form { position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
+.nt-btn-readall {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; border: 1px solid #eadfe0; border-radius: 8px; padding: 8px 16px;
+    font-family: inherit; font-size: 0.8rem; font-weight: 500; color: #7E4655; cursor: pointer;
+    box-shadow: 0 2px 6px rgba(43, 35, 38, 0.05);
+    transition: border-color 0.2s, background-color 0.2s;
+}
+.nt-btn-readall:hover { border-color: #7E4655; background: #FFF9FA; }
+
+/* ---------- FILTER ---------- */
+.nt-main { max-width: 1025px; margin: 0 auto; padding: 0 20px 70px; }
+.nt-filter { display: flex; gap: 8px; margin-bottom: 18px; }
+.nt-filter a {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600;
+    color: #8c8286; text-decoration: none; border: 1px solid transparent;
+    transition: background-color 0.2s, color 0.2s;
+}
+.nt-filter a:hover { color: #7E4655; }
+.nt-filter a.active { background: #fff; color: #7E4655; border-color: #eadfe0; }
+.nt-filter-count { background: #7E4655; color: #fff; border-radius: 10px; font-size: 0.68rem; padding: 1px 7px; }
+
+/* ---------- KARTU ---------- */
+.nt-list { display: flex; flex-direction: column; gap: 14px; }
+.nt-card {
+    display: grid; grid-template-columns: 46px 1fr auto; gap: 16px; align-items: center;
+    background: #FBF8F7; border: 1.5px solid #EDE6E4; border-radius: 14px;
+    padding: 22px 22px 22px 20px; overflow: hidden;
+    transition: background-color 0.3s, border-color 0.3s, height 0.3s ease, opacity 0.25s ease,
+                padding 0.3s ease, margin 0.3s ease, transform 0.3s ease;
+    animation: glFadeUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.nt-card.is-unread { background: #fff; border-color: #E2B9C2; cursor: pointer; }
+.nt-card.is-unread:hover { box-shadow: 0 6px 18px rgba(126, 70, 85, 0.08); }
+.nt-card.is-removing {
+    height: 0 !important; opacity: 0; padding-top: 0; padding-bottom: 0; margin-bottom: -14px;
+    border-width: 0; transform: translateX(30px);
+}
+.nt-list .nt-card:nth-child(2) { animation-delay: 0.03s; }
+.nt-list .nt-card:nth-child(3) { animation-delay: 0.06s; }
+.nt-list .nt-card:nth-child(4) { animation-delay: 0.09s; }
+.nt-list .nt-card:nth-child(n+5) { animation-delay: 0.12s; }
+
+.nt-icon {
+    width: 44px; height: 44px; border-radius: 12px; align-self: start;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff !important; border: 1px solid #eadfe0 !important; font-size: 1.05rem;
+}
+.nt-content { min-width: 0; }
+.nt-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.nt-badge { font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; border: 1px solid; }
+.nt-dot { width: 6px; height: 6px; border-radius: 50%; background: #9C4A5E; }
+.nt-meta time { font-size: 0.72rem; color: #8c8286; }
+.nt-content h3 { margin: 0 0 6px; font-size: 1.05rem; font-weight: 600; }
+.nt-content p { margin: 0; font-size: 0.92rem; line-height: 1.6; color: #5c5357; }
+
+.nt-actions { display: flex; align-items: center; gap: 14px; }
+.nt-btn-action {
+    display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    background: #fff; border: 1px solid #E2B9C2; border-radius: 8px; padding: 8px 16px;
+    font-size: 0.8rem; font-weight: 500; color: #7E4655; text-decoration: none;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.nt-btn-action i { font-size: 0.72rem; transition: transform 0.2s; }
+.nt-btn-action:hover { background: #7E4655; border-color: #7E4655; color: #fff; }
+.nt-btn-action:hover i { transform: translateX(3px); }
+.nt-del-form { margin: 0; }
+.nt-btn-del {
+    background: none; border: none; cursor: pointer; color: #8c8286; font-size: 0.95rem;
+    width: 32px; height: 32px; border-radius: 8px; transition: color 0.2s, background-color 0.2s;
+}
+.nt-btn-del:hover { color: #C0263D; background: #FDECEC; }
+
+/* ---------- WARNA PER TIPE (ikon & badge) ---------- */
+.nt-c-rose   { color: #B23A55; background: #FDECEF; border-color: #F6C9D3; }
+.nt-c-blue   { color: #1D5FD1; background: #EAF1FE; border-color: #C5D8FB; }
+.nt-c-indigo { color: #4F46E5; background: #EEF0FF; border-color: #CFD2FB; }
+.nt-c-amber  { color: #A16207; background: #FEF8E6; border-color: #F3DE9E; }
+.nt-icon.nt-c-amber { color: #E0A100; }
+.nt-c-red    { color: #C0263D; background: #FDECEC; border-color: #F5C2C7; }
+.nt-c-green  { color: #15803D; background: #EAF7EF; border-color: #BFE5CC; }
+.nt-c-orange { color: #C2620A; background: #FFF3E6; border-color: #FAD3A9; }
+.nt-c-teal   { color: #0F766E; background: #E6F6F4; border-color: #B5E3DD; }
+
+/* ---------- KOSONG ---------- */
+.nt-empty { text-align: center; padding: 70px 20px; color: #8c8286; background: #fff; border: 1px dashed #e3d7da; border-radius: 16px; }
+.nt-empty i { font-size: 2.4rem; color: #d4c3c8; margin-bottom: 14px; }
+.nt-empty h3 { margin: 0 0 6px; color: #2b2326; font-size: 1.1rem; }
+.nt-empty p { margin: 0; font-size: 0.9rem; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 760px) {
+    .nt-header h1 { font-size: 1.8rem; }
+    .nt-readall-form { position: static; transform: none; margin-top: 14px; }
+    .nt-card { grid-template-columns: 40px 1fr; padding: 18px; }
+    .nt-actions { grid-column: 1 / -1; justify-content: space-between; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nt-card { transition: none; animation: none; }
+}

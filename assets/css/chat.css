@@ -1,0 +1,161 @@
+/* =========================================================
+   CHAT KLIEN <-> MUA  (mua/chat.php & klien/chat.php)
+   ========================================================= */
+.ct-body {
+    margin: 0;
+    padding-top: 80px;                 /* tinggi navbar */
+    background: #FBF7F6;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #2b2326;
+}
+.ct-body *, .ct-body *::before, .ct-body *::after { box-sizing: border-box; }
+.ct-body [hidden] { display: none !important; }
+
+/* ---------- TOP BAR ---------- */
+.ct-topbar { background: linear-gradient(180deg, #F6DCE1 0%, #FBF7F6 100%); padding: 30px 0 22px; }
+.ct-topbar-inner { max-width: 1320px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; gap: 44px; }
+.ct-btn-back {
+    width: 52px; height: 52px; border-radius: 50%; background: #A99C9F; color: #fff; font-size: 1.3rem;
+    display: flex; align-items: center; justify-content: center; text-decoration: none;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.ct-btn-back:hover { background: #8c8286; transform: translateX(-2px); }
+.ct-topbar h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+
+/* ---------- LAYOUT ---------- */
+.ct-main {
+    max-width: 1320px; margin: 0 auto; padding: 0 20px 24px;
+    display: grid; grid-template-columns: 445px 1fr; gap: 18px;
+    height: calc(100vh - 80px - 104px); min-height: 520px;
+}
+
+/* ---------- DAFTAR ---------- */
+.ct-side {
+    background: #fff; border: 1px solid #eee5e3; border-radius: 14px;
+    padding: 30px 24px 20px; display: flex; flex-direction: column; min-height: 0;
+}
+.ct-side h2 { margin: 0 0 16px 6px; color: #7E4655; font-size: 1.6rem; font-weight: 600; }
+.ct-search { position: relative; margin-bottom: 10px; }
+.ct-search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #a39a9d; font-size: 0.85rem; }
+.ct-search input {
+    width: 100%; border: 1px solid #eadfe0; background: #FBF8F7; border-radius: 10px;
+    padding: 10px 14px 10px 38px; font-family: inherit; font-size: 0.86rem; outline: none;
+}
+.ct-search input:focus { border-color: #7E4655; background: #fff; }
+.ct-list { flex: 1; overflow-y: auto; margin: 0 -8px; padding: 0 8px; }
+.ct-list-empty { color: #8c8286; font-size: 0.86rem; text-align: center; margin: 30px 0; }
+
+.ct-item {
+    width: 100%; display: flex; gap: 14px; align-items: center; text-align: left;
+    background: none; border: none; border-bottom: 1px solid #8c8286; border-radius: 0;
+    padding: 14px 8px; cursor: pointer; font-family: inherit; color: inherit;
+    transition: background-color 0.15s;
+}
+.ct-item:hover { background: #FBF4F5; }
+.ct-item.active { background: #F8ECEE; border-radius: 10px; border-bottom-color: transparent; }
+.ct-item-body { flex: 1; min-width: 0; }
+.ct-item-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.ct-item-top b { font-size: 0.98rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ct-item-top time { font-size: 0.7rem; color: #8c8286; flex-shrink: 0; }
+.ct-item-bottom { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 3px; }
+.ct-preview { font-size: 0.86rem; color: #5c5357; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ct-item.unread .ct-preview { color: #2b2326; font-weight: 600; }
+.ct-item.unread .ct-item-top time { color: #7E4655; font-weight: 600; }
+.ct-unread { background: #7E4655; color: #fff; font-size: 0.68rem; font-weight: 700; min-width: 20px; height: 20px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; flex-shrink: 0; }
+
+.ct-avatar {
+    width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
+    background: #E9D3D8; color: #7E4655; font-weight: 700; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+}
+.ct-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.ct-avatar.sm { width: 32px; height: 32px; font-size: 0.8rem; }
+
+.ct-saran { border-top: 1px solid #eee5e3; margin-top: 10px; padding-top: 14px; }
+.ct-saran-title { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #B05F6D; margin: 0 0 8px 4px; }
+.ct-saran-item {
+    width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px; border: none; background: none;
+    border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.86rem; color: #2b2326; text-align: left;
+}
+.ct-saran-item span { flex: 1; }
+.ct-saran-item > i { color: #a39a9d; font-size: 0.8rem; }
+.ct-saran-item:hover { background: #FBF4F5; }
+.ct-saran-item:hover > i { color: #7E4655; }
+
+/* ---------- RUANG CHAT ---------- */
+.ct-room {
+    background: #FDF4F2; border: 1px solid #eee5e3; border-radius: 14px; overflow: hidden;
+    display: flex; flex-direction: column; min-height: 0;
+}
+.ct-placeholder { margin: auto; text-align: center; color: #8c8286; padding: 40px; max-width: 360px; }
+.ct-placeholder i { font-size: 2.6rem; color: #d4c3c8; margin-bottom: 14px; }
+.ct-placeholder h3 { margin: 0 0 6px; color: #2b2326; }
+.ct-placeholder p { margin: 0; font-size: 0.9rem; line-height: 1.5; }
+
+.ct-room-head {
+    display: flex; align-items: center; gap: 18px; background: #fff;
+    padding: 20px 52px; border-bottom: 1px solid #eee5e3;
+}
+.ct-room-head b { display: block; font-size: 1rem; font-weight: 600; }
+.ct-room-head small { font-size: 0.78rem; color: #5c5357; }
+.ct-btn-list { display: none; background: none; border: none; font-size: 1.1rem; color: #5c5357; cursor: pointer; padding: 6px; }
+
+.ct-msgs { flex: 1; overflow-y: auto; padding: 30px 60px 20px; display: flex; flex-direction: column; gap: 14px; scroll-behavior: auto; }
+.ct-loading { margin: auto; color: #8c8286; font-size: 0.86rem; }
+.ct-empty-room { margin: auto; text-align: center; color: #8c8286; font-size: 0.9rem; }
+.ct-empty-room i { font-size: 2rem; color: #d4b3bb; margin-bottom: 10px; }
+.ct-date {
+    align-self: center; font-size: 0.72rem; font-weight: 600; color: #8c8286;
+    background: rgba(255,255,255,0.8); border: 1px solid #f0e3e3; border-radius: 20px; padding: 4px 12px; margin: 6px 0;
+}
+
+.ct-msg {
+    position: relative; max-width: 68%; border-radius: 10px; padding: 12px 16px 10px;
+    display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 14px; row-gap: 2px;
+    animation: ctMasuk 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.ct-msg p { margin: 0; font-size: 0.95rem; line-height: 1.55; white-space: pre-wrap; word-break: break-word; flex: 1 1 auto; }
+.ct-msg.me   { align-self: flex-end; background: #F2D5D7; color: #2b2326; border-bottom-right-radius: 4px; }
+.ct-msg.them { align-self: flex-start; background: #D7A9AA; color: #2b2326; border-bottom-left-radius: 4px; }
+.ct-meta { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font-size: 0.72rem; color: #6f6266; white-space: nowrap; }
+.ct-check { font-size: 0.7rem; color: #8c8286; }
+.ct-check.dibaca { color: #2F7FD8; }
+.ct-check.gagal { color: #C0263D; }
+.ct-msg.pending { opacity: 0.75; }
+.ct-msg.failed { outline: 1px dashed #C0263D; }
+@keyframes ctMasuk { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ---------- INPUT ---------- */
+.ct-form { display: flex; align-items: flex-end; gap: 22px; padding: 16px 52px 24px; }
+.ct-form textarea {
+    flex: 1; resize: none; min-height: 56px; max-height: 140px; overflow-y: auto;
+    border: 2px solid #8c8286; border-radius: 14px; background: #FAF5F4;
+    padding: 15px 38px; font-family: inherit; font-size: 0.98rem; line-height: 1.4; color: #2b2326; outline: none;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+.ct-form textarea:focus { border-color: #7E4655; background: #fff; }
+.ct-send {
+    width: 52px; height: 52px; border-radius: 50%; border: none; flex-shrink: 0; margin-bottom: 2px;
+    background: #7E4655; color: #fff; font-size: 1.15rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.ct-send:hover { background: #633642; transform: scale(1.05); }
+.ct-send:active { transform: scale(0.95); }
+
+/* ---------- RESPONSIVE: HP = satu kolom (daftar <-> ruang chat) ---------- */
+@media (max-width: 860px) {
+    .ct-topbar-inner { padding: 0 20px; gap: 20px; }
+    .ct-main { grid-template-columns: 1fr; height: calc(100vh - 80px - 96px); }
+    .ct-room { display: none; }
+    .ct-main.show-room .ct-side { display: none; }
+    .ct-main.show-room .ct-room { display: flex; }
+    .ct-btn-list { display: block; }
+    .ct-room-head { padding: 14px 16px; gap: 12px; }
+    .ct-msgs { padding: 20px 16px; }
+    .ct-msg { max-width: 85%; }
+    .ct-form { padding: 12px 14px 16px; gap: 10px; }
+    .ct-form textarea { padding: 14px 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .ct-msg { animation: none; } }

@@ -436,11 +436,113 @@
 .pf-preview-body b { display: block; font-size: 1rem; padding-bottom: 14px; border-bottom: 1px solid #eae5e3; margin-bottom: 12px; word-break: break-word; }
 .pf-preview-tags { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; color: #B05F6D; }
 
+/* =========================================================
+   JADWAL: MODE RENTANG, PINTASAN, CUTI MENDATANG
+   ========================================================= */
+.pf-mode { display: flex; background: #F5EEF0; border-radius: 12px; padding: 4px; gap: 4px; margin-bottom: 22px; }
+.pf-mode-btn {
+    flex: 1; border: none; background: none; cursor: pointer; font-family: inherit; font-size: 0.85rem; font-weight: 600;
+    color: #8c8286; padding: 9px 10px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.pf-mode-btn:hover { color: #7E4655; }
+.pf-mode-btn.active { background: #fff; color: #7E4655; box-shadow: 0 2px 8px rgba(126,70,85,0.12); }
+
+/* Sorotan rentang */
+.pf-cal-day.is-range { background: #F6E3E8; border-radius: 0; color: #7E4655; }
+.pf-cal-day.is-range-preview { background: #FBF0F3; }
+.pf-cal-day.is-range-start { border-radius: 8px 0 0 8px; }
+.pf-cal-day.is-range-end { border-radius: 0 8px 8px 0; }
+.pf-cal-day.is-range-start.is-range-end { border-radius: 8px; }
+.pf-cal-day.is-range-start, .pf-cal-day.is-range-end { background: #7E4655; color: #fff; font-weight: 700; }
+.pf-cal-day.is-range-start .pf-cal-dot, .pf-cal-day.is-range-end .pf-cal-dot { background: #fff; }
+.pf-cal-day.is-range-start::before, .pf-cal-day.is-range-end::before { color: #fff; }
+.is-range-mode .pf-cal-grid#pfCalDates { gap: 6px 0; }
+.is-range-mode .pf-cal-day.is-past { cursor: not-allowed; }
+.is-range-mode .pf-cal-day:hover { transform: none; }
+
+.pf-shortcuts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 22px; padding-top: 18px; border-top: 1px solid #eae5e3; }
+.pf-shortcut { cursor: pointer; transition: background-color 0.2s, border-color 0.2s, transform 0.2s; }
+.pf-shortcut:hover { background: #FBEFF2; border-color: #7E4655; transform: translateY(-1px); }
+.pf-cal-tip { margin: 12px 0 0; font-size: 0.76rem; color: #8c8286; }
+.pf-cal-tip kbd { font-family: inherit; font-size: 0.72rem; background: #F5EEF0; border: 1px solid #e6dcdc; border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; }
+
+.pf-range-stats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.pf-range-stats .pf-day-badge { margin-bottom: 0; }
+.pf-day-badge.is-warn { background: #FFF4E0; color: #B26A00; }
+.pf-link-btn { display: block; margin: 12px auto 0; background: none; border: none; color: #8c8286; font-family: inherit; font-size: 0.82rem; cursor: pointer; text-decoration: underline; }
+.pf-link-btn:hover { color: #7E4655; }
+
+.pf-upcoming { margin-top: 30px; }
+.pf-upcoming-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.pf-upcoming-list li {
+    display: flex; align-items: center; gap: 14px; border: 1px solid #f0d7dd; background: #FFF9FA;
+    border-radius: 12px; padding: 12px 14px; animation: glFadeUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.pf-upcoming-list li > i { color: #D0103A; width: 34px; height: 34px; border-radius: 50%; background: #FDECEF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pf-upcoming-list li > div { flex: 1; min-width: 0; }
+.pf-upcoming-list b { display: block; font-size: 0.9rem; }
+.pf-upcoming-list small { color: #8c8286; font-size: 0.78rem; }
+
+/* Modal libur rutin */
+.pf-rutin-box { max-width: 460px; }
+.pf-modal-icon-soft { background: #F5EEF0; color: #7E4655; }
+.pf-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 4px 0 20px; }
+.pf-weekday input { position: absolute; opacity: 0; pointer-events: none; }
+.pf-weekday span {
+    display: block; padding: 10px 0; border: 1px solid #e6dcdc; border-radius: 10px; cursor: pointer;
+    font-size: 0.82rem; font-weight: 600; color: #5c5357; transition: all 0.15s;
+}
+.pf-weekday span:hover { border-color: #7E4655; }
+.pf-weekday input:checked + span { background: #7E4655; border-color: #7E4655; color: #fff; }
+.pf-weekday input:focus-visible + span { box-shadow: 0 0 0 3px rgba(126,70,85,0.25); }
+.pf-rutin-preview { background: #FAF5F6; border-radius: 10px; padding: 12px 14px; font-size: 0.85rem; color: #5c5357; text-align: left; margin: 0 0 20px !important; }
+.pf-modal-actions button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* =========================================================
+   POPUP DETAIL PORTFOLIO
+   ========================================================= */
+.pf-porto-card { cursor: pointer; }
+.pf-porto-card:focus-visible { outline: 3px solid #7E4655; outline-offset: 3px; }
+.pf-porto-box {
+    position: relative; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, 1fr);
+    width: 100%; max-width: 940px; max-height: calc(100vh - 80px);
+    background: #fff; border-radius: 20px; overflow: hidden; padding: 0;
+}
+.pf-porto-view { position: relative; background: #2b2326; min-height: 420px; display: flex; align-items: center; justify-content: center; }
+.pf-porto-view img { width: 100%; height: 100%; max-height: calc(100vh - 120px); object-fit: contain; display: block; }
+.pf-porto-view .pf-porto-missing { color: #8c8286; }
+.pf-porto-nav {
+    position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,0.88); color: #2b2326; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: background-color 0.2s, transform 0.2s;
+}
+.pf-porto-nav:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
+.pf-porto-nav.prev { left: 14px; }
+.pf-porto-nav.next { right: 14px; }
+.pf-porto-side { padding: 34px 30px 28px; display: flex; flex-direction: column; overflow-y: auto; }
+.pf-porto-side h3 { margin: 0 0 14px; font-size: 1.35rem; line-height: 1.3; word-break: break-word; }
+.pf-porto-tags-light { margin-bottom: 18px; }
+.pf-porto-tags-light span { background: #FBEFF2; color: #B05F6D; }
+.pf-porto-side p { margin: 0; font-size: 0.92rem; line-height: 1.7; color: #3d3438; white-space: pre-line; flex: 1; }
+.pf-porto-actions { display: flex; gap: 10px; margin-top: 26px; padding-top: 20px; border-top: 1px solid #eae5e3; }
+.pf-porto-actions > * { flex: 1; }
+.pf-text-danger { color: #B8324A; }
+.pf-text-danger:hover { border-color: #B8324A; background: #FDECEF; }
+.pf-porto-close {
+    position: absolute; top: 14px; right: 14px; z-index: 3; width: 36px; height: 36px; border-radius: 50%; border: none;
+    background: #FAF5F6; color: #5c5357; cursor: pointer; font-size: 1rem; transition: background-color 0.2s;
+}
+.pf-porto-close:hover { background: #eee3e5; }
+
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 1000px) {
     .pf-grid-about, .pf-grid-jadwal, .pf-edit-grid, .pf-post-grid { grid-template-columns: 1fr; }
     .pf-grid-3 { grid-template-columns: repeat(2, 1fr); }
     .pf-edit-side, .pf-preview-card { position: static; }
+    .pf-porto-box { grid-template-columns: 1fr; overflow-y: auto; }
+    .pf-porto-view { min-height: 280px; }
+    .pf-porto-view img { max-height: 55vh; }
 }
 @media (max-width: 700px) {
     .pf-head-card { flex-direction: column; text-align: center; padding: 30px 22px; gap: 18px; }
