@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 14, 2026 at 10:11 AM
+-- Generation Time: Nov 14, 2026 at 03:55 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -95,7 +95,8 @@ CREATE TABLE `chats` (
 
 INSERT INTO `chats` (`id_chat`, `id_pengirim`, `id_penerima`, `pesan`, `waktu_kirim`, `dibaca_pada`) VALUES
 (1, 2, 1, 'Halo Jocelyn Thank u sudah book', '2026-11-13 11:17:26', NULL),
-(2, 2, 6, 'Halo Kuncoro, terima kasih', '2026-11-13 11:18:56', '2026-11-14 08:53:05');
+(2, 2, 6, 'Halo Kuncoro, terima kasih', '2026-11-13 11:18:56', '2026-11-14 08:53:05'),
+(3, 6, 2, 'mau pesen buat malming depan apakah bisa?', '2026-11-14 09:42:23', NULL);
 
 -- --------------------------------------------------------
 
@@ -129,6 +130,22 @@ CREATE TABLE `klien_notifikasi` (
   `dibaca_pada` datetime DEFAULT NULL,
   `dihapus_pada` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `klien_notifikasi`
+--
+
+INSERT INTO `klien_notifikasi` (`id_notif`, `id_pelanggan`, `kunci`, `tipe`, `judul`, `pesan`, `link`, `label_aksi`, `waktu`, `dibaca_pada`, `dihapus_pada`) VALUES
+(1, 6, 'baru:8', 'booking', 'Booking Berhasil Dibuat', 'Permintaan booking kamu berhasil dikirim. Silakan tunggu konfirmasi dari MUA', 'detail_booking.php?id=8', 'Lihat Detail', '2026-10-26 21:00:38', '2026-11-14 16:41:40', NULL),
+(2, 6, 'baru:9', 'booking', 'Booking Berhasil Dibuat', 'Permintaan booking kamu berhasil dikirim. Silakan tunggu konfirmasi dari MUA', 'detail_booking.php?id=9', 'Lihat Detail', '2026-10-26 21:02:06', '2026-11-14 16:41:40', NULL),
+(3, 6, 'baru:10', 'booking', 'Booking Berhasil Dibuat', 'Permintaan booking kamu berhasil dikirim. Silakan tunggu konfirmasi dari MUA', 'detail_booking.php?id=10', 'Lihat Detail', '2026-10-30 00:23:21', '2026-11-14 16:41:40', NULL),
+(4, 6, 'bayar:10', 'bayar', 'Pembayaran Berhasil', 'Pembayaran booking GL-5256 sebesar Rp 100.000 melalui Transfer Bank berhasil diterima.', 'detail_booking.php?id=10', 'Lihat Detail', '2026-10-30 00:23:21', '2026-11-14 16:41:40', NULL),
+(5, 6, 'baru:12', 'booking', 'Booking Berhasil Dibuat', 'Permintaan booking kamu berhasil dikirim. Silakan tunggu konfirmasi dari MUA', 'detail_booking.php?id=12', 'Lihat Detail', '2026-11-13 16:31:10', '2026-11-14 16:41:40', NULL),
+(6, 6, 'bayar:12', 'bayar', 'Pembayaran Berhasil', 'Pembayaran booking GL-9102 sebesar Rp 3.000.000 melalui BCA Virtual Account berhasil diterima.', 'detail_booking.php?id=12', 'Lihat Detail', '2026-11-13 16:31:10', '2026-11-14 16:41:40', NULL),
+(7, 6, 'baru:14', 'booking', 'Booking Berhasil Dibuat', 'Permintaan booking kamu berhasil dikirim. Silakan tunggu konfirmasi dari MUA', 'detail_booking.php?id=14', 'Lihat Detail', '2026-11-11 17:31:10', '2026-11-14 16:41:40', NULL),
+(8, 6, 'bayar:14', 'bayar', 'Pembayaran Berhasil', 'Pembayaran booking GL-9104 sebesar Rp 750.000 melalui Transfer Bank berhasil diterima.', 'detail_booking.php?id=14', 'Lihat Detail', '2026-11-11 17:31:10', '2026-11-14 16:41:40', NULL),
+(9, 6, 'konfirm:14', 'konfirm', 'Booking Dikonfirmasi', 'Kayla Studio menerima booking GL-9104 (Graduation) untuk 14 Nov 2026 pukul 08:00 WIB. Sampai jumpa di hari acara!', 'detail_booking.php?id=14', 'Lihat Detail', '2026-11-14 16:41:40', '2026-11-14 16:41:40', NULL),
+(10, 6, 'jadwal:14:hari', 'jadwal', 'Pengingat Jadwal Hari Ini', 'Sesi Graduation bersama Kayla Studio hari ini pukul 08:00 WIB.', 'detail_booking.php?id=14', 'Lihat Detail', '2026-11-14 16:41:40', '2026-11-14 16:41:40', NULL);
 
 -- --------------------------------------------------------
 
@@ -429,7 +446,7 @@ INSERT INTO `users` (`id_user`, `nama`, `email`, `nomor_telepon`, `nama_brand`, 
 (2, 'Kayla', 'kayla@gmail.com', '08123456789', 'Kayla Studio', 'Professional Make Up Artist in Greater Jakarta. Since 2020.', 'Jakarta Timur, Bogor, Jakarta Barat, Jakarta Selatan', 'profil_f503a6a7668d8e62.jpg', '$2y$10$rjqMP/OoC4piHLtOwaFtY.pVKT4Vv3sXkxEjUzKWdNU6EnAh7ijby', 'mua', '2026-10-16 16:00:25', 'approved', NULL),
 (4, 'alex', 'alex@gmail.com', '081234567890', 'Mpruy Studio', 'Studio tergacor', 'Jakarta Timur', 'profil_713a502cf5c43137.jpg', '$2y$10$ETqMldWHGvcdyxDIxSDb0ulfe5CAHNfIykRGXL4nxd0EjMZdYUWzy', 'mua', '2026-10-17 21:17:26', 'approved', NULL),
 (5, 'ferdi', 'ferdi@gmail.com', '081234567890', 'Gacor Studio', 'pasti gacor', 'Jakarta Timur', 'profil_5092b841046d0c6c.jpg', '$2y$10$aceJkSjULSLhuVIcuapwPulTBP0xxBKnfmXJwjUA1m9JiZCbYoto2', 'mua', '2026-10-17 22:09:29', 'pending', NULL),
-(6, 'kuncoro', 'kuncoro@gmail.com', '081234567890', NULL, NULL, NULL, NULL, '$2y$10$KbxJYMf3nJ0i8pHk1Y9p6OcggB.aY0CIfKzUW6NlfiPQu/OmpQebC', 'pelanggan', '2026-10-19 06:17:44', 'approved', NULL),
+(6, 'kuncoro', 'kuncoro@gmail.com', '081234567890', NULL, NULL, NULL, 'profil_18ee730182fb6bbb.jpg', '$2y$10$KbxJYMf3nJ0i8pHk1Y9p6OcggB.aY0CIfKzUW6NlfiPQu/OmpQebC', 'pelanggan', '2026-10-19 06:17:44', 'approved', NULL),
 (7, 'Admin 1', 'admin@gmail.com', NULL, NULL, NULL, NULL, NULL, 'admin123', 'admin', '2026-10-19 13:55:41', 'approved', NULL);
 
 --
@@ -566,7 +583,7 @@ ALTER TABLE `bookings`
 -- AUTO_INCREMENT for table `chats`
 --
 ALTER TABLE `chats`
-  MODIFY `id_chat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_chat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `favorit`
@@ -578,7 +595,7 @@ ALTER TABLE `favorit`
 -- AUTO_INCREMENT for table `klien_notifikasi`
 --
 ALTER TABLE `klien_notifikasi`
-  MODIFY `id_notif` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_notif` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=281;
 
 --
 -- AUTO_INCREMENT for table `laporan_mua`
