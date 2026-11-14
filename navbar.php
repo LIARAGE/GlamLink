@@ -100,7 +100,15 @@ if ($nav_logged_in && in_array($nav_role, ['mua', 'pelanggan']) && isset($koneks
                     <i class="fa-solid fa-message"></i>
                     <span class="badge" id="navChatBadge" <?php echo $nav_chat_baru ? '' : 'hidden'; ?>><?php echo $nav_chat_baru > 99 ? '99+' : $nav_chat_baru; ?></span>
                 </a>
-                <a href="#" class="icon-btn" title="Segera hadir"><i class="fa-solid fa-bell"></i></a>
+                <?php
+                // Lonceng notifikasi klien: jumlah belum dibaca dari tabel klien_notifikasi
+                require_once __DIR__ . '/includes/klien_notifikasi.php';
+                $nav_notif_klien = (($koneksi ?? null) instanceof mysqli) ? klien_notif_jumlah_baru($koneksi, (int)$_SESSION['id_user']) : 0;
+                ?>
+                <a href="<?php echo $path_prefix; ?>klien/notifikasi.php" class="icon-btn" title="Notifikasi">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="badge" id="navNotifBadge" <?php echo $nav_notif_klien ? '' : 'hidden'; ?>><?php echo $nav_notif_klien > 99 ? '99+' : $nav_notif_klien; ?></span>
+                </a>
             </div>
             <a href="<?php echo $path_prefix; ?>klien/profil.php" style="text-decoration:none;color:inherit;">
                 <div class="profile-info">

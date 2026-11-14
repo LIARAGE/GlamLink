@@ -37,7 +37,6 @@ include __DIR__ . '/../navbar.php';
     <?php foreach ($data as $b):
         [$label, $kelas, $pesan] = info_status($b);
         $id = (int)$b['id_booking'];
-        $wa = format_wa($b['nomor_telepon']);
         $detail = 'detail_booking.php?id=' . $id; ?>
         <article class="hs-card">
             <div class="hs-mua">
@@ -59,8 +58,8 @@ include __DIR__ . '/../navbar.php';
             <div class="hs-aksi">
                 <span class="hs-badge <?php echo e($kelas); ?>"><?php echo e($label); ?></span>
                 <div class="hs-btns">
-                    <?php if (in_array($b['status'], ['menunggu', 'dikonfirmasi'], true) && $wa): ?>
-                        <a class="kb-fill hs-btn" href="<?php echo e($wa['link']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-comment"></i> Chat</a>
+                    <?php if (in_array($b['status'], ['menunggu', 'dikonfirmasi'], true)): ?>
+                        <a class="kb-fill hs-btn" href="chat.php?dengan=<?php echo (int)$b['id_mua']; ?>"><i class="fa-solid fa-comment"></i> Chat</a>
                     <?php elseif ($b['status'] === 'selesai'): ?>
                         <button type="button" class="kb-fill hs-btn js-rate" data-id="<?php echo $id; ?>" data-mua="<?php echo e($b['nama_brand']); ?>" data-rating="<?php echo (int)$b['rating']; ?>" data-ulasan="<?php echo e($b['ulasan']); ?>">
                             <i class="fa-solid fa-star"></i> <?php echo (int)$b['rating'] > 0 ? 'Ubah Review' : 'Beri Review'; ?></button>

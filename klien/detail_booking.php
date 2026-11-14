@@ -87,9 +87,7 @@ head_klien('Detail Booking');
             <a class="hs-muaid" href="mua.php?id=<?php echo (int)$b['id_mua']; ?>"><?php echo foto($b['foto_profil'], 'avatar'); ?><b><?php echo e($b['nama_brand']); ?></b></a>
             <?php if ($wa): ?><div class="hs-kontak"><i class="fa-solid fa-phone"></i><div><b>WhatsApp</b><span><?php echo e($wa['tampil']); ?></span></div></div><?php endif; ?>
             <div class="hs-kontak"><i class="fa-regular fa-envelope"></i><div><b>Email</b><span><?php echo e($b['email']); ?></span></div></div>
-            <?php if ($wa): ?>
-                <a class="kb-fill hs-chat" href="<?php echo e($wa['link']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-comment"></i> Chat</a>
-            <?php endif; ?>
+            <a class="kb-fill hs-chat" href="chat.php?dengan=<?php echo (int)$b['id_mua']; ?>"><i class="fa-solid fa-comment"></i> Chat</a>
         </div>
     </section>
 

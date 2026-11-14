@@ -135,7 +135,7 @@
     function tambahPesan(daftar, paksaScroll) {
         var bawah = dekatBawah();
         daftar.forEach(function (m) {
-            if (msgs.querySelector('.ct-msg[data-id="' + m.id + '"]')) return;     // sudah ada
+            if (msgs.querySelector('.ct-msg[data-id="' + m.id + '"]')) { lastId = Math.max(lastId, m.id); return; }     // sudah ada
             // Pesan saya yang masih "mengirim" dengan isi sama: ganti, jangan dobel
             if (m.saya) {
                 var tmp = Array.prototype.find.call(msgs.querySelectorAll('.ct-msg.me.pending'), function (x) { return x.dataset.teks === m.pesan; });
@@ -231,8 +231,9 @@
             b.dataset.id = res.pesan.id;
             b.querySelector('time').textContent = res.pesan.jam;
             centang(b, 'terkirim');
-            lastId = Math.max(lastId, res.pesan.id);
+            // lastId SENGAJA tidak dinaikkan di sini: balasan lawan yang masuk sebelum pesan ini (id lebih kecil) harus tetap terambil polling
             muatList();
+            muatPesanBaru();
         }).catch(function (err) {
             b.classList.remove('pending');
             b.classList.add('failed');

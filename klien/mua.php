@@ -69,8 +69,9 @@ $info = ['fav_on' => ['ok', 'Ditambahkan ke favorit Anda.'], 'fav_off' => ['ok',
         <div class="det-card">
             <h2>Kontak &amp; Jangkauan</h2>
             <div class="kontak-item"><i class="fa-solid fa-location-dot"></i><div><b>Lokasi</b><span><?php echo e($m['lokasi'] ?: '-'); ?></span></div></div>
-            <div class="kontak-item"><i class="fa-brands fa-whatsapp"></i><div><b>WhatsApp</b><?php echo $wa ? '<a href="' . e($wa['link']) . '" target="_blank" rel="noopener">' . e($wa['tampil']) . '</a>' : '<span>-</span>'; ?></div></div>
+            <div class="kontak-item"><i class="fa-brands fa-whatsapp"></i><div><b>WhatsApp</b><span><?php echo $wa ? e($wa['tampil']) : '-'; ?></span></div></div>
             <div class="kontak-item"><i class="fa-regular fa-envelope"></i><div><b>Email</b><a href="mailto:<?php echo e($m['email']); ?>"><?php echo e($m['email']); ?></a></div></div>
+            <a class="kb-outline" style="display:block;margin:4px 0 22px" href="chat.php?dengan=<?php echo $id; ?>"><i class="fa-regular fa-comment-dots"></i> Chat MUA</a>
             <?php if ($area): ?><div class="area-box"><b>Area Jangkauan</b><div class="chips"><?php foreach ($area as $a) echo '<span class="chip">' . e($a) . '</span>'; ?></div></div><?php endif; ?>
         </div>
     </div>

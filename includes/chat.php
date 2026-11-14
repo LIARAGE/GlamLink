@@ -157,6 +157,7 @@ function chat_saran(mysqli $k, int $saya, string $role_saya): array {
         SELECT u.id_user, u.nama, u.nama_brand, u.foto_profil, u.role, MAX(b.created_at) AS terakhir
         FROM bookings b JOIN users u ON u.id_user = b.$kolom_lawan
         WHERE b.$kolom_saya = ?
+          AND (u.role <> 'mua' OR u.status_verifikasi = 'approved')
           AND NOT EXISTS (SELECT 1 FROM chats c WHERE (c.id_pengirim = ? AND c.id_penerima = u.id_user) OR (c.id_pengirim = u.id_user AND c.id_penerima = ?))
         GROUP BY u.id_user ORDER BY terakhir DESC LIMIT 6");
     $st->bind_param('iii', $saya, $saya, $saya);

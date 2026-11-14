@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 13, 2026 at 04:05 PM
+-- Generation Time: Nov 14, 2026 at 10:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -95,7 +95,7 @@ CREATE TABLE `chats` (
 
 INSERT INTO `chats` (`id_chat`, `id_pengirim`, `id_penerima`, `pesan`, `waktu_kirim`, `dibaca_pada`) VALUES
 (1, 2, 1, 'Halo Jocelyn Thank u sudah book', '2026-11-13 11:17:26', NULL),
-(2, 2, 6, 'Halo Kuncoro, terima kasih', '2026-11-13 11:18:56', NULL);
+(2, 2, 6, 'Halo Kuncoro, terima kasih', '2026-11-13 11:18:56', '2026-11-14 08:53:05');
 
 -- --------------------------------------------------------
 
@@ -108,6 +108,26 @@ CREATE TABLE `favorit` (
   `id_pelanggan` int(11) NOT NULL,
   `id_mua` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `klien_notifikasi`
+--
+
+CREATE TABLE `klien_notifikasi` (
+  `id_notif` int(11) NOT NULL,
+  `id_pelanggan` int(11) NOT NULL,
+  `kunci` varchar(100) NOT NULL COMMENT 'Penanda unik sumber, contoh: baru:12, bayar:12, konfirm:12',
+  `tipe` varchar(30) NOT NULL COMMENT 'booking | bayar | konfirm | tolak | selesai | jadwal',
+  `judul` varchar(150) NOT NULL,
+  `pesan` text NOT NULL,
+  `link` varchar(255) DEFAULT NULL,
+  `label_aksi` varchar(50) DEFAULT NULL,
+  `waktu` datetime NOT NULL,
+  `dibaca_pada` datetime DEFAULT NULL,
+  `dihapus_pada` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -444,6 +464,14 @@ ALTER TABLE `favorit`
   ADD KEY `id_mua` (`id_mua`);
 
 --
+-- Indexes for table `klien_notifikasi`
+--
+ALTER TABLE `klien_notifikasi`
+  ADD PRIMARY KEY (`id_notif`),
+  ADD UNIQUE KEY `uq_klien_notif_kunci` (`id_pelanggan`,`kunci`),
+  ADD KEY `idx_klien_notif_list` (`id_pelanggan`,`dihapus_pada`,`waktu`);
+
+--
 -- Indexes for table `laporan_mua`
 --
 ALTER TABLE `laporan_mua`
@@ -547,6 +575,12 @@ ALTER TABLE `favorit`
   MODIFY `id_favorit` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `klien_notifikasi`
+--
+ALTER TABLE `klien_notifikasi`
+  MODIFY `id_notif` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `laporan_mua`
 --
 ALTER TABLE `laporan_mua`
@@ -631,6 +665,12 @@ ALTER TABLE `chats`
 ALTER TABLE `favorit`
   ADD CONSTRAINT `favorit_ibfk_1` FOREIGN KEY (`id_pelanggan`) REFERENCES `users` (`id_user`) ON DELETE CASCADE,
   ADD CONSTRAINT `favorit_ibfk_2` FOREIGN KEY (`id_mua`) REFERENCES `users` (`id_user`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `klien_notifikasi`
+--
+ALTER TABLE `klien_notifikasi`
+  ADD CONSTRAINT `fk_klien_notif_user` FOREIGN KEY (`id_pelanggan`) REFERENCES `users` (`id_user`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `laporan_mua`
