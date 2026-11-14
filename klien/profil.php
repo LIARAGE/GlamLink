@@ -1,57 +1,55 @@
 <?php
 session_start();
 require __DIR__ . '/../includes/klien.php';
-require __DIR__ . '/../includes/upload.php';
+require __DIR__ . '/../includes/profil_klien.php';
 
-$pesan = ''; $tipe = 'ok';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (($_POST['aksi'] ?? '') === 'profil') {
-        $nama = trim($_POST['nama'] ?? ''); $hp = preg_replace('/[\s\-]/', '', trim($_POST['nomor_telepon'] ?? ''));
-        if ($nama === '' || mb_strlen($nama) > 100) { $pesan = 'Nama wajib diisi (maksimal 100 karakter).'; $tipe = 'err'; }
-        elseif (!preg_match('/^(\+62|62|0)8[0-9]{8,11}$/', $hp)) { $pesan = 'Nomor telepon tidak valid. Contoh: 081234567890.'; $tipe = 'err'; }
-        else {
-            $foto = '';
-            if (!empty($_FILES['foto']['name'])) {
-                $foto = simpan_gambar($_FILES['foto'], 'profil', 5, $alasan);
-                if (!$foto) { $pesan = 'Foto gagal diunggah: ' . pesan_upload($alasan) . '.'; $tipe = 'err'; }
-            }
-            if ($tipe === 'ok') {
-                q("UPDATE users SET nama = ?, nomor_telepon = ?, foto_profil = COALESCE(NULLIF(?, ''), foto_profil) WHERE id_user = ?", [$nama, $hp, $foto, $id_klien]);
-                $_SESSION['nama'] = $nama; $pesan = 'Profil berhasil diperbarui.';
-            }
-        }
-    } elseif (($_POST['aksi'] ?? '') === 'password') {
-        $u = q('SELECT password FROM users WHERE id_user = ?', [$id_klien])[0];
-        if (!password_verify($_POST['lama'] ?? '', $u['password'])) { $pesan = 'Password lama salah.'; $tipe = 'err'; }
-        elseif (strlen($_POST['baru'] ?? '') < 8) { $pesan = 'Password baru minimal 8 karakter.'; $tipe = 'err'; }
-        elseif (($_POST['baru'] ?? '') !== ($_POST['konfirmasi'] ?? '')) { $pesan = 'Konfirmasi password baru tidak cocok.'; $tipe = 'err'; }
-        else { q('UPDATE users SET password = ? WHERE id_user = ?', [password_hash($_POST['baru'], PASSWORD_DEFAULT), $id_klien]); $pesan = 'Password berhasil diganti.'; }
-    }
+$u   = q('SELECT nama, email, nomor_telepon, lokasi, bio, foto_profil, dibuat_pada FROM users WHERE id_user = ?', [$id_klien])[0];
+$st  = q("SELECT COUNT(*) AS total, COALESCE(SUM(status = 'selesai'), 0) AS selesai FROM bookings WHERE id_pelanggan = ?", [$id_klien])[0];
+$fav = daftar_favorit($id_klien);
+$notif = pesan_profil(is_string($_GET['msg'] ?? null) ? $_GET['msg'] : '', is_string($_GET['info'] ?? null) ? $_GET['info'] : '');
+$gabung = NAMA_BULAN[(int)date('n', strtotime($u['dibuat_pada']))] . ' ' . date('Y', strtotime($u['dibuat_pada']));
+
+/** Satu kotak informasi (baca-saja). $fokus = id kolom di halaman Edit yang langsung difokuskan; null = tidak bisa diubah */
+function kotak_info($label, $nilai, $ikon, $fokus) {
+    $isi = trim((string)$nilai) !== '' ? e($nilai) : '<span class="muted">Belum diisi</span>';
+    echo '<div class="pr-item"><span class="pr-lbl">' . e($label) . '</span>';
+    if ($fokus) echo '<a class="pr-box" href="profil_edit.php?fokus=' . $fokus . '"><i class="' . $ikon . ' pr-ic"></i><span>' . $isi . '</span><i class="fa-solid fa-pencil pr-pen"></i></a>';
+    else echo '<div class="pr-box pr-lock" title="Email tidak dapat diubah"><i class="' . $ikon . ' pr-ic"></i><span>' . $isi . '</span><i class="fa-solid fa-lock pr-pen"></i></div>';
+    echo '</div>';
 }
-$u = q('SELECT nama, email, nomor_telepon, foto_profil FROM users WHERE id_user = ?', [$id_klien])[0];
 
 head_klien('Profil');
 include __DIR__ . '/../navbar.php';
 ?>
-<main class="kl-wrap page-top">
-    <h1 class="kl-title big">Profil Saya</h1>
-    <?php if ($pesan) echo '<p class="alert-' . $tipe . '">' . e($pesan) . '</p>'; ?>
-    <div class="booking-grid">
-        <form class="form-card" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="aksi" value="profil">
-            <div class="foto-edit"><?php echo foto($u['foto_profil'], 'avatar xl'); ?><input type="file" name="foto" accept="image/jpeg,image/png,image/webp"></div>
-            <label>Nama Lengkap</label><input type="text" name="nama" maxlength="100" value="<?php echo e($u['nama']); ?>" required>
-            <label>Email</label><input type="email" value="<?php echo e($u['email']); ?>" disabled>
-            <label>Nomor Telepon</label><input type="tel" name="nomor_telepon" value="<?php echo e($u['nomor_telepon']); ?>" required>
-            <button class="btn-cari full" type="submit">Simpan Perubahan</button>
-        </form>
-        <form class="form-card" method="POST">
-            <input type="hidden" name="aksi" value="password"><h3>Ganti Password</h3>
-            <label>Password Lama</label><input type="password" name="lama" required>
-            <label>Password Baru</label><input type="password" name="baru" minlength="8" required>
-            <label>Konfirmasi Password Baru</label><input type="password" name="konfirmasi" required>
-            <button class="btn-cari full" type="submit">Ganti Password</button>
-        </form>
+<main class="kl-wrap page-top pr-page">
+    <?php if ($notif) echo '<p class="alert-' . $notif[0] . '" role="status">' . e($notif[1]) . '</p>'; ?>
+
+    <section class="pr-head">
+        <?php echo foto($u['foto_profil'], 'avatar xl'); ?>
+        <div class="pr-head-info">
+            <h1><?php echo e($u['nama']); ?></h1>
+            <p class="pr-bio"><?php echo trim((string)$u['bio']) !== '' ? nl2br(e($u['bio'])) : '<span class="muted">Belum ada bio.</span>'; ?></p>
+            <p class="pr-stat"><span><b><?php echo (int)$st['total']; ?></b> booking</span><span><b><?php echo (int)$st['selesai']; ?></b> selesai</span><span><b><?php echo count($fav); ?></b> favorit</span><span class="muted">Bergabung <?php echo e($gabung); ?></span></p>
+        </div>
+        <a class="pr-edit-btn" href="profil_edit.php"><i class="fa-solid fa-pen-to-square"></i> Edit Profil</a>
+    </section>
+
+    <div class="pr-grid">
+        <section class="pr-card">
+            <h2>Informasi Pribadi</h2>
+            <?php kotak_info('Email', $u['email'], 'fa-regular fa-envelope', null);
+            kotak_info('No Telepon', $u['nomor_telepon'], 'fa-solid fa-phone', 'telp');
+            kotak_info('Alamat', $u['lokasi'], 'fa-solid fa-location-dot', 'alamat'); ?>
+            <a class="pr-link" href="profil_edit.php#password"><i class="fa-solid fa-key"></i> Ganti Password</a>
+        </section>
+
+        <section class="pr-card">
+            <h2>MUA Favorit</h2>
+            <?php foreach ($fav as $m) kartu_favorit($m, 'profil'); ?>
+            <?php if (!$fav): ?>
+                <div class="kosong pr-kosong"><i class="fa-regular fa-heart"></i><p>Belum ada MUA favorit.<br><span class="small">Tekan ikon hati di profil MUA untuk menyimpannya di sini.</span></p><a class="kb-fill" href="cari.php">Cari MUA</a></div>
+            <?php endif; ?>
+        </section>
     </div>
 </main>
 <?php bottom_nav();

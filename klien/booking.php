@@ -37,6 +37,7 @@ $pilih_id = $layanan_dari_url ? $id_layanan : (int)($layanan[0]['id_service'] ??
 $v = ['tanggal' => '', 'waktu' => '', 'nama_acara' => '', 'jenis' => '', 'kota' => '', 'alamat' => '', 'catatan' => '', 'metode' => 'Transfer Bank'];
 if (tgl_ok(input('tanggal')) && input('tanggal') >= $hari_ini && input('tanggal') <= $maks) { $v['tanggal'] = input('tanggal'); }
 if (in_array(input('jam'), $mulai_slot, true)) { $v['waktu'] = input('jam'); }
+$v['alamat'] = mb_substr(trim((string)(q('SELECT lokasi FROM users WHERE id_user = ?', [$id_klien])[0]['lokasi'] ?? '')), 0, 200);   // dari Profil klien
 $langkah = $layanan_dari_url ? ($v['tanggal'] && $v['waktu'] ? 3 : 2) : 1;
 $error = '';
 

@@ -8,7 +8,9 @@ $id  = (int)($_POST['id_mua'] ?? 0);
 $tab = in_array($_POST['tab'] ?? '', ['tentang', 'layanan', 'portfolio', 'jadwal', 'review'], true) ? $_POST['tab'] : 'tentang';
 $tgl = preg_match('/^\d{4}-\d{2}-\d{2}$/', $_POST['tanggal'] ?? '') ? '&tanggal=' . $_POST['tanggal'] : '';
 $kembali = 'mua.php?id=' . $id . '&tab=' . $tab . $tgl;
-if (($_POST['dari'] ?? '') === 'home') { $kembali = 'index.php?hasil=fav'; }   // hati di kartu Home -> balik ke Home (nilai tetap, bukan input mentah)
+// Hati dari Home / Profil / Edit Profil -> balik ke halaman asal (tujuan dipilih dari daftar tetap, bukan input mentah)
+$asal = ['home' => 'index.php', 'profil' => 'profil.php', 'profil_edit' => 'profil_edit.php'][is_string($_POST['dari'] ?? null) ? $_POST['dari'] : ''] ?? '';
+if ($asal !== '') { $kembali = $asal . '?hasil=fav'; }
 
 $ada = q("SELECT 1 FROM users WHERE id_user = ? AND role = 'mua' AND status_verifikasi = 'approved'", [$id]);
 if (!csrf_ok() || !$ada) { header('Location: ' . $kembali . '&info=gagal'); exit(); }
