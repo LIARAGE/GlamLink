@@ -1,3 +1,10 @@
+-- MERGED SQL DUMP: db_glamlink
+-- Based on the newer dump (Nov 18, 2026).
+-- The older dump (Nov 14, 2026) has the same 15 table definitions,
+-- indexes, AUTO_INCREMENT setup, and foreign-key constraints.
+-- Every primary-key record in the older dump is already represented
+-- in the newer dump; newer-dump values are retained for overlapping IDs.
+
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
