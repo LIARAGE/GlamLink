@@ -25,7 +25,7 @@ if ($nav_logged_in && in_array($nav_role, ['mua', 'pelanggan']) && isset($koneks
         <!-- ========================================== -->
         <div class="nav-links">
             <a href="<?php echo $path_prefix; ?>login.php" class="btn-text">Masuk</a>
-            <a href="<?php echo $path_prefix; ?>login.php" class="btn-outline">Masuk Sebagai MUA</a>
+            <a href="<?php echo $path_prefix; ?>login.php" class="btn-outline nav-mua">Masuk Sebagai MUA</a>
             <a href="<?php echo $path_prefix; ?>register.php" class="btn-filled">Daftar</a>
         </div>
 

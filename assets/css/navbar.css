@@ -23,7 +23,7 @@
 
 /* 2. Logo */
 .navbar .logo { display: flex; align-items: center; }
-.navbar .logo img { display: block; height: 60px; width: auto; }
+.navbar .logo img { display: block; height: 48px; width: auto; }
 
 
 /* =========================================================
@@ -177,7 +177,7 @@
 
 @media (max-width: 768px) {
     .navbar { padding: 0 5%; }
-    .navbar .logo img { height: 48px; }
+    .navbar .logo img { height: 40px; }
     
     /* Guest Links */
     .navbar .nav-links { gap: 8px; }

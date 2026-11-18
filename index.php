@@ -18,11 +18,16 @@ if (isset($_SESSION['status_login'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlamLink - Tampil Memukau Di Setiap Momen</title>
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="assets/css/navbar.css">
     <link rel="stylesheet" href="assets/css/landing.css">
+    <style>
+        /* Saat link footer di-scroll ke bagian ini, judulnya tidak tertutup navbar (tinggi 80px) */
+        #fitur, #portfolio { scroll-margin-top: 90px; }
+    </style>
 </head>
 <body>
 
@@ -41,7 +46,7 @@ if (isset($_SESSION['status_login'])) {
         </main>
     </div>
 
-    <section class="features-section">
+    <section class="features-section" id="fitur">
         <div class="section-header">
             <span class="overline">MENGAPA MEMILIH GLAMLINK</span>
             <h2>Cara Baru Menemukan & Memesan<br>MUA Profesional</h2>
@@ -76,7 +81,7 @@ if (isset($_SESSION['status_login'])) {
         </div>
     </section>
 
-    <section class="portfolio-section">
+    <section class="portfolio-section" id="portfolio">
         <div class="section-header">
             <span class="overline">PORTFOLIO PILIHAN</span>
             <h2>Temukan MUA untuk Momen Spesialmu</h2>
@@ -116,55 +121,7 @@ if (isset($_SESSION['status_login'])) {
         </div>
     </section>
 
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-brand">
-                <a href="index.php" class="footer-brand-logo">
-                    <img src="assets/img/logo.png" alt="GlamLink" class="footer-logo">
-                    <span>GlamLink</span>
-                </a>
-                <p>Marketplace kecantikan dua sisi terdepan yang menghubungkan klien dengan makeup artist (MUA) profesional terpercaya untuk pernikahan, wisuda, gala pesta, dan sesi photoshoot.</p>
-                <div class="socials">
-                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
-                    <a href="#"><i class="fa-regular fa-envelope"></i></a>
-                </div>
-            </div>
-            
-            <div class="footer-links">
-                <h4>Platform</h4>
-                <ul>
-                    <li><a href="#">Fitur</a></li>
-                    <li><a href="#">Layanan Kami</a></li>
-                    <li><a href="#">Cara Kerja</a></li>
-                    <li><a href="#">Temukan Makeup Artist</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-links">
-                <h4>Perusahaan</h4>
-                <ul>
-                    <li><a href="#">Tentang Kami</a></li>
-                    <li><a href="#">Kontak Bantuan</a></li>
-                    <li><a href="#">Syarat & Ketentuan</a></li>
-                    <li><a href="#">Kebijakan Privasi</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-links">
-                <h4>Untuk MUA</h4>
-                <ul>
-                    <li><a href="register_form.php?role=mua">Daftar sebagai MUA</a></li>
-                    <li><a href="#">Keuntungan Bermitra</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>&copy; 2026 GlamLink. Seluruh hak cipta dilindungi.</p>
-            <p>Dibuat dengan ❤️ untuk para seniman rias dan klien di Indonesia</p>
-        </div>
-    </footer>
+    <?php include 'footer.php'; // footer bersama: link Fitur & Temukan MUA scroll ke bagian di atas ?>
 
 </body>
 </html>
