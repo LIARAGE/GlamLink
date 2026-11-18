@@ -3,7 +3,7 @@ session_start(); //halo
 
 if (isset($_SESSION['status_login'])) {
     if ($_SESSION['role'] == 'admin') {
-        header("Location: admin/index.php");
+        header("Location: admin/dashboard.php");
     } else if ($_SESSION['role'] == 'mua') {
         header("Location: mua/index.php");
     } else {

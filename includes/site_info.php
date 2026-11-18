@@ -30,7 +30,7 @@ function site_link_mulai(string $kategori = ''): string {
     $role = $_SESSION['role'] ?? '';
     if ($role === 'pelanggan') return 'klien/cari.php' . ($kategori !== '' ? '?kategori=' . urlencode($kategori) : '');
     if ($role === 'mua')       return 'mua/index.php';
-    if ($role === 'admin')     return 'admin/index.php';
+    if ($role === 'admin')     return 'admin/dashboard.php';
     return 'register_form.php?role=pelanggan';
 }
 

@@ -59,7 +59,11 @@ $_SESSION['status_login'] = true;
 
 // 6. Arahkan halaman sesuai role
 if ($user['role'] == 'admin') {
-    header("Location: ../admin/index.php");
+    // Halaman admin memakai sesi admin_logged_in (lihat admin/login_act.php)
+    $_SESSION['admin_logged_in'] = true;
+    $_SESSION['admin_nama']      = $user['nama'];
+    $_SESSION['admin_email']     = $user['email'];
+    header("Location: ../admin/dashboard.php");
 } else if ($user['role'] == 'mua') {
     header("Location: ../mua/index.php");
 } else {

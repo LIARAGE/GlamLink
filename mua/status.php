@@ -1,7 +1,7 @@
 <?php
 session_start();
 require '../koneksi.php';
-require __DIR__ . '/../Includes/auth_mua.php';
+require __DIR__ . '/../includes/auth_mua.php';
 
 // Sudah disetujui admin -> langsung ke dashboard
 if ($status_verifikasi === 'approved') { header('Location: index.php'); exit(); }

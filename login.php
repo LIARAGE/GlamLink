@@ -4,7 +4,7 @@ session_start();
 // Jika sudah login, langsung arahkan ke dashboard
 if (isset($_SESSION['status_login'])) {
     if ($_SESSION['role'] == 'admin') {
-        header("Location: admin/index.php");
+        header("Location: admin/dashboard.php");
     } else if ($_SESSION['role'] == 'mua') {
         header("Location: mua/index.php");
     } else {

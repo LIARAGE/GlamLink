@@ -5,7 +5,13 @@ include '../koneksi.php';
 
 $keyword = isset($_GET['cari']) ? trim(mysqli_real_escape_string($koneksi, $_GET['cari'])) : '';
 $status_filter = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : 'semua';
-$periode = isset($_GET['periode']) ? mysqli_real_escape_string($koneksi, $_GET['periode']) : 'bulan_ini';
+$periode = isset($_GET['periode']) ? mysqli_real_escape_string($koneksi, $_GET['periode']) : 'semua';
+
+// Label periode dihitung dari tanggal hari ini (bukan ditulis mati)
+$nama_bulan_id = [1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+$bulan_lalu_ts = strtotime('first day of last month');
+$label_bulan_ini  = $nama_bulan_id[(int)date('n')] . ' ' . date('Y');
+$label_bulan_lalu = $nama_bulan_id[(int)date('n', $bulan_lalu_ts)] . ' ' . date('Y', $bulan_lalu_ts);
 
 $sql = "SELECT * FROM users WHERE role = 'mua'";
 
@@ -17,11 +23,11 @@ if ($status_filter !== '' && $status_filter !== 'semua') {
 }
 
 if ($periode == 'bulan_ini') {
-    $sql .= " AND MONTH(dibuat_pada) = 10 AND YEAR(dibuat_pada) = 2026";
+    $sql .= " AND MONTH(dibuat_pada) = MONTH(CURDATE()) AND YEAR(dibuat_pada) = YEAR(CURDATE())";
 } elseif ($periode == 'bulan_lalu') {
-    $sql .= " AND MONTH(dibuat_pada) = 9 AND YEAR(dibuat_pada) = 2026";
+    $sql .= " AND MONTH(dibuat_pada) = MONTH(CURDATE() - INTERVAL 1 MONTH) AND YEAR(dibuat_pada) = YEAR(CURDATE() - INTERVAL 1 MONTH)";
 } elseif ($periode == 'tahun_ini') {
-    $sql .= " AND YEAR(dibuat_pada) = 2026";
+    $sql .= " AND YEAR(dibuat_pada) = YEAR(CURDATE())";
 }
 
 $sql .= " ORDER BY FIELD(status_verifikasi, 'pending', 'approved', 'rejected'), id_user DESC";
@@ -89,9 +95,10 @@ $rejected_count = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as 
                 <form method="GET" action="verifikasi_mua.php">
                     <div style="position: relative;">
                         <select name="periode" onchange="this.form.submit()" style="height: 40px; padding: 0 35px 0 36px; border-radius: 10px; border: 1px solid #D7CCC8; background: #FFFFFF; font-size: 13px; color: #4A3B32; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;">
-                            <option value="bulan_ini" <?= $periode == 'bulan_ini' ? 'selected' : ''; ?>>Bulan ini (Oktober 2026)</option>
-                            <option value="bulan_lalu" <?= $periode == 'bulan_lalu' ? 'selected' : ''; ?>>Bulan lalu (September 2026)</option>
-                            <option value="tahun_ini" <?= $periode == 'tahun_ini' ? 'selected' : ''; ?>>Tahun ini (2026)</option>
+                            <option value="semua" <?= $periode == 'semua' ? 'selected' : ''; ?>>Semua waktu</option>
+                            <option value="bulan_ini" <?= $periode == 'bulan_ini' ? 'selected' : ''; ?>>Bulan ini (<?= $label_bulan_ini; ?>)</option>
+                            <option value="bulan_lalu" <?= $periode == 'bulan_lalu' ? 'selected' : ''; ?>>Bulan lalu (<?= $label_bulan_lalu; ?>)</option>
+                            <option value="tahun_ini" <?= $periode == 'tahun_ini' ? 'selected' : ''; ?>>Tahun ini (<?= date('Y'); ?>)</option>
                         </select>
                         <svg style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #7A6F68;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                         <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #7A6F68; font-size: 10px;">▼</span>

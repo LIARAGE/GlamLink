@@ -484,3 +484,10 @@ a.pr-box:hover { background: #FBF3F4; } .pr-pen { color: #6b5a60; font-size: .8r
     .pr-card { padding: 24px 18px 28px; } .pr-fav { flex-wrap: wrap; padding: 16px; } .pr-fav-info { flex-basis: calc(100% - 100px); } .pr-fav-aksi { width: 100%; justify-content: space-between; }
     .pr-foto { flex-direction: column; text-align: center; } .pr-foto > div { align-items: center; }
 }
+
+/* Tab "Booking Saya" di layar sempit: geser horizontal, tidak meluber */
+@media (max-width: 480px) {
+    .hs-tabs { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .hs-tabs::-webkit-scrollbar { display: none; }
+    .hs-tabs a { flex: 1 0 auto; padding: 12px 10px; }
+}

@@ -116,7 +116,7 @@ $s1 = isset($_SESSION['reg_mua_step1']) ? $_SESSION['reg_mua_step1'] : [];
                 <h2>Buat Profil MUAmu</h2>
             </div>
             <?php
-            require_once __DIR__ . '/Includes/upload.php';
+            require_once __DIR__ . '/includes/upload.php';
             $pesan = ['password' => 'Password tidak cocok atau kurang dari 8 karakter.', 'email' => 'Email sudah terdaftar. Gunakan email lain atau masuk.', 'foto' => 'Foto gagal diunggah: ' . pesan_upload($_GET['alasan'] ?? '') . '.'];
             if (isset($_GET['err'], $pesan[$_GET['err']])) echo '<p class="error-message" style="display:block;text-align:center;margin-bottom:15px">' . $pesan[$_GET['err']] . '</p>';
             ?>

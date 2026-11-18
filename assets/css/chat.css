@@ -146,7 +146,8 @@
 /* ---------- RESPONSIVE: HP = satu kolom (daftar <-> ruang chat) ---------- */
 @media (max-width: 860px) {
     .ct-topbar-inner { padding: 0 20px; gap: 20px; }
-    .ct-main { grid-template-columns: 1fr; height: calc(100vh - 80px - 96px); }
+    .ct-main { grid-template-columns: minmax(0, 1fr); height: calc(100vh - 80px - 96px); }
+    .ct-side, .ct-room { min-width: 0; }
     .ct-room { display: none; }
     .ct-main.show-room .ct-side { display: none; }
     .ct-main.show-room .ct-room { display: flex; }

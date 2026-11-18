@@ -5,14 +5,36 @@ include '../koneksi.php';
 
 $id_user = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Proses aksi tombol setujui/tolak langsung dari halaman detail jika ditekan
-if (isset($_GET['action']) && isset($_GET['id'])) {
-    $action_id = intval($_GET['id']);
-    $status = $_GET['action'] == 'approve' ? 'approved' : 'rejected';
-    
-    mysqli_query($koneksi, "UPDATE users SET status_verifikasi='$status' WHERE id_user=$action_id AND role='mua'");
-    header("Location: detail_verifikasi.php?id=" . $action_id);
-    exit();
+// Token sederhana agar aksi verifikasi hanya bisa dikirim dari halaman ini
+if (empty($_SESSION['admin_csrf'])) $_SESSION['admin_csrf'] = bin2hex(random_bytes(16));
+$error_aksi = '';
+
+// Proses tombol Setujui / Tolak (POST). Penolakan wajib menyertakan alasan untuk MUA.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aksi'])) {
+    $action_id = intval($_POST['id'] ?? 0);
+    $token_ok  = hash_equals($_SESSION['admin_csrf'], $_POST['token'] ?? '');
+    $alasan    = trim($_POST['alasan_tolak'] ?? '');
+
+    if (!$token_ok) {
+        $error_aksi = 'Sesi halaman sudah kedaluwarsa. Muat ulang lalu coba lagi.';
+    } elseif ($_POST['aksi'] === 'approve') {
+        $st = $koneksi->prepare("UPDATE users SET status_verifikasi = 'approved', alasan_tolak = NULL WHERE id_user = ? AND role = 'mua'");
+        $st->bind_param('i', $action_id);
+        $st->execute();
+        header("Location: detail_verifikasi.php?id=" . $action_id);
+        exit();
+    } elseif ($_POST['aksi'] === 'reject') {
+        if (mb_strlen($alasan) < 10 || mb_strlen($alasan) > 255) {
+            $error_aksi = 'Tuliskan alasan penolakan (10–255 karakter) agar MUA tahu apa yang perlu diperbaiki.';
+        } else {
+            $st = $koneksi->prepare("UPDATE users SET status_verifikasi = 'rejected', alasan_tolak = ? WHERE id_user = ? AND role = 'mua'");
+            $st->bind_param('si', $alasan, $action_id);
+            $st->execute();
+            header("Location: detail_verifikasi.php?id=" . $action_id);
+            exit();
+        }
+    }
+    $id_user = $action_id;
 }
 
 // Ambil data MUA berdasarkan ID
@@ -107,15 +129,33 @@ $query_porto = mysqli_query($koneksi, "SELECT * FROM portfolios WHERE id_mua = $
             <!-- Tombol Aksi Verifikasi / Kotak Informasi Status -->
             <div style="border-top: 1px solid #EFECE6; padding-top: 20px;">
                 <?php if ($mua['status_verifikasi'] == 'pending') : ?>
-                    <div style="display: flex; gap: 12px;">
-                        <a href="detail_verifikasi.php?action=approve&id=<?= $mua['id_user']; ?>" style="background: #1B5E20; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px;">Setujui Akun MUA</a>
-                        <a href="detail_verifikasi.php?action=reject&id=<?= $mua['id_user']; ?>" style="background: #C62828; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px;">Tolak Akun MUA</a>
+                    <?php if ($error_aksi !== '') : ?>
+                        <p style="margin: 0 0 14px; background: #FFEBEE; border: 1px solid #F5C2C7; color: #B71C1C; padding: 10px 14px; border-radius: 8px; font-size: 13px;"><?= htmlspecialchars($error_aksi); ?></p>
+                    <?php endif; ?>
+                    <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+                        <form method="POST" style="margin: 0;">
+                            <input type="hidden" name="aksi" value="approve">
+                            <input type="hidden" name="id" value="<?= $mua['id_user']; ?>">
+                            <input type="hidden" name="token" value="<?= $_SESSION['admin_csrf']; ?>">
+                            <button type="submit" style="background: #1B5E20; color: white; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 13px;">Setujui Akun MUA</button>
+                        </form>
+                        <details <?= $error_aksi !== '' ? 'open' : ''; ?> style="flex: 1; min-width: 260px;">
+                            <summary style="display: inline-block; list-style: none; background: #C62828; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;">Tolak Akun MUA</summary>
+                            <form method="POST" style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+                                <input type="hidden" name="aksi" value="reject">
+                                <input type="hidden" name="id" value="<?= $mua['id_user']; ?>">
+                                <input type="hidden" name="token" value="<?= $_SESSION['admin_csrf']; ?>">
+                                <label for="alasan_tolak" style="font-size: 12px; font-weight: 600; color: #4A3B32;">Alasan penolakan (ditampilkan ke MUA)</label>
+                                <textarea id="alasan_tolak" name="alasan_tolak" rows="3" minlength="10" maxlength="255" required placeholder="Contoh: Foto portofolio buram. Unggah ulang minimal 3 foto hasil riasan asli." style="padding: 10px 12px; border: 1px solid #D7CCC8; border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical;"><?= htmlspecialchars($_POST['alasan_tolak'] ?? ''); ?></textarea>
+                                <button type="submit" style="align-self: flex-start; background: #FFFFFF; color: #C62828; border: 1px solid #C62828; padding: 9px 18px; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 13px;">Kirim Penolakan</button>
+                            </form>
+                        </details>
                     </div>
                 <?php else : ?>
                     <!-- Kotak Informasi dengan Ikon SVG Status/Shield Baru yang Lebih Estetis -->
                     <div style="display: flex; align-items: center; gap: 12px; background: #FAFAFA; border: 1px solid #EFECE6; padding: 14px 20px; border-radius: 10px; color: #7A6F68; font-size: 13px;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #4A3B32;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                        <span>Akun MUA ini sudah berstatus <strong><?= ucfirst($mua['status_verifikasi']); ?></strong>. Tidak ada tindakan lanjutan yang diperlukan.</span>
+                        <span>Akun MUA ini sudah berstatus <strong><?= ucfirst($mua['status_verifikasi']); ?></strong>. Tidak ada tindakan lanjutan yang diperlukan.<?php if ($mua['status_verifikasi'] == 'rejected' && !empty($mua['alasan_tolak'])) : ?><br><b>Alasan:</b> <?= htmlspecialchars($mua['alasan_tolak']); ?><?php endif; ?></span>
                     </div>
                 <?php endif; ?>
             </div>

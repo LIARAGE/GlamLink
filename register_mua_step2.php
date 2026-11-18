@@ -1,7 +1,7 @@
 <?php
 session_start();
 require __DIR__ . '/koneksi.php';
-require_once __DIR__ . '/Includes/upload.php';
+require_once __DIR__ . '/includes/upload.php';
 
 // 1. LOGIKA HAPUS FOTO DARI SESSION & SERVER
 if (isset($_GET['hapus_foto'])) {
